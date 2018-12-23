@@ -89,11 +89,11 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\..\XamarinBackgroundKit.Android\XamarinBackgroundKit.Android.csproj">
+    <ProjectReference Include="..\XamarinBackgroundKit.Android\XamarinBackgroundKit.Android.csproj">
       <Project>{ff4d0964-aee1-4de1-9864-e9402443569c}</Project>
       <Name>XamarinBackgroundKit.Android</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\XamarinBackgroundKit\XamarinBackgroundKit.csproj">
+    <ProjectReference Include="..\XamarinBackgroundKit\XamarinBackgroundKit.csproj">
       <Project>{54366595-a90d-4ac0-b816-fce69fa6410f}</Project>
       <Name>XamarinBackgroundKit</Name>
     </ProjectReference>

@@ -155,7 +155,7 @@ namespace XamarinBackgroundKit.Android.Extensions
 			var positions = gradients.Select(x => x.Offset).ToArray();
 
             /* If positions are set, then go for PaintDrawable */
-            if (positions.All(x => Math.Abs(x) < Math.Pow(10, -10)))
+            if (!positions.All(x => Math.Abs(x) < Math.Pow(10, -10)))
             {
                 view.SetPaintGradient(gradients, angle);
                 return;
