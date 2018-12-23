@@ -1,0 +1,291 @@
+﻿using System;
+using System.ComponentModel;
+using Android.Content;
+using Android.Support.Design.Card;
+using Android.Support.V4.View;
+using Android.Views;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
+using XamarinBackgroundKit.Android.Renderers;
+using XamarinBackgroundKit.Controls;
+using AView = Android.Views.View;
+
+[assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
+namespace XamarinBackgroundKit.Android.Renderers
+{
+	public class MaterialContentViewRenderer : MaterialCardView, IViewRenderer, IVisualElementRenderer, AView.IOnTouchListener, AView.IOnClickListener
+	{
+		private bool _disposed;
+		private bool _isTouchListenerSet;
+		private bool _isClickListenerSet;
+		private int? _defaultLabelFor;
+
+		private VisualElementTracker _visualElementTracker;
+		private VisualElementPackager _visualElementPackager;
+
+		#region IVisualElementRenderer Properties
+
+		private MaterialContentView _element;
+		protected MaterialContentView Element
+		{
+			get => _element;
+			set
+			{
+				if (_element == value) return;
+				var oldElement = _element;
+				_element = value;
+
+				OnElementChanged(new ElementChangedEventArgs<MaterialContentView>(oldElement, _element));
+			}
+		}
+
+		AView IVisualElementRenderer.View => this;
+		ViewGroup IVisualElementRenderer.ViewGroup => this;
+		VisualElement IVisualElementRenderer.Element => Element;
+		VisualElementTracker IVisualElementRenderer.Tracker => _visualElementTracker;
+
+		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
+		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
+
+		#endregion
+
+		public MaterialContentViewRenderer(Context context) : base(context) { }
+
+		#region IViewRenderer Implementation
+
+		void IViewRenderer.MeasureExactly()
+		{
+			if (Element == null) return;
+
+			if (Element.Width <= 0 || Element.Height <= 0) return;
+
+			var widthPixels = (int)Context.ToPixels(Element.Width);
+			var heightPixels = (int)Context.ToPixels(Element.Height);
+
+			var widthMeasureSpec = MeasureSpec.MakeMeasureSpec(widthPixels, MeasureSpecMode.Exactly);
+			var heightMeasureSpec = MeasureSpec.MakeMeasureSpec(heightPixels, MeasureSpecMode.Exactly);
+
+			Measure(widthMeasureSpec, heightMeasureSpec);
+		}
+
+		#endregion
+
+		#region IVisualRenderer Implementation
+
+		void IVisualElementRenderer.SetLabelFor(int? id)
+		{
+			if (_defaultLabelFor == null)
+				_defaultLabelFor = ViewCompat.GetLabelFor(this);
+
+			ViewCompat.SetLabelFor(this, (int)(id ?? _defaultLabelFor));
+		}
+
+		void IVisualElementRenderer.UpdateLayout()
+		{
+			_visualElementTracker?.UpdateLayout();
+		}
+
+		void IVisualElementRenderer.SetElement(VisualElement element)
+		{
+			Element = element as MaterialContentView;
+
+			if (string.IsNullOrEmpty(Element?.AutomationId)) return;
+
+			ContentDescription = Element.AutomationId;
+		}
+
+		SizeRequest IVisualElementRenderer.GetDesiredSize(int widthConstraint, int heightConstraint)
+		{
+			return new SizeRequest(new Size(Context.ToPixels(20), Context.ToPixels(20)));
+		}
+
+		#endregion
+
+		#region Element Changed
+
+		protected virtual void OnElementChanged(ElementChangedEventArgs<MaterialContentView> e)
+		{
+			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
+
+			if (e.OldElement != null)
+			{
+				e.OldElement.PropertyChanged -= OnElementPropertyChanged;
+			}
+
+			if (e.NewElement == null) return;
+
+			this.EnsureId();
+
+            /*
+             * This is very important to prevent scenarios where image was not cropped,
+             * and the corner radius was below the image.
+             */
+			PreventCornerOverlap = true;
+
+			if (_visualElementTracker == null)
+			{
+				_visualElementTracker = new MaterialVisualElementTracker(this);
+				_visualElementPackager = new VisualElementPackager(this);
+				_visualElementPackager.Load();
+			}
+
+			UpdateAll();
+
+			e.NewElement.PropertyChanged += OnElementPropertyChanged;
+		}
+
+		#endregion
+
+		#region Layout Children
+
+		protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
+		{
+			if (Element == null) return;
+
+			var children = ((IElementController)Element).LogicalChildren;
+			foreach (var child in children)
+			{
+				if (!(child is VisualElement visualElement)) continue;
+
+				Platform.GetRenderer(visualElement)?.UpdateLayout();
+			}
+		}
+
+		#endregion
+
+		#region Property Changed
+
+		protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (_disposed) return;
+
+			ElementPropertyChanged?.Invoke(this, e);
+
+			if (e.PropertyName == MaterialContentView.IsFocusableProperty.PropertyName) UpdateIsFocusable();
+			else if (e.PropertyName == MaterialContentView.IsClickableProperty.PropertyName) UpdateIsClickable();
+		}
+
+		private void UpdateAll()
+		{
+			UpdateIsFocusable();
+			UpdateIsClickable();
+		}
+
+		private void UpdateIsFocusable()
+		{
+			if (_isTouchListenerSet && !Element.IsFocusable)
+			{
+				Focusable = false;
+				SetOnTouchListener(null);
+				_isTouchListenerSet = false;
+			}
+			else if (!_isTouchListenerSet && Element.IsFocusable)
+			{
+				Focusable = true;
+				SetOnTouchListener(this);
+				_isTouchListenerSet = true;
+			}
+		}
+
+		private void UpdateIsClickable()
+		{
+			if (_isClickListenerSet && !Element.IsClickable)
+			{
+				Clickable = false;
+				SetOnClickListener(null);
+				_isClickListenerSet = false;
+			}
+			else if (!_isClickListenerSet && Element.IsClickable)
+			{
+				Clickable = true;
+				SetOnClickListener(this);
+				_isClickListenerSet = true;
+			}
+		}
+
+		#endregion
+
+		#region Touch Handling
+
+		public bool OnTouch(AView v, MotionEvent e)
+		{
+			switch (e.Action)
+			{
+				case MotionEventActions.Down:
+					Element?.OnPressed();
+					break;
+				case MotionEventActions.Cancel:
+					Element?.OnCancelled();
+					Element?.OnReleasedOrCancelled();
+					break;
+				case MotionEventActions.Up:
+					Element?.OnReleased();
+					Element?.OnReleasedOrCancelled();
+					break;
+			}
+
+			return true;
+		}
+
+		#endregion
+
+		#region Click Handling
+
+		public void OnClick(AView v)
+		{
+			Element?.OnClicked();
+		}
+
+		#endregion
+
+		#region LifeCycle
+
+		protected override void Dispose(bool disposing)
+		{
+			if (_disposed) return;
+
+			_disposed = true;
+
+			if (disposing)
+			{
+				if (_isClickListenerSet)
+				{
+					SetOnClickListener(null);
+				}
+
+				if (_isTouchListenerSet)
+				{
+					SetOnTouchListener(null);
+				}
+
+				if (_visualElementTracker != null)
+				{
+					_visualElementTracker.Dispose();
+					_visualElementTracker = null;
+				}
+
+				if (_visualElementPackager != null)
+				{
+					_visualElementPackager.Dispose();
+					_visualElementPackager = null;
+				}
+
+				for (var i = 0; i < ChildCount; i++)
+				{
+					GetChildAt(i)?.Dispose();
+				}
+
+				if (Element != null)
+				{
+					Element.PropertyChanged -= OnElementPropertyChanged;
+
+					((IVisualElementRenderer)this).SetElement(null);
+				}
+			}
+
+			base.Dispose(disposing);
+		}
+
+		#endregion
+	}
+}
