@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage 
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
+    x:Class="XamarinBackgroundKitSample.MainPage">
+    <ContentPage.Resources>
+        <Style TargetType="Label">
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="TextColor" Value="LightGray" />
+            <Setter Property="VerticalTextAlignment" Value="Center" />
+            <Setter Property="HorizontalTextAlignment" Value="Center" />
+        </Style>
+    </ContentPage.Resources>
+    <StackLayout Margin="16" Spacing="16">
+        <controls:MaterialContentView 
+            Angle="0"
+            GradientType="Linear"
+            CornerRadius="30"
+            HeightRequest="60"
+            BorderColor="Aquamarine"
+            BorderWidth="4">
+            <controls:MaterialContentView.Gradients>
+                <controls:GradientStop Color="Blue" />
+                <controls:GradientStop Color="DarkRed" />
+            </controls:MaterialContentView.Gradients>
+            <Label Text="Material ContentView with Gradient but no Offsets" />
+        </controls:MaterialContentView>
+    </StackLayout>
+</ContentPage>
