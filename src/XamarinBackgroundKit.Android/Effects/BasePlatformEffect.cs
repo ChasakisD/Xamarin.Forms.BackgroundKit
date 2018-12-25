@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using AView = Android.Views.View;
@@ -14,7 +15,9 @@ namespace XamarinBackgroundKit.Android.Effects
         protected TElement XElement;
         protected TNativeView View;
 
-        protected bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null;
+        protected bool IsDisposed =>
+            (Container as IVisualElementRenderer)?.Element == null ||
+            (View == null || View?.Handle == IntPtr.Zero);
 
         protected override void OnAttached()
         {

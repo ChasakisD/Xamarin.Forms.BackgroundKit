@@ -52,6 +52,7 @@
     <Compile Include="Effects\NoFontPaddingEffect.cs" />
     <Compile Include="Extensions\GradientDrawableExtensions.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />
+    <Compile Include="Renderers\GradientStrokeDrawable.cs" />
     <Compile Include="Renderers\MaterialContentViewRenderer.cs" />
     <Compile Include="Renderers\MaterialVisualElementTracker.cs" />
     <Compile Include="Resources\Resource.designer.cs" />

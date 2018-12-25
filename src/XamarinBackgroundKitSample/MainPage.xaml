@@ -26,5 +26,32 @@
             </controls:MaterialContentView.Gradients>
             <Label Text="Material ContentView with Gradient but no Offsets" />
         </controls:MaterialContentView>
+        <controls:MaterialContentView 
+            Angle="0"
+            GradientType="Linear"
+            CornerRadius="30"
+            HeightRequest="60"
+            BorderColor="Aquamarine"
+            BorderWidth="4">
+            <controls:MaterialContentView.Gradients>
+                <controls:GradientStop Color="Blue" Offset="0" />
+                <controls:GradientStop Color="DarkRed" Offset="1" />
+            </controls:MaterialContentView.Gradients>
+            <Label Text="Material ContentView with Gradient and Offsets" />
+        </controls:MaterialContentView>
+        <controls:MaterialContentView 
+            Angle="0"
+            GradientType="Linear"
+            CornerRadius="30"
+            HeightRequest="60"
+            BorderColor="Aquamarine"
+            Elevation="8"
+            BorderWidth="4">
+            <controls:MaterialContentView.Gradients>
+                <controls:GradientStop Color="Blue" Offset="0" />
+                <controls:GradientStop Color="DarkRed" Offset="1" />
+            </controls:MaterialContentView.Gradients>
+            <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
+        </controls:MaterialContentView>
     </StackLayout>
 </ContentPage>

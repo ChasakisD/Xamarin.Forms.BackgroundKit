@@ -23,7 +23,7 @@ namespace XamarinBackgroundKit.Android.Effects
 		{
 			base.OnDetached();
 
-			if (View == null || View.Handle == IntPtr.Zero) return;
+			if (IsDisposed) return;
 
 			View.Background?.Dispose();
 		}

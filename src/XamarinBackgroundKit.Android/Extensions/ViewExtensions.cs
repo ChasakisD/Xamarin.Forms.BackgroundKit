@@ -2,17 +2,18 @@
 using Android.Content.Res;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Graphics.Drawables.Shapes;
+using Android.Support.Design.Card;
+using Android.Support.Design.Chip;
 using Android.Support.V4.View;
 using Android.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Android.Graphics.Drawables.Shapes;
-using Android.Support.Design.Card;
-using Android.Support.Design.Chip;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
+using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Extensions;
 using AGradientType = Android.Graphics.Drawables.GradientType;
@@ -65,12 +66,19 @@ namespace XamarinBackgroundKit.Android.Extensions
 				case GradientDrawable gradientDrawable:
 					gradientDrawable.SetStroke(borderWidth, ColorStateList.ValueOf(color.ToAndroid()));
 					break;
+                case GradientStrokeDrawable gradientStrokeDrawable:
+                    gradientStrokeDrawable.SetStroke(borderWidth, color);
+                    break;
                 case PaintDrawable paintDrawable:
                     var paint = paintDrawable.Paint;
                     paint.AntiAlias = true;
                     paint.Color = color.ToAndroid();
                     paint.StrokeWidth = borderWidth;
                     paint.SetStyle(Paint.Style.Stroke);
+                    if (element is IGradientElement gradientElement)
+                    {
+                        view.SetPaintGradient(gradientElement.Gradients, gradientElement.Angle);
+                    }
                     break;
 				default:
 					view.Background?.Dispose();
@@ -199,30 +207,25 @@ namespace XamarinBackgroundKit.Android.Extensions
         private static void SetPaintGradient(this AView view, IList<GradientStop> gradients, float angle)
         {
             var constructNew = true;
-            PaintDrawable paintDrawable;
+            GradientStrokeDrawable gradientStrokeDrawable;
 
-            if (view.Background is PaintDrawable oldPaintDrawable)
+            if (view.Background is GradientStrokeDrawable oldGradientStrokeDrawable)
             {
                 constructNew = false;
-                paintDrawable = oldPaintDrawable;
+                gradientStrokeDrawable = oldGradientStrokeDrawable;
             }
             else
             {
-                paintDrawable = new PaintDrawable();
+                gradientStrokeDrawable = new GradientStrokeDrawable();
             }
 
-            paintDrawable.Shape = new RectShape();
-            paintDrawable.SetShaderFactory(new GradientShaderFactory
-            {
-                ColorPositions = angle.ToStartEndPoint(),
-                Position = gradients.Select(x => x.Offset).ToArray(),
-                Colors = gradients.Select(x => (int)x.Color.ToAndroid()).ToArray()
-            });
+            gradientStrokeDrawable.Shape = new RectShape();
+            gradientStrokeDrawable.SetGradient(gradients, angle);
 
             if (!constructNew) return;
 
             view.Background?.Dispose();
-            view.Background = paintDrawable;
+            view.Background = gradientStrokeDrawable;
         }
 
 		#endregion
@@ -295,23 +298,4 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		#endregion
 	}
-
-    public class GradientShaderFactory : ShapeDrawable.ShaderFactory
-    {
-        public int[] Colors { private get; set; }
-        public float[] Position { private get; set; }
-        public float[] ColorPositions { private get; set; }
-
-        public override Shader Resize(int width, int height)
-        {
-           return new LinearGradient(
-                width * Position[0],
-                height * Position[1],
-                width * Position[2],
-                height * Position[3],
-                Colors,
-                ColorPositions,
-                Shader.TileMode.Mirror);
-        }
-    }
 }
