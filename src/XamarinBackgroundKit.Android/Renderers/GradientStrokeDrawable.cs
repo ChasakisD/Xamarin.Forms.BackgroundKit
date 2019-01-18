@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
+using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Extensions;
