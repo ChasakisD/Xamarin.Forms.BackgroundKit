@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Android.Effects;
@@ -9,44 +8,37 @@ using AView = Android.Views.View;
 [assembly: ExportEffect(typeof(BackgroundEffectDroid), nameof(BackgroundEffect))]
 namespace XamarinBackgroundKit.Android.Effects
 {
-	public class BackgroundEffectDroid : BasePlatformEffect<BackgroundEffect, Element, AView>
+    public class BackgroundEffectDroid : BasePlatformEffect<BackgroundEffect, Element, AView>
 	{
 		protected override void OnAttached()
 		{
 			base.OnAttached();
 
-			ApplyGradient();
-			ApplyRadius();
-		}
+            ApplyAll();
+        }
 
-		protected override void OnDetached()
-		{
-			base.OnDetached();
+        protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
+        {
+            base.OnElementPropertyChanged(args);
 
-			if (IsDisposed) return;
+            if (args.PropertyName == Background.GradientsProperty.PropertyName
+                || args.PropertyName == Background.AngleProperty.PropertyName
+                || args.PropertyName == Background.GradientTypeProperty.PropertyName) ApplyGradient();
+            else if (args.PropertyName == Background.BorderColorProperty.PropertyName
+                     || args.PropertyName == Background.BorderWidthProperty.PropertyName) ApplyBorder();
+            else if (args.PropertyName == Background.CornerRadiusProperty.PropertyName) ApplyRadius();
+            else if (args.PropertyName == Background.ElevationProperty.PropertyName) ApplyElevation();
+        }
 
-			View.Background?.Dispose();
-		}
+        private void ApplyAll()
+        {
+            ApplyElevation();
+            ApplyGradient();
+            ApplyBorder();
+            ApplyRadius();
+        }
 
-		#region Property Changed
-
-		protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
-		{
-			base.OnElementPropertyChanged(args);
-
-			if (args.PropertyName == Background.GradientsProperty.PropertyName
-				|| args.PropertyName == Background.AngleProperty.PropertyName
-				|| args.PropertyName == Background.GradientTypeProperty.PropertyName) ApplyGradient();
-			else if (args.PropertyName == Background.BorderColorProperty.PropertyName
-				|| args.PropertyName == Background.BorderWidthProperty.PropertyName) ApplyBorder();
-			else if (args.PropertyName == Background.CornerRadiusProperty.PropertyName) ApplyRadius();
-		}
-
-		#endregion
-
-		#region Apply Radius and Gradient
-
-		private void ApplyGradient()
+        private void ApplyGradient()
 		{
 			if (View == null) return;
 
@@ -74,6 +66,9 @@ namespace XamarinBackgroundKit.Android.Effects
 			View?.SetBorder(View.Context, viewElement, borderColor, borderWidth);
 		}
 
-		#endregion
+        public void ApplyElevation()
+        {
+            View?.SetElevation(View.Context, Background.GetElevation(Element));
+        }
 	}
 }

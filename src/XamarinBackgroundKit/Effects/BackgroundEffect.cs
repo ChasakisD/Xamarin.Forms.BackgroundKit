@@ -45,6 +45,15 @@ namespace XamarinBackgroundKit.Effects
 
         #endregion
 
+        #region Elevation
+
+        public static readonly BindableProperty ElevationProperty =
+            BindableProperty.CreateAttached(
+                "Elevation", typeof(float), typeof(Elevation), 0f, propertyChanged: (b, o, n) =>
+                    b.AddOrRemoveEffect<ElevationEffect>(() => n is float elevation && elevation > 0));
+
+        #endregion
+
         #endregion
 
         #region Getters and Setters
@@ -86,6 +95,20 @@ namespace XamarinBackgroundKit.Effects
         public static IList<GradientStop> GetGradients(BindableObject view) => (IList<GradientStop>)view.GetValue(GradientsProperty);
 
         public static void SetGradients(BindableObject view, IList<GradientStop> value) => view.SetValue(GradientsProperty, value);
+
+        #endregion
+
+        #region Elevation
+
+        public static float GetElevation(BindableObject view)
+        {
+            return (float)view.GetValue(ElevationProperty);
+        }
+
+        public static void SetElevation(BindableObject view, float value)
+        {
+            view.SetValue(ElevationProperty, value);
+        }
 
         #endregion
 

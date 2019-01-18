@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls.Base;
@@ -11,7 +12,7 @@ namespace XamarinBackgroundKit.Controls
 {
     /// <inheritdoc cref="ContentView" />
     /// <summary>
-    /// The way a Material Content View Should be. MaterialCardView on Android, Card on iOS
+    /// The way a Material Content View Should be.
     /// </summary>
     public class MaterialContentView : ContentView, IFocusableElement, IClickableElement, IMaterialVisualElement
 	{
@@ -250,11 +251,104 @@ namespace XamarinBackgroundKit.Controls
 
 		#endregion
 
-		#endregion
+        public static readonly BindableProperty IsCircleProperty = BindableProperty.Create(
+            nameof(IsCircle), typeof(bool), typeof(MaterialContentView), false);
 
-		#region IElevation Implementation
+        public bool IsCircle
+        {
+            get => (bool) GetValue(IsCircleProperty);
+            set => SetValue(IsCircleProperty, value);
+        }
 
-		void IElevationElement.OnElevationPropertyChanged(double oldValue, double newValue) { }
+        #endregion
+
+        private bool _isExecuting;
+
+        private readonly double _threshold = Math.Pow(10, -15);
+
+        protected override void OnSizeAllocated(double width, double height)
+        {
+            base.OnSizeAllocated(width, height);
+
+            InvalidateCircle(width, height);
+        }
+
+        #region Setup Circle
+        
+        public virtual async void InvalidateCircle(double width, double height)
+        {
+            if (!IsCircle) return;
+
+            var desiredCircleSize = Math.Max(width, height);
+
+            InvalidateCircleCorner(desiredCircleSize / 2);
+
+            /*
+             * HACK THE BOX:
+             * In iOS, while in the Layout Process, at first it calculates the paddings,
+             * and second it measures the View. So the actual width and height comes at the second
+             * time. So only one thread will wait 10ms and it will update the circle dimensions
+             * according to latest ones. This hack prevents to set WidthRequest with only the Padding.
+             * If we make this mistake, our view, will have Width = Padding.Left + Padding.Right.
+             */
+            if (Device.RuntimePlatform == Device.iOS)
+            {
+                if (_isExecuting) return;
+                
+                /* Block any other threads */
+                _isExecuting = true;
+
+                await Task.Delay(10);
+                
+                if (Math.Abs(Width - width) < _threshold && Math.Abs(Height - height) < _threshold) return;
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    try
+                    {
+                        InvalidateCircleDimensions(Math.Max(Width, Height));
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                });
+
+                _isExecuting = false;
+            }
+            else
+            {
+                InvalidateCircleDimensions(desiredCircleSize);
+            }
+        }
+        
+        public virtual void InvalidateCircleCorner(double desiredCornerSize)
+        {
+            if (CornerRadius == desiredCornerSize) return;
+
+            CornerRadius = desiredCornerSize;
+        }
+
+        public virtual void InvalidateCircleDimensions(double desiredCircleSize)
+        {
+            if (Math.Abs(WidthRequest - HeightRequest) < _threshold && WidthRequest > 0) return;
+
+            if (Math.Abs(WidthRequest - desiredCircleSize) > _threshold)
+            {
+                WidthRequest = desiredCircleSize;
+            }
+
+            if (Math.Abs(HeightRequest - desiredCircleSize) > _threshold)
+            {
+                HeightRequest = desiredCircleSize;
+            }
+        }
+
+        #endregion
+
+        #region IElevation Implementation
+
+        void IElevationElement.OnElevationPropertyChanged(double oldValue, double newValue) { }
 
 		#endregion
 

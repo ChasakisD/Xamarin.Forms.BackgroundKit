@@ -1,10 +1,10 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using Android.Content;
+﻿using Android.Content;
 using Android.Content.Res;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
+using System;
+using System.ComponentModel;
+using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -14,7 +14,7 @@ using XamarinBackgroundKit.Extensions;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
-	public class MaterialVisualElementTracker : VisualElementTracker
+    public class MaterialVisualElementTracker : VisualElementTracker
 	{
 		private bool _disposed;
 		private Context _context;

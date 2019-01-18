@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage 
+<ContentPage
+    x:Class="XamarinBackgroundKitSample.MainPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
-    x:Class="XamarinBackgroundKitSample.MainPage">
+    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit">
     <ContentPage.Resources>
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="18" />
@@ -13,43 +13,43 @@
         </Style>
     </ContentPage.Resources>
     <StackLayout Margin="16" Spacing="16">
-        <controls:MaterialContentView 
+        <controls:MaterialContentView
             Angle="0"
-            GradientType="Linear"
-            CornerRadius="30"
-            HeightRequest="60"
             BorderColor="Aquamarine"
-            BorderWidth="4">
+            BorderWidth="4"
+            CornerRadius="30"
+            GradientType="Linear"
+            HeightRequest="60">
             <controls:MaterialContentView.Gradients>
                 <controls:GradientStop Color="Blue" />
                 <controls:GradientStop Color="DarkRed" />
             </controls:MaterialContentView.Gradients>
             <Label Text="Material ContentView with Gradient but no Offsets" />
         </controls:MaterialContentView>
-        <controls:MaterialContentView 
+        <controls:MaterialContentView
             Angle="0"
-            GradientType="Linear"
-            CornerRadius="30"
-            HeightRequest="60"
             BorderColor="Aquamarine"
-            BorderWidth="4">
+            BorderWidth="4"
+            CornerRadius="30"
+            GradientType="Linear"
+            HeightRequest="60">
             <controls:MaterialContentView.Gradients>
-                <controls:GradientStop Color="Blue" Offset="0" />
-                <controls:GradientStop Color="DarkRed" Offset="1" />
+                <controls:GradientStop Offset="0" Color="Blue" />
+                <controls:GradientStop Offset="1" Color="DarkRed" />
             </controls:MaterialContentView.Gradients>
             <Label Text="Material ContentView with Gradient and Offsets" />
         </controls:MaterialContentView>
-        <controls:MaterialContentView 
+        <controls:MaterialContentView
             Angle="0"
-            GradientType="Linear"
-            CornerRadius="30"
-            HeightRequest="60"
             BorderColor="Aquamarine"
+            BorderWidth="4"
+            CornerRadius="30"
             Elevation="8"
-            BorderWidth="4">
+            GradientType="Linear"
+            HeightRequest="60">
             <controls:MaterialContentView.Gradients>
-                <controls:GradientStop Color="Blue" Offset="0" />
-                <controls:GradientStop Color="DarkRed" Offset="1" />
+                <controls:GradientStop Offset="0" Color="Blue" />
+                <controls:GradientStop Offset="1" Color="DarkRed" />
             </controls:MaterialContentView.Gradients>
             <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
         </controls:MaterialContentView>

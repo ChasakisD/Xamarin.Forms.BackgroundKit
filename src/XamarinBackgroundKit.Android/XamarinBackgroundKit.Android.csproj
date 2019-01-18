@@ -47,12 +47,12 @@
   <ItemGroup>
     <Compile Include="Effects\BackgroundEffect.cs" />
     <Compile Include="Effects\BasePlatformEffect.cs" />
-    <Compile Include="Effects\ElevationEffect.cs" />
     <Compile Include="Effects\NoButtonTextCapsEffect.cs" />
     <Compile Include="Effects\NoFontPaddingEffect.cs" />
     <Compile Include="Extensions\GradientDrawableExtensions.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />
     <Compile Include="Renderers\GradientStrokeDrawable.cs" />
+    <Compile Include="Renderers\MaterialCardRenderer.cs" />
     <Compile Include="Renderers\MaterialContentViewRenderer.cs" />
     <Compile Include="Renderers\MaterialVisualElementTracker.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.0.0.8055-pre1</Version>
+      <Version>4.0.0.62955-pre2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />

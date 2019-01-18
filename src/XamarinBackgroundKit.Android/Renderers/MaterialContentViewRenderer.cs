@@ -1,9 +1,8 @@
-﻿using System;
-using System.ComponentModel;
-using Android.Content;
-using Android.Support.Design.Card;
+﻿using Android.Content;
 using Android.Support.V4.View;
 using Android.Views;
+using System;
+using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
@@ -13,10 +12,9 @@ using AView = Android.Views.View;
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
-	public class MaterialContentViewRenderer : MaterialCardView, IViewRenderer, IVisualElementRenderer, AView.IOnTouchListener, AView.IOnClickListener
+    public class MaterialContentViewRenderer : FormsViewGroup, IViewRenderer, IVisualElementRenderer, AView.IOnClickListener
 	{
 		private bool _disposed;
-		private bool _isTouchListenerSet;
 		private bool _isClickListenerSet;
 		private int? _defaultLabelFor;
 
@@ -115,13 +113,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 			if (e.NewElement == null) return;
 
 			this.EnsureId();
-
-            /*
-             * This is very important to prevent scenarios where image was not cropped,
-             * and the corner radius was below the image.
-             */
-			PreventCornerOverlap = true;
-
+            
 			if (_visualElementTracker == null)
 			{
 				_visualElementTracker = new MaterialVisualElementTracker(this);
@@ -172,19 +164,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 		}
 
 		private void UpdateIsFocusable()
-		{
-			if (_isTouchListenerSet && !Element.IsFocusable)
-			{
-				Focusable = false;
-				SetOnTouchListener(null);
-				_isTouchListenerSet = false;
-			}
-			else if (!_isTouchListenerSet && Element.IsFocusable)
-			{
-				Focusable = true;
-				SetOnTouchListener(this);
-				_isTouchListenerSet = true;
-			}
+        {
+            Focusable = Element.IsFocusable;
 		}
 
 		private void UpdateIsClickable()
@@ -207,25 +188,25 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 		#region Touch Handling
 
-		public bool OnTouch(AView v, MotionEvent e)
-		{
-			switch (e.Action)
-			{
-				case MotionEventActions.Down:
-					Element?.OnPressed();
-					break;
-				case MotionEventActions.Cancel:
-					Element?.OnCancelled();
-					Element?.OnReleasedOrCancelled();
-					break;
-				case MotionEventActions.Up:
-					Element?.OnReleased();
-					Element?.OnReleasedOrCancelled();
-					break;
-			}
-
-			return true;
-		}
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            switch (e.Action)
+            {
+                case MotionEventActions.Down:
+                    Element?.OnPressed();
+                    break;
+                case MotionEventActions.Cancel:
+                    Element?.OnCancelled();
+                    Element?.OnReleasedOrCancelled();
+                    break;
+                case MotionEventActions.Up:
+                    Element?.OnReleased();
+                    Element?.OnReleasedOrCancelled();
+                    break;
+            }
+            
+            return base.OnTouchEvent(e);
+        }
 
 		#endregion
 
@@ -252,12 +233,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 				{
 					SetOnClickListener(null);
 				}
-
-				if (_isTouchListenerSet)
-				{
-					SetOnTouchListener(null);
-				}
-
+                
 				if (_visualElementTracker != null)
 				{
 					_visualElementTracker.Dispose();
