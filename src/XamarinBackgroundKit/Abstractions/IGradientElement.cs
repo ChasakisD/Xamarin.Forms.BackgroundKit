@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using XamarinBackgroundKit.Controls;
 
 namespace XamarinBackgroundKit.Abstractions
@@ -8,6 +9,8 @@ namespace XamarinBackgroundKit.Abstractions
         float Angle { get; }
         GradientType GradientType { get; }
         IList<GradientStop> Gradients { get; }
+
+        event EventHandler<EventArgs> InvalidateGradientRequested;
 
         void OnAnglePropertyChanged(float oldValue, float newValue);
         void OnGradientTypePropertyChanged(GradientType oldValue, GradientType newValue);

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Extensions;
-using IBorderElement = XamarinBackgroundKit.Abstractions.IBorderElement;
 
 namespace XamarinBackgroundKit.Controls
 {
@@ -14,106 +11,24 @@ namespace XamarinBackgroundKit.Controls
     /// <summary>
     /// The way a Material Content View Should be.
     /// </summary>
-    public class MaterialContentView : ContentView, IFocusableElement, IClickableElement, IMaterialVisualElement
+    public class MaterialContentView : ContentView, IFocusableElement, IClickableElement, IBackgroundElement
 	{
-		#region Bindable Properties
+        #region Bindable Properties
 
-		#region IElevation Properties
-
-		public static readonly BindableProperty ElevationProperty = ElevationElement.ElevationProperty;
+        public static readonly BindableProperty BackgroundProperty = BackgroundElement.BackgroundProperty;
 
         /// <summary>
-        /// Gets or sets the Elevation of the MaterialContentView
+        /// Gets or sets whether the Background Property of MaterialContentView
         /// </summary>
-		public double Elevation
-		{
-			get => (double)GetValue(ElevationProperty);
-			set => SetValue(ElevationProperty, value);
-		}
+		public Background Background
+        {
+            get => (Background)GetValue(BackgroundProperty);
+            set => SetValue(BackgroundProperty, value);
+        }
 
-		#endregion
+        #region IClickableElement Properties
 
-		#region ICornerElement Properties
-
-		public static readonly BindableProperty CornerRadiusProperty = CornerElement.CornerRadiusProperty;
-
-        /// <summary>
-        /// Gets or sets the Elevation of the MaterialContentView
-        /// </summary>
-		public CornerRadius CornerRadius
-		{
-			get => (CornerRadius)GetValue(CornerRadiusProperty);
-			set => SetValue(CornerRadiusProperty, value);
-		}
-
-		#endregion
-
-		#region IGradientElement Properties
-
-		public static readonly BindableProperty AngleProperty = GradientElement.AngleProperty;
-
-        /// <summary>
-        /// Gets or sets the Angle of the Gradient of the MaterialContentView
-        /// </summary>
-		public float Angle
-		{
-			get => (float)GetValue(AngleProperty);
-			set => SetValue(AngleProperty, value);
-		}
-
-		public static readonly BindableProperty GradientTypeProperty = GradientElement.GradientTypeProperty;
-
-        /// <summary>
-        /// Gets or sets the Type of the Gradient of the MaterialContentView
-        /// </summary>
-		public GradientType GradientType
-		{
-			get => (GradientType)GetValue(GradientTypeProperty);
-			set => SetValue(GradientTypeProperty, value);
-		}
-
-		public static readonly BindableProperty GradientsProperty = GradientElement.GradientsProperty;
-
-        /// <summary>
-        /// Gets or sets the Gradients of the MaterialContentView
-        /// </summary>
-		public IList<GradientStop> Gradients
-		{
-			get => (IList<GradientStop>)GetValue(GradientsProperty);
-			set => SetValue(GradientsProperty, value);
-		}
-
-		#endregion
-
-		#region IBorderElement Properties
-
-		public static readonly BindableProperty BorderColorProperty = BorderElement.BorderColorProperty;
-
-        /// <summary>
-        /// Gets or sets the Border Color of the MaterialContentView
-        /// </summary>
-		public Color BorderColor
-		{
-			get => (Color)GetValue(BorderColorProperty);
-			set => SetValue(BorderColorProperty, value);
-		}
-
-		public static readonly BindableProperty BorderWidthProperty = BorderElement.BorderWidthProperty;
-
-        /// <summary>
-        /// Gets or sets the Border Width of the MaterialContentView
-        /// </summary>
-		public double BorderWidth
-		{
-			get => (double)GetValue(BorderWidthProperty);
-			set => SetValue(BorderWidthProperty, value);
-		}
-
-		#endregion
-
-		#region IClickableElement Properties
-
-		public static readonly BindableProperty IsClickableProperty = ClickableElement.IsClickableProperty;
+        public static readonly BindableProperty IsClickableProperty = ClickableElement.IsClickableProperty;
 
         /// <summary>
         /// Gets or sets whether the MaterialContentView will be Clickable or not
@@ -262,9 +177,9 @@ namespace XamarinBackgroundKit.Controls
 
         #endregion
 
-        private bool _isExecuting;
+        #region Setup Circle
 
-        private readonly double _threshold = Math.Pow(10, -15);
+        private bool _blockFirstTime = true;
 
         protected override void OnSizeAllocated(double width, double height)
         {
@@ -273,9 +188,7 @@ namespace XamarinBackgroundKit.Controls
             InvalidateCircle(width, height);
         }
 
-        #region Setup Circle
-        
-        public virtual async void InvalidateCircle(double width, double height)
+        public virtual void InvalidateCircle(double width, double height)
         {
             if (!IsCircle) return;
 
@@ -293,92 +206,53 @@ namespace XamarinBackgroundKit.Controls
              */
             if (Device.RuntimePlatform == Device.iOS)
             {
-                if (_isExecuting) return;
-                
-                /* Block any other threads */
-                _isExecuting = true;
-
-                await Task.Delay(10);
-                
-                if (Math.Abs(Width - width) < _threshold && Math.Abs(Height - height) < _threshold) return;
-
-                Device.BeginInvokeOnMainThread(() =>
+                if (_blockFirstTime)
                 {
-                    try
-                    {
-                        InvalidateCircleDimensions(Math.Max(Width, Height));
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                });
+                    _blockFirstTime = false;
+                    return;
+                }
+            }
 
-                _isExecuting = false;
-            }
-            else
-            {
-                InvalidateCircleDimensions(desiredCircleSize);
-            }
+            InvalidateCircleDimensions(desiredCircleSize);
         }
-        
+
         public virtual void InvalidateCircleCorner(double desiredCornerSize)
         {
-            if (CornerRadius == desiredCornerSize) return;
+            if (Background == null) return;
 
-            CornerRadius = desiredCornerSize;
+            if (Math.Abs(Background.CornerRadius.TopLeft - desiredCornerSize) < 0.0001) return;
+
+            Background.CornerRadius = desiredCornerSize;
         }
 
         public virtual void InvalidateCircleDimensions(double desiredCircleSize)
         {
-            if (Math.Abs(WidthRequest - HeightRequest) < _threshold && WidthRequest > 0) return;
+            var threshold = Math.Pow(10, -15);
+            if (Math.Abs(WidthRequest - HeightRequest) < threshold && WidthRequest > 0) return;
 
-            if (Math.Abs(WidthRequest - desiredCircleSize) > _threshold)
+            if (Math.Abs(WidthRequest - desiredCircleSize) > threshold)
             {
                 WidthRequest = desiredCircleSize;
             }
 
-            if (Math.Abs(HeightRequest - desiredCircleSize) > _threshold)
+            if (Math.Abs(HeightRequest - desiredCircleSize) > threshold)
             {
                 HeightRequest = desiredCircleSize;
             }
         }
 
+
         #endregion
 
-        #region IElevation Implementation
+        #region IBackgroundElement Implementation
 
-        void IElevationElement.OnElevationPropertyChanged(double oldValue, double newValue) { }
+        void IBackgroundElement.OnBackgroundChanged(Background oldValue, Background newValue) { }
 
-		#endregion
+        #endregion
 
-		#region ICornerElement Implementation
+        #region IFocusableElement Implementation
 
-		void ICornerElement.OnCornerRadiusPropertyChanged(CornerRadius oldValue, CornerRadius newValue) { }
-
-		#endregion
-
-		#region IGradientElement Implementation
-
-		void IGradientElement.OnAnglePropertyChanged(float oldValue, float newValue) { }
-
-		void IGradientElement.OnGradientTypePropertyChanged(GradientType oldValue, GradientType newValue) { }
-
-		void IGradientElement.OnGradientsPropertyChanged(IList<GradientStop> oldValue, IList<GradientStop> newValue) { }
-
-		#endregion
-
-		#region IBorderElement Implementation
-
-		void IBorderElement.OnBorderColorPropertyChanged(Color oldValue, Color newValue) { }
-
-		void IBorderElement.OnBorderWidthPropertyChanged(double oldValue, double newValue) { }
-
-		#endregion
-
-		#region IFocusableElement Implementation
-
-		public event EventHandler<EventArgs> Pressed;
+        public event EventHandler<EventArgs> Pressed;
 		public event EventHandler<EventArgs> Released;
 		public event EventHandler<EventArgs> Cancelled;
 		public event EventHandler<EventArgs> ReleasedOrCancelled;
@@ -428,6 +302,6 @@ namespace XamarinBackgroundKit.Controls
 
 		public void OnIsClickablePropertyChanged(bool oldValue, bool newValue) { }
 
-		#endregion
-	}
+        #endregion
+    }
 }

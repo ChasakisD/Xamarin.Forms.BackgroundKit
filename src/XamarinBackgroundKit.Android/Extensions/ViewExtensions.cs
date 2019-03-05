@@ -31,8 +31,6 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		public static void SetBorder(this Chip view, Context context, IBorderElement borderElement)
 		{
-			if (Math.Abs(borderElement.BorderWidth) < 0.00001) return;
-
 			view.ChipStrokeColor = ColorStateList.ValueOf(borderElement.BorderColor.ToAndroid());
 			view.ChipStrokeWidth = (int)context.ToPixels(borderElement.BorderWidth);
 		}
@@ -44,8 +42,6 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		public static void SetBorder(this MaterialCardView view, Context context, Color color, double width)
 		{
-			if (Math.Abs(width) < 0.00001) return;
-
 			view.StrokeColor = color == Color.White ? new global::Android.Graphics.Color(254, 254, 254) : color.ToAndroid();
 			view.StrokeWidth = (int)context.ToPixels(width);
 		}
@@ -57,8 +53,6 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		public static void SetBorder(this AView view, Context context, VisualElement element, Color color, double width)
 		{
-			if (Math.Abs(width) < 0.00001) return;
-
 			var borderWidth = (int)context.ToPixels(width);
 
 			switch (view.Background)
@@ -94,13 +88,10 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		#region Corner Radius
 
-		public static void SetCornerRadius(this AView view, Context context, ICornerElement cornerElement)
+		public static void SetCornerRadius(this AView view, Context context, VisualElement element, ICornerElement cornerElement)
 		{
-			if (cornerElement is VisualElement element)
-			{
-				view.SetCornerRadius(context, element, cornerElement.CornerRadius);
-			}
-		}
+            view.SetCornerRadius(context, element, cornerElement.CornerRadius);
+        }
 
 		public static void SetCornerRadius(this MaterialCardView view, Context context, ICornerElement cornerElement)
 		{
@@ -144,15 +135,6 @@ namespace XamarinBackgroundKit.Android.Extensions
 		public static void SetGradient(this AView view, IGradientElement gradientElement)
 		{
 			view.SetGradient(gradientElement.GradientType, gradientElement.Gradients, gradientElement.Angle);
-		}
-
-		public static void SetGradient(this AView view, Context context, VisualElement element)
-		{
-			if (!(element is IMaterialVisualElement supportElement)) return;
-
-			view.SetGradient(supportElement.GradientType, supportElement.Gradients, supportElement.Angle);
-			view.SetCornerRadius(context, supportElement);
-			view.SetBorder(context, element, supportElement);
 		}
 
 		public static void SetGradient(this AView view, XGradientType type, IList<GradientStop> gradients, float angle)
@@ -256,18 +238,27 @@ namespace XamarinBackgroundKit.Android.Extensions
 			view.Elevation = context.ToPixels(elevation);
 		}
 
-		public static void SetTranslationZ(this AView view, float translationZ)
-		{
-			if (view == null) return;
+        #endregion
 
-			ViewCompat.SetTranslationZ(view, translationZ);
-		}
+        #region TranslationZ
 
-		#endregion
+        public static void SetTranslationZ(this AView view, Context context, IElevationElement elevationElement)
+        {
+            view.SetTranslationZ(context, elevationElement.TranslationZ);
+        }
 
-		#region Rendering
+        public static void SetTranslationZ(this AView view, Context context, double translationZ)
+        {
+            if (view == null) return;
 
-		public static ViewGroup FindViewGroupParent(this AView view)
+            view.TranslationZ = context.ToPixels(translationZ);
+        }
+
+        #endregion
+
+        #region Rendering
+
+        public static ViewGroup FindViewGroupParent(this AView view)
 		{
 			var parent = view.Parent;
 			while (parent != null)

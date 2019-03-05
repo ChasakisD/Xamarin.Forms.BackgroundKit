@@ -3,7 +3,9 @@
     x:Class="XamarinBackgroundKitSample.MainPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit">
+    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
+    xmlns:effects="clr-namespace:XamarinBackgroundKit.Effects;assembly=XamarinBackgroundKit"
+    BackgroundColor="Wheat">
     <ContentPage.Resources>
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="18" />
@@ -12,46 +14,114 @@
             <Setter Property="HorizontalTextAlignment" Value="Center" />
         </Style>
     </ContentPage.Resources>
+
     <StackLayout Margin="16" Spacing="16">
-        <controls:MaterialContentView
-            Angle="0"
-            BorderColor="Aquamarine"
-            BorderWidth="4"
-            CornerRadius="30"
-            GradientType="Linear"
-            HeightRequest="60">
-            <controls:MaterialContentView.Gradients>
-                <controls:GradientStop Color="Blue" />
-                <controls:GradientStop Color="DarkRed" />
-            </controls:MaterialContentView.Gradients>
+        <controls:MaterialContentView HeightRequest="60">
+            <controls:MaterialContentView.Background>
+                <controls:Background
+                    Angle="0"
+                    BorderColor="Aquamarine"
+                    BorderWidth="4"
+                    CornerRadius="30"
+                    GradientType="Linear">
+                    <controls:Background.Gradients>
+                        <controls:GradientStop Color="Blue" />
+                        <controls:GradientStop Color="DarkRed" />
+                    </controls:Background.Gradients>
+                </controls:Background>
+            </controls:MaterialContentView.Background>
+
             <Label Text="Material ContentView with Gradient but no Offsets" />
         </controls:MaterialContentView>
-        <controls:MaterialContentView
-            Angle="0"
-            BorderColor="Aquamarine"
-            BorderWidth="4"
-            CornerRadius="30"
-            GradientType="Linear"
-            HeightRequest="60">
-            <controls:MaterialContentView.Gradients>
-                <controls:GradientStop Offset="0" Color="Blue" />
-                <controls:GradientStop Offset="1" Color="DarkRed" />
-            </controls:MaterialContentView.Gradients>
+
+        <controls:MaterialContentView HeightRequest="60">
+            <controls:MaterialContentView.Background>
+                <controls:Background
+                    Angle="0"
+                    BorderColor="Aquamarine"
+                    BorderWidth="4"
+                    CornerRadius="30"
+                    GradientType="Linear">
+                    <controls:Background.Gradients>
+                        <controls:GradientStop Offset="0" Color="Blue" />
+                        <controls:GradientStop Offset="1" Color="DarkRed" />
+                    </controls:Background.Gradients>
+                </controls:Background>
+            </controls:MaterialContentView.Background>
+
             <Label Text="Material ContentView with Gradient and Offsets" />
         </controls:MaterialContentView>
-        <controls:MaterialContentView
-            Angle="0"
-            BorderColor="Aquamarine"
-            BorderWidth="4"
-            CornerRadius="30"
-            Elevation="8"
-            GradientType="Linear"
-            HeightRequest="60">
-            <controls:MaterialContentView.Gradients>
-                <controls:GradientStop Offset="0" Color="Blue" />
-                <controls:GradientStop Offset="1" Color="DarkRed" />
-            </controls:MaterialContentView.Gradients>
+
+        <controls:MaterialContentView HeightRequest="60">
+            <controls:MaterialContentView.Background>
+                <controls:Background
+                    Angle="0"
+                    BorderColor="Aquamarine"
+                    BorderWidth="4"
+                    CornerRadius="30"
+                    Elevation="8"
+                    GradientType="Linear">
+                    <controls:Background.Gradients>
+                        <controls:GradientStop Offset="0" Color="Blue" />
+                        <controls:GradientStop Offset="1" Color="DarkRed" />
+                    </controls:Background.Gradients>
+                </controls:Background>
+            </controls:MaterialContentView.Background>
             <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
         </controls:MaterialContentView>
+
+        <Button HorizontalOptions="FillAndExpand" Text="Button with gradient">
+            <effects:BackgroundEffect.Background>
+                <controls:Background
+                    Angle="0"
+                    Elevation="16"
+                    GradientType="Linear">
+                    <controls:Background.Gradients>
+                        <controls:GradientStop Offset="0" Color="Blue" />
+                        <controls:GradientStop Offset="1" Color="DarkRed" />
+                    </controls:Background.Gradients>
+                </controls:Background>
+            </effects:BackgroundEffect.Background>
+        </Button>
+
+        <StackLayout
+            Margin="16"
+            Padding="16"
+            HorizontalOptions="FillAndExpand">
+            <effects:BackgroundEffect.Background>
+                <controls:Background
+                    Angle="0"
+                    CornerRadius="20"
+                    Elevation="16"
+                    GradientType="Linear">
+                    <controls:Background.Gradients>
+                        <controls:GradientStop Offset="0" Color="Blue" />
+                        <controls:GradientStop Offset="1" Color="DarkRed" />
+                    </controls:Background.Gradients>
+                </controls:Background>
+            </effects:BackgroundEffect.Background>
+
+            <Label Text="I am inside a stack layout" />
+        </StackLayout>
+
+        <Grid
+            Margin="16"
+            Padding="16"
+            HorizontalOptions="FillAndExpand">
+            <effects:BackgroundEffect.Background>
+                <controls:Background
+                    Angle="0"
+                    CornerRadius="20"
+                    Elevation="16"
+                    GradientType="Linear">
+                    <controls:Background.Gradients>
+                        <controls:GradientStop Offset="0" Color="Blue" />
+                        <controls:GradientStop Offset="1" Color="DarkRed" />
+                    </controls:Background.Gradients>
+                </controls:Background>
+            </effects:BackgroundEffect.Background>
+
+            <Label Text="I am inside a Grid" />
+        </Grid>
     </StackLayout>
 </ContentPage>

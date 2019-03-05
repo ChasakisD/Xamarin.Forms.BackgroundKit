@@ -1,4 +1,6 @@
-﻿namespace XamarinBackgroundKit.Abstractions
+﻿using System.ComponentModel;
+
+namespace XamarinBackgroundKit.Abstractions
 {
-	public interface IMaterialVisualElement : IBorderElement, ICornerElement, IGradientElement, IElevationElement { }
+    public interface IMaterialVisualElement : INotifyPropertyChanged, IBorderElement, ICornerElement, IGradientElement, IElevationElement { }
 }
