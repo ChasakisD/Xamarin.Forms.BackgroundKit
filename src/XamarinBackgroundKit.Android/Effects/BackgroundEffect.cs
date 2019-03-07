@@ -19,29 +19,37 @@ namespace XamarinBackgroundKit.Android.Effects
         {
             base.OnAttached();
 
-            UpdateBackground();
+            SetTracker();
+            HandleBackgroundManager();
+
+            _background = BackgroundEffect.GetBackground(Element);
+
+            UpdateBackground(null, _background);
         }
 
         protected override void OnDetached()
         {
             base.OnDetached();
 
-            UpdateBackground();
+            DisposeTracker();
         }
 
         protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
         {
             base.OnElementPropertyChanged(args);
 
-            if (args.PropertyName == BackgroundEffect.BackgroundProperty.PropertyName) UpdateBackground();
+            if (args.PropertyName == BackgroundEffect.BackgroundProperty.PropertyName)
+            {
+                var oldBackground = _background;
+
+                _background = BackgroundEffect.GetBackground(Element);
+
+                UpdateBackground(oldBackground, _background);
+            }
         }
 
-        private void UpdateBackground()
+        private void SetTracker()
         {
-            var oldBackground = _background;
-
-            _background = BackgroundEffect.GetBackground(Element);
-
             if (Control is IVisualElementRenderer controlRenderer)
             {
                 _tracker = new MaterialVisualElementTracker(controlRenderer);
@@ -50,8 +58,45 @@ namespace XamarinBackgroundKit.Android.Effects
             {
                 _tracker = new MaterialVisualElementTracker(containerRenderer);
             }
+        }
 
-            _tracker.SetElement(oldBackground, _background);
+        private void DisposeTracker()
+        {
+            _tracker?.Dispose();
+        }
+
+        private void HandleBackgroundManager()
+        {
+            /*
+            * Hack The Box:
+            * For some reason Xamarin.Forms.Platform.Android.BackgroundManager
+            * sets the background to null when no BackgroundColor is defined.
+            * 
+            * So the flow goes this way:
+            * 1) The Effect is attached when the Element is set to the Renderer
+            * and it is triggered before the BackgroundManager's listener.
+            * 2) We set the background of the label
+            * 3) The BackgroundManagers' On ElementChanged is triggered
+            * 4) BackgroundManager overrides Background
+            * 
+            * So, in order to prevent that and do not overdraw,
+            * we wait till the Control is attached to the Window. 
+            * At this time, the BackgroundManager did the override
+            * and we are up and running!
+            */
+            if (!(Element is Image) && !(Element is Label)) return;
+
+            Control.ViewAttachedToWindow += OnAttachedToWindow;
+        }
+
+        private void OnAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e)
+        {
+            UpdateBackground(null, _background);
+        }
+
+        private void UpdateBackground(Background oldBackground, Background newBackground)
+        {           
+            _tracker?.SetElement(oldBackground, newBackground);
         }
     }
 }

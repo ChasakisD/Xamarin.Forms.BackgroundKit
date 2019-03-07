@@ -84,6 +84,20 @@
             </effects:BackgroundEffect.Background>
         </Button>
 
+        <Label HorizontalOptions="FillAndExpand" Text="Label with gradient">
+            <effects:BackgroundEffect.Background>
+                <controls:Background
+                    Angle="0"
+                    Elevation="16"
+                    GradientType="Linear">
+                    <controls:Background.Gradients>
+                        <controls:GradientStop Offset="0" Color="Blue" />
+                        <controls:GradientStop Offset="1" Color="DarkRed" />
+                    </controls:Background.Gradients>
+                </controls:Background>
+            </effects:BackgroundEffect.Background>
+        </Label>
+
         <StackLayout
             Margin="16"
             Padding="16"
