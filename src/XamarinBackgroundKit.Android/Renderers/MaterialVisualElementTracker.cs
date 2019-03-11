@@ -1,12 +1,10 @@
 ﻿using Android.Content;
 using Android.Content.Res;
-using Android.OS;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using Android.Util;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -145,11 +143,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 				|| e.PropertyName == BorderElement.BorderWidthProperty.PropertyName) UpdateBorder();
 			else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
 			else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
-            else if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName)
-            {
-                Log.Error("", "");
-            }
-
         }
 
 		private void UpdateGradients()

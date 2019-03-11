@@ -5,7 +5,6 @@ using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
-using Android.Support.V4.View;
 using Android.Views;
 using System;
 using System.Collections.Generic;
@@ -88,9 +87,9 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		#region Corner Radius
 
-		public static void SetCornerRadius(this AView view, Context context, VisualElement element, ICornerElement cornerElement)
+		public static void SetCornerRadius(this AView view, Context context, VisualElement element, ICornerElement cornerElement, Color? color = null)
 		{
-            view.SetCornerRadius(context, element, cornerElement.CornerRadius);
+            view.SetCornerRadius(context, element, cornerElement.CornerRadius, color);
         }
 
 		public static void SetCornerRadius(this MaterialCardView view, Context context, ICornerElement cornerElement)
@@ -103,30 +102,45 @@ namespace XamarinBackgroundKit.Android.Extensions
 			view.ChipCornerRadius = context.ToPixels(cornerElement.CornerRadius.TopLeft);
 		}
 
-		public static void SetCornerRadius(this AView view, Context context, VisualElement element, CornerRadius cornerRadius)
+		public static void SetCornerRadius(this AView view, Context context, VisualElement element, CornerRadius cornerRadius, Color? color)
 		{
-			if (view == null || element == null || cornerRadius == new CornerRadius(0d)) return;
+            if (view == null || cornerRadius == new CornerRadius(0d)) return;
 
-			var cornerRadii = cornerRadius.ToRadii(context.Resources.DisplayMetrics.Density);
+            var isUniform = cornerRadius.IsAllRadius() && !cornerRadius.IsEmpty();
 
-			switch (view.Background)
-			{
-				case GradientDrawable gradientDrawable:
-					gradientDrawable.SetCornerRadii(cornerRadii);
-					break;
-				case PaintDrawable paintDrawable:
-					paintDrawable.SetCornerRadii(cornerRadii);
-					break;
-				default:
-					view.Background?.Dispose();
+            var uniformCornerRadius = context.ToPixels(cornerRadius.TopLeft);
+            var cornerRadii = cornerRadius.ToRadii(context.Resources.DisplayMetrics.Density);
 
-					var newGradientDrawable = new GradientDrawable();
-					newGradientDrawable.SetCornerRadii(cornerRadii);
-					newGradientDrawable.SetColor(element.BackgroundColor.ToAndroid());
-					view.Background = newGradientDrawable;
-					break;
-			}
-		}
+            switch (view.Background)
+            {
+                case GradientDrawable gradientDrawable:
+                    if (isUniform) gradientDrawable.SetCornerRadius(uniformCornerRadius);
+                    else gradientDrawable.SetCornerRadii(cornerRadii);
+                    break;
+                case PaintDrawable paintDrawable:
+                    if (isUniform) paintDrawable.SetCornerRadius(uniformCornerRadius);
+                    else paintDrawable.SetCornerRadii(cornerRadii);
+                    break;
+                default:
+                    view.Background?.Dispose();
+
+                    var newGradientDrawable = new GradientDrawable();
+                    if (isUniform) newGradientDrawable.SetCornerRadius(uniformCornerRadius);
+                    else newGradientDrawable.SetCornerRadii(cornerRadii);
+
+                    if (color != null)
+                    {
+                        newGradientDrawable.SetColor(color.Value.ToAndroid());
+                    }
+                    else if (element?.BackgroundColor != null)
+                    {
+                        newGradientDrawable.SetColor(element.BackgroundColor.ToAndroid());
+                    }
+
+                    view.Background = newGradientDrawable;
+                    break;
+            }
+        }
 
 		#endregion
 

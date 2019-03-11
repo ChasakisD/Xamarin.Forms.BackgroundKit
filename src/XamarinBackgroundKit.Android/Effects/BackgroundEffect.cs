@@ -31,7 +31,7 @@ namespace XamarinBackgroundKit.Android.Effects
         {
             base.OnDetached();
 
-            DisposeTracker();
+            Dispose();
         }
 
         protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
@@ -59,12 +59,7 @@ namespace XamarinBackgroundKit.Android.Effects
                 _tracker = new MaterialVisualElementTracker(containerRenderer);
             }
         }
-
-        private void DisposeTracker()
-        {
-            _tracker?.Dispose();
-        }
-
+        
         private void HandleBackgroundManager()
         {
             /*
@@ -97,6 +92,15 @@ namespace XamarinBackgroundKit.Android.Effects
         private void UpdateBackground(Background oldBackground, Background newBackground)
         {           
             _tracker?.SetElement(oldBackground, newBackground);
+        }
+
+        private void Dispose()
+        {
+            _tracker?.Dispose();
+
+            if (!(Element is Image) && !(Element is Label)) return;
+
+            Control.ViewAttachedToWindow += OnAttachedToWindow;
         }
     }
 }

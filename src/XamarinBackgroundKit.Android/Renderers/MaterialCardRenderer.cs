@@ -5,6 +5,7 @@ using Android.Views;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
@@ -13,7 +14,12 @@ using AView = Android.Views.View;
 [assembly: ExportRenderer(typeof(MaterialCard), typeof(MaterialCardRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
-    public class MaterialCardRenderer : MaterialCardView, IViewRenderer, IVisualElementRenderer, AView.IOnClickListener
+    public class MaterialCardRenderer : 
+        MaterialCardView, 
+        IViewRenderer, 
+        IVisualElementRenderer, 
+        IEffectControlProvider,
+        AView.IOnClickListener
     {
         private bool _disposed;
         private bool _isClickListenerSet;
@@ -100,10 +106,25 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         #endregion
 
+        #region IEffectControlProvider Implementation
+
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            if (!(effect is PlatformEffect platformEffect)) return;
+
+            platformEffect.SetContainer(this);
+        }
+
+        #endregion
+
         #region Element Changed
 
         protected virtual void OnElementChanged(ElementChangedEventArgs<MaterialCard> e)
         {
+            this.EnsureId();
+
+            EffectUtilities.RegisterEffectControlProvider(this, e.OldElement, e.NewElement);
+
             ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
 
             if (e.OldElement != null)
@@ -112,8 +133,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
 
             if (e.NewElement == null) return;
-
-            this.EnsureId();
 
             PreventCornerOverlap = true;
 
@@ -232,6 +251,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (disposing)
             {
+                EffectUtilities.UnregisterEffectControlProvider(this, Element);
+
                 if (_isClickListenerSet)
                 {
                     SetOnClickListener(null);

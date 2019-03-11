@@ -4,6 +4,7 @@ using Android.Views;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
@@ -12,7 +13,12 @@ using AView = Android.Views.View;
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
-    public class MaterialContentViewRenderer : FormsViewGroup, IViewRenderer, IVisualElementRenderer, AView.IOnClickListener
+    public class MaterialContentViewRenderer : 
+        FormsViewGroup, 
+        IViewRenderer, 
+        IVisualElementRenderer,
+        IEffectControlProvider,
+        AView.IOnClickListener
 	{
 		private bool _disposed;
 		private bool _isClickListenerSet;
@@ -97,13 +103,28 @@ namespace XamarinBackgroundKit.Android.Renderers
 			return new SizeRequest(new Size(Context.ToPixels(20), Context.ToPixels(20)));
 		}
 
-		#endregion
+        #endregion
 
-		#region Element Changed
+        #region IEffectControlProvider Implementation
 
-		protected virtual void OnElementChanged(ElementChangedEventArgs<MaterialContentView> e)
+        void IEffectControlProvider.RegisterEffect(Effect effect)
+        {
+            if (!(effect is PlatformEffect platformEffect)) return;
+
+            platformEffect.SetContainer(this);
+        }
+
+        #endregion
+
+        #region Element Changed
+
+        protected virtual void OnElementChanged(ElementChangedEventArgs<MaterialContentView> e)
 		{
-			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
+            this.EnsureId();
+
+            EffectUtilities.RegisterEffectControlProvider(this, e.OldElement, e.NewElement);
+
+            ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
 
 			if (e.OldElement != null)
 			{
@@ -111,9 +132,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 			}
 
 			if (e.NewElement == null) return;
-
-			this.EnsureId();
-            
+                        
 			if (_visualElementTracker == null)
 			{
 				_visualElementTracker = new MaterialVisualElementTracker(this);
@@ -229,7 +248,9 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 			if (disposing)
 			{
-				if (_isClickListenerSet)
+                EffectUtilities.UnregisterEffectControlProvider(this, Element);
+
+                if (_isClickListenerSet)
 				{
 					SetOnClickListener(null);
 				}

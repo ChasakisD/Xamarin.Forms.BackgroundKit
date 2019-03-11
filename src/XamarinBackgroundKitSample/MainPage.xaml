@@ -16,7 +16,7 @@
     </ContentPage.Resources>
 
     <StackLayout Margin="16" Spacing="16">
-        <controls:MaterialContentView HeightRequest="60">
+        <controls:MaterialContentView Clicked="MaterialContentView_Clicked" HeightRequest="60">
             <controls:MaterialContentView.Background>
                 <controls:Background
                     Angle="0"

@@ -50,7 +50,7 @@ namespace XamarinBackgroundKit.Controls
 			set => SetValue(ClickedCommandProperty, value);
 		}
 
-		public static readonly BindableProperty ClickedCommandParameterProperty = ClickableElement.ClickedCommandParameterProperty;
+        public static readonly BindableProperty ClickedCommandParameterProperty = ClickableElement.ClickedCommandParameterProperty;
 
         /// <summary>
         /// Gets or sets the Command Parameter that will be sent to the ClickedCommand when the Click fires

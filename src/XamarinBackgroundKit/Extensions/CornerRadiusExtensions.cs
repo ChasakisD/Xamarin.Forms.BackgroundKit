@@ -1,10 +1,37 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using Xamarin.Forms;
 using XamarinBackgroundKit.Abstractions;
 
 namespace XamarinBackgroundKit.Extensions
 {
     public static class CornerRadiusExtensions
     {
+        private static CornerRadius DefaultCornerRadius = new CornerRadius(0d);
+
+        public static bool IsEmpty(this ICornerElement cornerRadius)
+        {
+            return cornerRadius.CornerRadius.IsEmpty();
+        }
+
+        public static bool IsEmpty(this CornerRadius cornerRadius)
+        {
+            return cornerRadius == DefaultCornerRadius;
+        }
+
+        public static bool IsAllRadius(this ICornerElement cornerRadius)
+        {
+            return cornerRadius.CornerRadius.IsAllRadius();
+        }
+
+        public static bool IsAllRadius(this CornerRadius cornerRadius)
+        {
+            return Math.Abs((
+                (cornerRadius.TopLeft +
+                cornerRadius.TopRight +
+                cornerRadius.BottomLeft +
+                cornerRadius.BottomRight) / 4) - cornerRadius.TopLeft) < 0.001;
+        }
+
         public static float[] ToRadii(this ICornerElement cornerElement, double density)
         {
             return cornerElement.CornerRadius.ToRadii(density);
@@ -12,18 +39,16 @@ namespace XamarinBackgroundKit.Extensions
 
         public static float[] ToRadii(this CornerRadius cornerRadius, double density)
         {
-            var (topLeft, topRight, bottomLeft, bottomRight) = cornerRadius;
-
             return new[]
             {
-                ToPixels(topLeft, density),
-                ToPixels(topLeft, density),
-                ToPixels(topRight, density),
-                ToPixels(topRight, density),
-                ToPixels(bottomRight, density),
-                ToPixels(bottomRight, density),
-                ToPixels(bottomLeft, density),
-                ToPixels(bottomLeft, density)
+                ToPixels(cornerRadius.TopLeft, density),
+                ToPixels(cornerRadius.TopLeft, density),
+                ToPixels(cornerRadius.TopRight, density),
+                ToPixels(cornerRadius.TopRight, density),
+                ToPixels(cornerRadius.BottomRight, density),
+                ToPixels(cornerRadius.BottomRight, density),
+                ToPixels(cornerRadius.BottomLeft, density),
+                ToPixels(cornerRadius.BottomLeft, density)
             };
         }
 

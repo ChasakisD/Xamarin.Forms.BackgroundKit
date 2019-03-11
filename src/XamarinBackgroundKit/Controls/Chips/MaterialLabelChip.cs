@@ -1,5 +1,4 @@
 ﻿using Xamarin.Forms;
-using TextEffect = XamarinBackgroundKit.Effects.Text;
 
 namespace XamarinBackgroundKit.Controls.Chips
 {
@@ -18,8 +17,6 @@ namespace XamarinBackgroundKit.Controls.Chips
                 VerticalTextAlignment = TextAlignment.Center,
                 HorizontalTextAlignment = TextAlignment.Center
             };
-
-            TextEffect.SetNoFontPadding(_label, true);
 
             Content = _label;
         }
