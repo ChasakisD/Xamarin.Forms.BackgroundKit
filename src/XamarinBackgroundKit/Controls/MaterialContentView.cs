@@ -11,6 +11,7 @@ namespace XamarinBackgroundKit.Controls
     /// <summary>
     /// The way a Material Content View Should be.
     /// </summary>
+    [DesignTimeVisible(true)]
     public class MaterialContentView : ContentView, IFocusableElement, IClickableElement, IBackgroundElement
 	{
         #region Bindable Properties
@@ -200,8 +201,8 @@ namespace XamarinBackgroundKit.Controls
              * HACK THE BOX:
              * In iOS, while in the Layout Process, at first it calculates the paddings,
              * and second it measures the View. So the actual width and height comes at the second
-             * time. So only one thread will wait 10ms and it will update the circle dimensions
-             * according to latest ones. This hack prevents to set WidthRequest with only the Padding.
+             * time. So it will update the circle dimensions according to latest ones.
+             * This hack prevents to set WidthRequest with only the Padding.
              * If we make this mistake, our view, will have Width = Padding.Left + Padding.Right.
              */
             if (Device.RuntimePlatform == Device.iOS)

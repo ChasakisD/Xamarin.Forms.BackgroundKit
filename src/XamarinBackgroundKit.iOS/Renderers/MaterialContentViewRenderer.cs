@@ -8,7 +8,6 @@ using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Controls;
-using XamarinBackgroundKit.Extensions;
 using XamarinBackgroundKit.iOS.Renderers;
 
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]

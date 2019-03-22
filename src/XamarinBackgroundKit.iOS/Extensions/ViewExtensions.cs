@@ -61,7 +61,7 @@ namespace XamarinBackgroundKit.iOS.Extensions
                 view.Layer.InsertSublayer(shadowLayer, 0);
             }
 
-            if(view.Layer != shadowLayer)
+            if(!ReferenceEquals(view.Layer, shadowLayer))
             {
                 shadowLayer.Frame = view.Bounds;
             }
@@ -128,7 +128,7 @@ namespace XamarinBackgroundKit.iOS.Extensions
                 if (currentLayer == null) return;
             }
 
-            if (view.Layer != currentLayer)
+            if (!ReferenceEquals(view.Layer, currentLayer))
             {
                 currentLayer.Frame = view.Bounds;
             }
@@ -291,11 +291,11 @@ namespace XamarinBackgroundKit.iOS.Extensions
 
         public static T FindLayerOfType<T>(this UIView view) where T : CALayer
         {
-            if (view.Layer is T) return (T)view.Layer;
+            if (view.Layer is T layer) return layer;
 
             var subLayer = view.Layer?.Sublayers?.FirstOrDefault(x => x is T);
 
-            return subLayer == null ? null : (T)subLayer;
+            return (T) subLayer;
         }
     }
 }

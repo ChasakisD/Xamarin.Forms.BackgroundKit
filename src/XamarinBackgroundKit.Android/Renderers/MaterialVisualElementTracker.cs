@@ -2,7 +2,6 @@
 using Android.Content.Res;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
-using Android.Util;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;

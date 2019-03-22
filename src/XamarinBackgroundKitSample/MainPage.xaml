@@ -15,14 +15,18 @@
         </Style>
     </ContentPage.Resources>
 
-    <StackLayout Margin="16" Spacing="16">
+    <StackLayout
+        Margin="16"
+        Padding="4"
+        Spacing="16">
         <controls:MaterialContentView Clicked="MaterialContentView_Clicked" HeightRequest="60">
             <controls:MaterialContentView.Background>
                 <controls:Background
                     Angle="0"
-                    BorderColor="Aquamarine"
+                    BorderColor="#09B67C"
                     BorderWidth="4"
                     CornerRadius="30"
+                    Elevation="8"
                     GradientType="Linear">
                     <controls:Background.Gradients>
                         <controls:GradientStop Color="Blue" />
@@ -70,7 +74,10 @@
             <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
         </controls:MaterialContentView>
 
-        <Button HorizontalOptions="FillAndExpand" Text="Button with gradient">
+        <Button
+            BackgroundColor="Transparent"
+            HorizontalOptions="FillAndExpand"
+            Text="Button with gradient">
             <effects:BackgroundEffect.Background>
                 <controls:Background
                     Angle="0"
