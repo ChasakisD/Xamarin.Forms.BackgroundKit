@@ -59,9 +59,8 @@ namespace XamarinBackgroundKit.Controls.Base
 
             SetCancelEvents(bindable, true);
 
-            var values = bindable.GetValues(FontSizeProperty, FontAttributesProperty);
-            var fontSize = (double)values[0];
-            var fontAttributes = (FontAttributes)values[1];
+            var fontSize = (double)bindable.GetValue(FontSizeProperty);
+            var fontAttributes = (FontAttributes)bindable.GetValue(FontAttributesProperty);
             var fontFamily = (string)newValue;
 
             bindable.SetValue(FontProperty,
@@ -80,10 +79,9 @@ namespace XamarinBackgroundKit.Controls.Base
 
             SetCancelEvents(bindable, true);
 
-            var values = bindable.GetValues(FontFamilyProperty, FontAttributesProperty);
             var fontSize = (double)newValue;
-            var fontAttributes = (FontAttributes)values[1];
-            var fontFamily = (string)values[0];
+            var fontFamily = (string) bindable.GetValue(FontFamilyProperty);
+            var fontAttributes = (FontAttributes)bindable.GetValue(FontAttributesProperty);
 
             bindable.SetValue(FontProperty,
                 fontFamily != null
@@ -105,11 +103,10 @@ namespace XamarinBackgroundKit.Controls.Base
                 return;
 
             SetCancelEvents(bindable, true);
-
-            var values = bindable.GetValues(FontFamilyProperty, FontSizeProperty);
-            var fontSize = (double)values[1];
+            
             var fontAttributes = (FontAttributes)newValue;
-            var fontFamily = (string)values[0];
+            var fontSize = (double)bindable.GetValue(FontSizeProperty);
+            var fontFamily = (string)bindable.GetValue(FontFamilyProperty);
 
             bindable.SetValue(FontProperty,
                 fontFamily != null

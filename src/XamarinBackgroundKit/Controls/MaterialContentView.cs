@@ -176,6 +176,15 @@ namespace XamarinBackgroundKit.Controls
             set => SetValue(IsCircleProperty, value);
         }
 
+        public static readonly BindableProperty IsCornerRadiusHalfHeightProperty = BindableProperty.Create(
+            nameof(IsCornerRadiusHalfHeight), typeof(bool), typeof(MaterialContentView), false);
+
+        public bool IsCornerRadiusHalfHeight
+        {
+            get => (bool)GetValue(IsCornerRadiusHalfHeightProperty);
+            set => SetValue(IsCornerRadiusHalfHeightProperty, value);
+        }
+
         #endregion
 
         #region Setup Circle
@@ -187,6 +196,7 @@ namespace XamarinBackgroundKit.Controls
             base.OnSizeAllocated(width, height);
 
             InvalidateCircle(width, height);
+            InvalidateCornerRadiusHalfHeight(height);
         }
 
         public virtual void InvalidateCircle(double width, double height)
@@ -240,6 +250,18 @@ namespace XamarinBackgroundKit.Controls
             {
                 HeightRequest = desiredCircleSize;
             }
+        }
+
+        public virtual void InvalidateCornerRadiusHalfHeight(double height)
+        {
+            if (!IsCornerRadiusHalfHeight || Background == null) return;
+
+            var threshold = Math.Pow(10, -15);
+            var desiredCornerRadius = height / 2d;
+
+            if (Math.Abs(Background.CornerRadius.TopLeft - desiredCornerRadius) < threshold) return;
+
+            Background.CornerRadius = desiredCornerRadius;
         }
 
 

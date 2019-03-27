@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
     xmlns:effects="clr-namespace:XamarinBackgroundKit.Effects;assembly=XamarinBackgroundKit"
-    BackgroundColor="Wheat">
+    BackgroundColor="White">
     <ContentPage.Resources>
         <Style TargetType="Label">
             <Setter Property="FontSize" Value="18" />
@@ -14,35 +14,35 @@
             <Setter Property="HorizontalTextAlignment" Value="Center" />
         </Style>
     </ContentPage.Resources>
+    <effects:BackgroundEffect.Background>
+        <controls:Background Angle="135">
+            <controls:Background.Gradients>
+                <controls:GradientStop Offset="0" Color="Gray" />
+                <controls:GradientStop Offset="1" Color="White" />
+            </controls:Background.Gradients>
+        </controls:Background>
+    </effects:BackgroundEffect.Background>
 
     <StackLayout
         Margin="16"
         Padding="4"
         Spacing="16">
-        <controls:MaterialContentView Clicked="MaterialContentView_Clicked" HeightRequest="60">
-            <controls:MaterialContentView.Background>
-                <controls:Background
-                    Angle="0"
-                    BorderColor="#09B67C"
-                    BorderWidth="4"
-                    CornerRadius="30"
-                    Elevation="8"
-                    GradientType="Linear">
-                    <controls:Background.Gradients>
-                        <controls:GradientStop Color="Blue" />
-                        <controls:GradientStop Color="DarkRed" />
-                    </controls:Background.Gradients>
-                </controls:Background>
-            </controls:MaterialContentView.Background>
+        <controls:MaterialCard
+            Margin="8"
+            BackgroundColor="DarkRed"
+            HeightRequest="60">
+            <controls:MaterialCard.Background>
+                <controls:Background Elevation="16" />
+            </controls:MaterialCard.Background>
 
-            <Label Text="Material ContentView with Gradient but no Offsets" />
-        </controls:MaterialContentView>
+            <Label Margin="8" Text="Material Card does not support Gradients" />
+        </controls:MaterialCard>
 
         <controls:MaterialContentView HeightRequest="60">
             <controls:MaterialContentView.Background>
                 <controls:Background
                     Angle="0"
-                    BorderColor="Aquamarine"
+                    BorderColor="Brown"
                     BorderWidth="4"
                     CornerRadius="30"
                     GradientType="Linear">
@@ -60,7 +60,7 @@
             <controls:MaterialContentView.Background>
                 <controls:Background
                     Angle="0"
-                    BorderColor="Aquamarine"
+                    BorderColor="DarkCyan"
                     BorderWidth="4"
                     CornerRadius="30"
                     Elevation="8"

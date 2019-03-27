@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
+using Xamarin.Forms.Material.Android;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
@@ -54,7 +55,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         #endregion
 
-        public MaterialCardRenderer(Context context) : base(context) { }
+        public MaterialCardRenderer(Context context) : base(MaterialContextThemeWrapper.Create(context)) { }
 
         #region IViewRenderer Implementation
 

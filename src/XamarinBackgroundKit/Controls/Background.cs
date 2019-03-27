@@ -118,7 +118,7 @@ namespace XamarinBackgroundKit.Controls
 
         public Background()
         {
-            ((IGradientElement)this)?.OnGradientsPropertyChanged(null, Gradients);
+            ((IGradientElement)this).OnGradientsPropertyChanged(null, Gradients);
         }
                
         #region GradientStop Changed
