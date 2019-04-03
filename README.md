@@ -1,11 +1,11 @@
 # Xamarin.Forms-BackgroundKit
 The way the UI customization in Xamarin.Forms should be
 
+* [Screenshots](#Screenshots)
 * [What is Supported](#What-is-supported)
 * [Ripple Support](#Ripple-Support)
 * [Setup](#Setup)
 * [Usage](#Usage)
-* [Screenshots](#Screenshots)
 
 ### TODOs:
 * Add to nuget
@@ -25,7 +25,7 @@ What is supported out of the box:
 | Border | [GradientStrokeDrawable](https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/src/XamarinBackgroundKit.Android/Renderers/GradientStrokeDrawable.cs) | CAGradientLayer |
 | CornerRadius | [GradientStrokeDrawable](https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/src/XamarinBackgroundKit.Android/Renderers/GradientStrokeDrawable.cs) | CAGradientLayer / Mask when not uniform radius |
 
-### Native Views
+### Native Views (FastRenderers Pattern on Android)
 
 | Parent Views | Android | iOS |
 | ------ | ------ | ------ |
