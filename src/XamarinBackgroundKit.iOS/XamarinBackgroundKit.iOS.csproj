@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Compile Include="BackgroundKit.cs" />
     <Compile Include="Effects\BackgroundEffect.cs" />
     <Compile Include="Effects\BasePlatformEffect.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />

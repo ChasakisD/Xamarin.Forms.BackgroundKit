@@ -1,6 +1,8 @@
 ﻿using Android.Content;
-using Android.Support.Design.Card;
+using Android.Support.V4.Content;
 using Android.Support.V4.View;
+using Android.Support.V7.Widget;
+using Android.Util;
 using Android.Views;
 using System;
 using System.ComponentModel;
@@ -11,12 +13,14 @@ using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
 using AView = Android.Views.View;
+using Size = Xamarin.Forms.Size;
 
 [assembly: ExportRenderer(typeof(MaterialCard), typeof(MaterialCardRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
+    [Preserve(AllMembers = true)]
     public class MaterialCardRenderer : 
-        MaterialCardView, 
+        CardView, 
         IViewRenderer, 
         IVisualElementRenderer, 
         IEffectControlProvider,
@@ -136,6 +140,13 @@ namespace XamarinBackgroundKit.Android.Renderers
             if (e.NewElement == null) return;
 
             PreventCornerOverlap = true;
+
+            using (var rippleTypedValue = new TypedValue())
+            {
+                Context.Theme.ResolveAttribute(global::Android.Resource.Attribute.SelectableItemBackground, rippleTypedValue, true);
+
+                Foreground = ContextCompat.GetDrawable(Context, rippleTypedValue.ResourceId);
+            }
 
             if (_visualElementTracker == null)
             {

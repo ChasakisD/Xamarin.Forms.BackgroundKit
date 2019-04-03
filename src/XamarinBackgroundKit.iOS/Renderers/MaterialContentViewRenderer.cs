@@ -13,6 +13,7 @@ using XamarinBackgroundKit.iOS.Renderers;
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
 namespace XamarinBackgroundKit.iOS.Renderers
 {
+    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public class MaterialContentViewRenderer : UIView, IVisualElementRenderer, IEffectControlProvider
     {
         private bool _disposed;

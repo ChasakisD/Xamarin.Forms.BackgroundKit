@@ -12,6 +12,7 @@ using MCard = MaterialComponents.Card;
 [assembly: ExportRenderer(typeof(MaterialCard), typeof(MaterialCardRenderer))]
 namespace XamarinBackgroundKit.iOS.Renderers
 {
+    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public class MaterialCardRenderer : MCard, IVisualElementRenderer, IEffectControlProvider
     {
         private bool _disposed;

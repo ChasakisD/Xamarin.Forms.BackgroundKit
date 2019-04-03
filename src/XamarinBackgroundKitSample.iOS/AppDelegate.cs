@@ -1,7 +1,8 @@
 ﻿using Foundation;
 using UIKit;
+using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
-using XamarinBackgroundKit.iOS.Renderers;
+using XamarinBackgroundKit.iOS;
 
 namespace XamarinBackgroundKitSample.iOS
 {
@@ -10,16 +11,12 @@ namespace XamarinBackgroundKitSample.iOS
     {
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            Xamarin.Forms.Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental");
-            Xamarin.Forms.Forms.Init();
-            
-            LoadApplication(new App());
+            BackgroundKit.Init();
 
-            var types = new[]
-            {
-                typeof(MaterialCardRenderer),
-                typeof(MaterialContentViewRenderer)
-            };
+            Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
+            Forms.Init();
+
+            LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
         }

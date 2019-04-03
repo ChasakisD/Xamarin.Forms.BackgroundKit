@@ -14,7 +14,7 @@ namespace XamarinBackgroundKit.iOS.Effects
 {
     public class BackgroundEffectiOS : BasePlatformEffect<BackgroundEffect, Element, UIView>
     {
-        private IDisposable _boundsObserver;
+        private IDisposable _frameObserver;
 
         private Background _background;
         private MaterialVisualElementTracker _tracker;
@@ -31,7 +31,8 @@ namespace XamarinBackgroundKit.iOS.Effects
 
             if (View?.Layer == null) return;
 
-            _boundsObserver = View.Layer.AddObserver("bounds",
+            _frameObserver = View.AddObserver(
+                "frame",
                 NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.OldNew,
                 c => _tracker?.InvalidateLayer());
         }
@@ -40,21 +41,13 @@ namespace XamarinBackgroundKit.iOS.Effects
         {
             base.OnDetached();
 
-            _tracker?.Dispose();
-            
-            try
+            if (View != null && _frameObserver is NSObject frameObserverObject)
             {
-                if (View?.Layer != null && _boundsObserver is NSObject boundsObserverObj)
-                {
-                    View.Layer.RemoveObserver(boundsObserverObj, "bounds");
-                }
+                View.RemoveObserver(frameObserverObject, "frame");
+            }
 
-                _boundsObserver?.Dispose();
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.StackTrace);
-            }
+            _tracker?.Dispose();
+            _frameObserver?.Dispose();
         }
 
         protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)

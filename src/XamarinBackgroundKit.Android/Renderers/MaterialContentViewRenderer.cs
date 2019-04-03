@@ -13,6 +13,7 @@ using AView = Android.Views.View;
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
+    [Preserve(AllMembers = true)]
     public class MaterialContentViewRenderer : 
         FormsViewGroup, 
         IViewRenderer, 
