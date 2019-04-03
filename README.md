@@ -1,6 +1,18 @@
 # Xamarin.Forms-BackgroundKit
 The way the UI customization in Xamarin.Forms should be
 
+* [What is Supported](#What-is-supported)
+* [Ripple Support](#Ripple-Support)
+* [Setup](#Setup)
+* [Usage](#Usage)
+* [Screenshots](#Screenshots)
+
+### TODOs:
+* Add to nuget
+* Test IsCircle and MDCShadowLayer on iOS
+* Test Ripple on iOS
+* Add iOS Screenshots
+
 BackgroundKit Provides a consistent way for adding Background to your views.  
 What is supported out of the box: 
 
@@ -70,7 +82,7 @@ Initialize the renderer below the Xamarin.Forms.Init
 XamarinBackgroundKit.Android.BackgroundKit.Init();
 ```
 
-## Usage
+## <a name="usage"></a>Usage
 ### API Documentation
 #### Background
 | Property | Type | Description | Why do I need it? |
