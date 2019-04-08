@@ -93,7 +93,7 @@ namespace XamarinBackgroundKit.Controls
         public static readonly BindableProperty BorderColorProperty = BorderElement.BorderColorProperty;
 
         /// <summary>
-        /// Gets or sets the Border Color of the Background
+        /// Gets or sets the Border Color of the Border
         /// </summary>
 		public Color BorderColor
         {
@@ -104,7 +104,7 @@ namespace XamarinBackgroundKit.Controls
         public static readonly BindableProperty BorderWidthProperty = BorderElement.BorderWidthProperty;
 
         /// <summary>
-        /// Gets or sets the Border Width of the Background
+        /// Gets or sets the Border Width of the Border
         /// </summary>
 		public double BorderWidth
         {
@@ -112,13 +112,82 @@ namespace XamarinBackgroundKit.Controls
             set => SetValue(BorderWidthProperty, value);
         }
 
+        public static readonly BindableProperty DashGapProperty = BorderElement.DashGapProperty;
+
+        /// <summary>
+        /// Gets or sets the Dash Gap of the Border
+        /// </summary>
+        public double DashGap
+        {
+            get => (double)GetValue(DashGapProperty);
+            set => SetValue(DashGapProperty, value);
+        }
+
+        public static readonly BindableProperty DashWidthProperty = BorderElement.DashWidthProperty;
+
+        /// <summary>
+        /// Gets or sets the Dash Width of the Border
+        /// </summary>
+        public double DashWidth
+        {
+            get => (double)GetValue(DashWidthProperty);
+            set => SetValue(DashWidthProperty, value);
+        }
+
+        public static readonly BindableProperty BorderAngleProperty = BorderElement.BorderAngleProperty;
+
+        /// <summary>
+        /// Gets or sets the Angle of the Gradient of the Border
+        /// </summary>
+        public float BorderAngle
+        {
+            get => (float)GetValue(BorderAngleProperty);
+            set => SetValue(BorderAngleProperty, value);
+        }
+
+        public static readonly BindableProperty BorderGradientTypeProperty = BorderElement.BorderGradientTypeProperty;
+
+        /// <summary>
+        /// Gets or sets the Type of the Gradient of the Border
+        /// </summary>
+        public GradientType BorderGradientType
+        {
+            get => (GradientType)GetValue(BorderGradientTypeProperty);
+            set => SetValue(BorderGradientTypeProperty, value);
+        }
+
+        public static readonly BindableProperty BorderGradientsProperty = BorderElement.BorderGradientsProperty;
+
+        /// <summary>
+        /// Gets or sets the Gradients of the Border
+        /// </summary>
+        public IList<GradientStop> BorderGradients
+        {
+            get => (IList<GradientStop>)GetValue(BorderGradientsProperty);
+            set => SetValue(BorderGradientsProperty, value);
+        }
+        
         #endregion
 
+        public static readonly BindableProperty ColorProperty = BindableProperty.Create(
+            nameof(Color), typeof(Color), typeof(Background), Color.Default);
+
+        /// <summary>
+        /// Gets or sets the Color of the Background
+        /// </summary>
+        public Color Color
+        {
+            get => (Color) GetValue(ColorProperty);
+            set => SetValue(ColorProperty, value);
+        }
+
         public event EventHandler<EventArgs> InvalidateGradientRequested;
+        public event EventHandler<EventArgs> InvalidateBorderGradientRequested;
 
         public Background()
         {
             ((IGradientElement)this).OnGradientsPropertyChanged(null, Gradients);
+            ((IBorderElement)this).OnBorderGradientsPropertyChanged(null, BorderGradients);
         }
                
         #region GradientStop Changed
@@ -151,6 +220,36 @@ namespace XamarinBackgroundKit.Controls
         private void GradientStopPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             InvalidateGradientRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void BorderGradientsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            InvalidateBorderGradientRequested?.Invoke(this, EventArgs.Empty);
+
+            if (e.OldItems != null)
+            {
+                foreach (var oldItem in e.OldItems)
+                {
+                    if (!(oldItem is GradientStop oldStop)) continue;
+
+                    oldStop.PropertyChanged -= BorderGradientStopPropertyChanged;
+                }
+            }
+
+            if (e.NewItems != null)
+            {
+                foreach (var newItem in e.NewItems)
+                {
+                    if (!(newItem is GradientStop newStop)) continue;
+
+                    newStop.PropertyChanged += BorderGradientStopPropertyChanged;
+                }
+            }
+        }
+
+        private void BorderGradientStopPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            InvalidateBorderGradientRequested?.Invoke(this, EventArgs.Empty);
         }
 
         #endregion
@@ -210,6 +309,42 @@ namespace XamarinBackgroundKit.Controls
         void IBorderElement.OnBorderColorPropertyChanged(Color oldValue, Color newValue) { }
 
         void IBorderElement.OnBorderWidthPropertyChanged(double oldValue, double newValue) { }
+
+        void IBorderElement.OnDashGapPropertyChanged(double oldValue, double newValue) { }
+
+        void IBorderElement.OnDashWidthPropertyChanged(double oldValue, double newValue) { }
+
+        void IBorderElement.OnBorderAnglePropertyChanged(float oldValue, float newValue) { }
+
+        void IBorderElement.OnBorderGradientTypePropertyChanged(GradientType oldValue, GradientType newValue) { }
+
+        void IBorderElement.OnBorderGradientsPropertyChanged(IList<GradientStop> oldValue, IList<GradientStop> newValue)
+        {
+            if (oldValue != null)
+            {
+                if (oldValue is INotifyCollectionChanged oldCollection)
+                {
+                    oldCollection.CollectionChanged -= BorderGradientsCollectionChanged;
+                }
+
+                foreach (var oldStop in oldValue)
+                {
+                    oldStop.PropertyChanged -= BorderGradientStopPropertyChanged;
+                }
+            }
+
+            if (newValue == null) return;
+
+            if (newValue is INotifyCollectionChanged newCollection)
+            {
+                newCollection.CollectionChanged += BorderGradientsCollectionChanged;
+            }
+
+            foreach (var newStop in newValue)
+            {
+                newStop.PropertyChanged += BorderGradientStopPropertyChanged;
+            }
+        }
 
         #endregion
     }

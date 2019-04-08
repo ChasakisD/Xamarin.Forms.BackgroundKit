@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Android.Extensions;
+using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Extensions;
 
@@ -80,6 +81,7 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _context = null;
                 oldElement.PropertyChanged -= _propertyChangedHandler;
                 oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
+                oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
             }
 
 			_backgroundElement = newElement;
@@ -88,9 +90,11 @@ namespace XamarinBackgroundKit.Android.Renderers
             _context = _renderer.View.Context;
             newElement.PropertyChanged += _propertyChangedHandler;
             newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
+            newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
 
             if (oldElement == null)
             {
+                UpdateColor();
                 UpdateElevation();
                 UpdateTranslationZ();
                 UpdateGradients();
@@ -100,6 +104,9 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
             
             var eps = Math.Pow(10, -10);
+
+            if (oldElement.Color != newElement.Color)
+                UpdateColor();
 
             if (Math.Abs(oldElement.Elevation - newElement.Elevation) > eps)
                 UpdateElevation();
@@ -113,7 +120,10 @@ namespace XamarinBackgroundKit.Android.Renderers
                 UpdateGradients();
 
             if (oldElement.BorderColor != newElement.BorderColor
-                || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps)
+                || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps
+                || Math.Abs(oldElement.BorderAngle - newElement.BorderAngle) > eps
+                || oldElement.BorderGradientType != newElement.BorderGradientType
+                || oldElement.BorderGradients.AreEqual(newElement.BorderGradients))
                 UpdateBorder();
 
             if (oldElement.CornerRadius != newElement.CornerRadius)
@@ -123,6 +133,11 @@ namespace XamarinBackgroundKit.Android.Renderers
         private void InvalidateGradientsRequested(object sender, EventArgs e)
         {
             UpdateGradients();
+        }
+
+        private void InvalidateBorderGradientsRequested(object sender, EventArgs e)
+        {
+            UpdateBorder();
         }
 
         private void OnRendererElementChanged(object sender, VisualElementChangedEventArgs e)
@@ -139,24 +154,46 @@ namespace XamarinBackgroundKit.Android.Renderers
 				|| e.PropertyName == GradientElement.GradientsProperty.PropertyName
 				|| e.PropertyName == GradientElement.GradientTypeProperty.PropertyName) UpdateGradients();
 			else if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
-				|| e.PropertyName == BorderElement.BorderWidthProperty.PropertyName) UpdateBorder();
+				|| e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
+                || e.PropertyName == BorderElement.BorderAngleProperty.PropertyName
+                || e.PropertyName == BorderElement.BorderGradientsProperty.PropertyName
+                || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName) UpdateBorder();
 			else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
 			else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
+            else if (e.PropertyName == Background.ColorProperty.PropertyName) UpdateColor();
+        }
+
+        private void UpdateColor()
+        {
+            if (_renderer?.View == null) return;
+
+            switch (_renderer.View)
+            {
+                case MaterialCardView mCardView:
+                    mCardView.CardBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
+                    break;
+                case Chip mChip:
+                    mChip.ChipBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
+                    break;
+                default:
+                    _renderer.View.SetColor(_backgroundElement.Color);
+                    break;
+            }
         }
 
 		private void UpdateGradients()
 		{
 			if (_renderer?.View == null) return;
 
-            var gradientCount = _backgroundElement?.Gradients?.Count ?? 0;
+            var gradientCount = _backgroundElement.Gradients?.Count ?? 0;
 
 			switch (_renderer.View)
 			{
 				case Chip mChip when gradientCount == 0:
-					mChip.ChipBackgroundColor = ColorStateList.ValueOf(_visualElement.BackgroundColor.ToAndroid());
+					mChip.ChipBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
 					return;
 				case MaterialCardView mCardView when gradientCount == 0:
-					mCardView.CardBackgroundColor = ColorStateList.ValueOf(_visualElement.BackgroundColor.ToAndroid());
+					mCardView.CardBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
 					return;
 			}
 
@@ -176,9 +213,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void UpdateTranslationZ()
         {
-            if (_renderer?.View == null) return;
-
-            _renderer.View.SetTranslationZ(_context, _backgroundElement);
+            _renderer?.View?.SetTranslationZ(_context, _backgroundElement);
         }
 
 		private void UpdateElevation()

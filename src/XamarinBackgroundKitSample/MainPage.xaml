@@ -23,126 +23,170 @@
         </controls:Background>
     </effects:BackgroundEffect.Background>
 
-    <StackLayout
-        Margin="16"
-        Padding="4"
-        Spacing="16">
-        <controls:MaterialCard
-            Margin="8"
-            BackgroundColor="DarkRed"
-            HeightRequest="60">
-            <controls:MaterialCard.Background>
-                <controls:Background Elevation="16" />
-            </controls:MaterialCard.Background>
-
-            <Label Margin="8" Text="Material Card with Ripple!" />
-        </controls:MaterialCard>
-
-        <controls:MaterialContentView HeightRequest="60">
-            <controls:MaterialContentView.Background>
-                <controls:Background
-                    Angle="0"
-                    BorderColor="Brown"
-                    BorderWidth="4"
-                    CornerRadius="30"
-                    GradientType="Linear">
-                    <controls:Background.Gradients>
-                        <controls:GradientStop Offset="0" Color="Blue" />
-                        <controls:GradientStop Offset="1" Color="DarkRed" />
-                    </controls:Background.Gradients>
-                </controls:Background>
-            </controls:MaterialContentView.Background>
-
-            <Label Text="Material ContentView with Gradient and Offsets" />
-        </controls:MaterialContentView>
-
-        <controls:MaterialContentView HeightRequest="60">
-            <controls:MaterialContentView.Background>
-                <controls:Background
-                    Angle="0"
-                    BorderColor="DarkCyan"
-                    BorderWidth="4"
-                    CornerRadius="30"
-                    Elevation="8"
-                    GradientType="Linear">
-                    <controls:Background.Gradients>
-                        <controls:GradientStop Offset="0" Color="Blue" />
-                        <controls:GradientStop Offset="1" Color="DarkRed" />
-                    </controls:Background.Gradients>
-                </controls:Background>
-            </controls:MaterialContentView.Background>
-            <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
-        </controls:MaterialContentView>
-
-        <Button
-            BackgroundColor="Transparent"
-            HorizontalOptions="FillAndExpand"
-            Text="Button with gradient">
-            <effects:BackgroundEffect.Background>
-                <controls:Background
-                    Angle="0"
-                    Elevation="16"
-                    GradientType="Linear">
-                    <controls:Background.Gradients>
-                        <controls:GradientStop Offset="0" Color="Blue" />
-                        <controls:GradientStop Offset="1" Color="DarkRed" />
-                    </controls:Background.Gradients>
-                </controls:Background>
-            </effects:BackgroundEffect.Background>
-        </Button>
-
-        <Label HorizontalOptions="FillAndExpand" Text="Label with gradient">
-            <effects:BackgroundEffect.Background>
-                <controls:Background
-                    Angle="0"
-                    Elevation="16"
-                    GradientType="Linear">
-                    <controls:Background.Gradients>
-                        <controls:GradientStop Offset="0" Color="Blue" />
-                        <controls:GradientStop Offset="1" Color="DarkRed" />
-                    </controls:Background.Gradients>
-                </controls:Background>
-            </effects:BackgroundEffect.Background>
-        </Label>
+    <ScrollView>
 
         <StackLayout
             Margin="16"
-            Padding="16"
-            HorizontalOptions="FillAndExpand">
-            <effects:BackgroundEffect.Background>
-                <controls:Background
-                    Angle="0"
-                    CornerRadius="20"
-                    Elevation="16"
-                    GradientType="Linear">
-                    <controls:Background.Gradients>
-                        <controls:GradientStop Offset="0" Color="Blue" />
-                        <controls:GradientStop Offset="1" Color="DarkRed" />
-                    </controls:Background.Gradients>
-                </controls:Background>
-            </effects:BackgroundEffect.Background>
+            Padding="4"
+            Spacing="16">
+            <controls:MaterialCard Margin="8" HeightRequest="60">
+                <controls:MaterialCard.Background>
+                    <controls:Background Elevation="16" Color="DarkRed" />
+                </controls:MaterialCard.Background>
 
-            <Label Text="I am inside a stack layout" />
+                <Label Margin="8" Text="Material Card with Ripple!" />
+            </controls:MaterialCard>
+
+            <controls:MaterialContentView HeightRequest="60">
+                <controls:MaterialContentView.Background>
+                    <controls:Background
+                        Angle="0"
+                        BorderColor="Brown"
+                        BorderWidth="4"
+                        CornerRadius="30"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                    </controls:Background>
+                </controls:MaterialContentView.Background>
+
+                <Label Text="Material ContentView with Gradient and Offsets" />
+            </controls:MaterialContentView>
+
+            <controls:MaterialContentView HeightRequest="60">
+                <controls:MaterialContentView.Background>
+                    <controls:Background
+                        Angle="0"
+                        BorderColor="DarkCyan"
+                        BorderWidth="4"
+                        CornerRadius="30"
+                        Elevation="8"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                    </controls:Background>
+                </controls:MaterialContentView.Background>
+                <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
+            </controls:MaterialContentView>
+
+            <controls:MaterialContentView HeightRequest="60">
+                <controls:MaterialContentView.Background>
+                    <controls:Background
+                        Angle="0"
+                        BorderWidth="4"
+                        CornerRadius="30"
+                        Elevation="8"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                        <controls:Background.BorderGradients>
+                            <controls:GradientStop Offset="0" Color="Green" />
+                            <controls:GradientStop Offset="1" Color="Yellow" />
+                        </controls:Background.BorderGradients>
+                    </controls:Background>
+                </controls:MaterialContentView.Background>
+                <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
+            </controls:MaterialContentView>
+
+            <controls:MaterialContentView HeightRequest="60">
+                <controls:MaterialContentView.Background>
+                    <controls:Background
+                        Angle="0"
+                        BorderWidth="4"
+                        CornerRadius="30"
+                        DashGap="8"
+                        DashWidth="8"
+                        Elevation="8"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                        <controls:Background.BorderGradients>
+                            <controls:GradientStop Offset="0" Color="Green" />
+                            <controls:GradientStop Offset="1" Color="Yellow" />
+                        </controls:Background.BorderGradients>
+                    </controls:Background>
+                </controls:MaterialContentView.Background>
+                <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
+            </controls:MaterialContentView>
+
+            <Button
+                BackgroundColor="Transparent"
+                HorizontalOptions="FillAndExpand"
+                Text="Button with gradient">
+                <effects:BackgroundEffect.Background>
+                    <controls:Background
+                        Angle="0"
+                        Elevation="16"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                    </controls:Background>
+                </effects:BackgroundEffect.Background>
+            </Button>
+
+            <Label HorizontalOptions="FillAndExpand" Text="Label with gradient">
+                <effects:BackgroundEffect.Background>
+                    <controls:Background
+                        Angle="0"
+                        Elevation="16"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                    </controls:Background>
+                </effects:BackgroundEffect.Background>
+            </Label>
+
+            <StackLayout
+                Margin="16"
+                Padding="16"
+                HorizontalOptions="FillAndExpand">
+                <effects:BackgroundEffect.Background>
+                    <controls:Background
+                        Angle="0"
+                        CornerRadius="20"
+                        Elevation="16"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                    </controls:Background>
+                </effects:BackgroundEffect.Background>
+
+                <Label Text="I am inside a stack layout" />
+            </StackLayout>
+
+            <Grid
+                Margin="16"
+                Padding="16"
+                HorizontalOptions="FillAndExpand">
+                <effects:BackgroundEffect.Background>
+                    <controls:Background
+                        Angle="0"
+                        CornerRadius="20"
+                        Elevation="16"
+                        GradientType="Linear">
+                        <controls:Background.Gradients>
+                            <controls:GradientStop Offset="0" Color="Blue" />
+                            <controls:GradientStop Offset="1" Color="DarkRed" />
+                        </controls:Background.Gradients>
+                    </controls:Background>
+                </effects:BackgroundEffect.Background>
+
+                <Label Text="I am inside a Grid" />
+            </Grid>
         </StackLayout>
-
-        <Grid
-            Margin="16"
-            Padding="16"
-            HorizontalOptions="FillAndExpand">
-            <effects:BackgroundEffect.Background>
-                <controls:Background
-                    Angle="0"
-                    CornerRadius="20"
-                    Elevation="16"
-                    GradientType="Linear">
-                    <controls:Background.Gradients>
-                        <controls:GradientStop Offset="0" Color="Blue" />
-                        <controls:GradientStop Offset="1" Color="DarkRed" />
-                    </controls:Background.Gradients>
-                </controls:Background>
-            </effects:BackgroundEffect.Background>
-
-            <Label Text="I am inside a Grid" />
-        </Grid>
-    </StackLayout>
+    </ScrollView>
 </ContentPage>
