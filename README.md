@@ -159,7 +159,6 @@ Everything you need to do is coming from XAML!
 ### ScreenShots
 
 #### Android
-<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/background_android.png" width="280" />
-<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/dev/art/background_borders_android.png" width="280" />
+<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/background_android.png" width="280" />|<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/dev/art/background_borders_android.png" width="280" />
 
 #### iOS (coming soon...)
