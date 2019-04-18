@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using IBorderElement = XamarinBackgroundKit.Abstractions.IBorderElement;
 
@@ -32,7 +33,7 @@ namespace XamarinBackgroundKit.Controls.Base
         
         public static readonly BindableProperty BorderGradientsProperty = BindableProperty.Create(
             nameof(IBorderElement.BorderGradients), typeof(IList<GradientStop>), typeof(IBorderElement),
-            propertyChanged: OnBorderGradientsPropertyChanged, defaultValueCreator: b => new List<GradientStop>());
+            propertyChanged: OnBorderGradientsPropertyChanged, defaultValueCreator: b => new ObservableCollection<GradientStop>());
         
         private static void OnBorderColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{

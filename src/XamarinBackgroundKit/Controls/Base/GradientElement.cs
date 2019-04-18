@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Abstractions;
 
@@ -26,7 +27,7 @@ namespace XamarinBackgroundKit.Controls.Base
 
 		public static readonly BindableProperty GradientsProperty = BindableProperty.Create(
 			nameof(IGradientElement.Gradients), typeof(IList<GradientStop>), typeof(IGradientElement),
-			propertyChanged: OnGradientsPropertyChanged, defaultValueCreator: b => new List<GradientStop>());
+			propertyChanged: OnGradientsPropertyChanged, defaultValueCreator: b => new ObservableCollection<GradientStop>());
 
         private static void OnGradientsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{

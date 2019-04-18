@@ -16,7 +16,11 @@ namespace XamarinBackgroundKit.Android.Renderers
     public class GradientStrokeDrawable : PaintDrawable
     {
         private readonly Context _context;
-        
+
+        private int[] _colors;
+        private float[] _positions;
+        private float[] _colorPositions;
+
         private Paint _strokePaint;
         private int[] _strokeColors;
         private float[] _strokePositions;
@@ -37,7 +41,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             SetStroke(background.BorderWidth, background.BorderColor);
             SetDashedBorder(background.DashWidth, background.DashGap);
         }
-
+        
         private void Initialize()
         {
             Shape = new RectShape();
@@ -50,7 +54,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             
             _strokePaint.SetStyle(Paint.Style.Stroke);
         }
-
+        
         public void SetColor(Color color)
         {
             if (color == Color.Default) return;
@@ -131,12 +135,11 @@ namespace XamarinBackgroundKit.Android.Renderers
                 positions[i] = 1;
             }
 
-            SetShaderFactory(new GradientShaderFactory
-            {
-                Positions = positions,
-                ColorPositions = gradients.Select(x => x.Offset).ToArray(),
-                Colors = gradients.Select(x => (int)x.Color.ToAndroid()).ToArray(),
-            });
+            _positions = positions;
+            _colors = gradients.Select(x => (int)x.Color.ToAndroid()).ToArray();
+            _colorPositions = gradients.Select(x => x.Offset).ToArray();
+
+            InvalidateSelf();
         }
 
         public void SetCornerRadius(CornerRadius cornerRadius)
@@ -154,6 +157,18 @@ namespace XamarinBackgroundKit.Android.Renderers
         
         protected override void OnDraw(Shape shape, Canvas canvas, Paint paint)
         {
+            if (_colors != null && _positions != null && _colorPositions != null)
+            {
+                Paint.SetShader(new LinearGradient(
+                    canvas.Width * _positions[0],
+                    canvas.Height * _positions[1],
+                    canvas.Width * _positions[2],
+                    canvas.Height * _positions[3],
+                    _colors,
+                    _colorPositions,
+                    Shader.TileMode.Clamp));
+            }
+
             base.OnDraw(shape, canvas, paint);
 
             if (_strokePaint == null) return;
@@ -189,25 +204,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
 
             base.Dispose(disposing);
-        }
-
-        private class GradientShaderFactory : ShaderFactory
-        {
-            public int[] Colors { private get; set; }
-            public float[] Positions { private get; set; }
-            public float[] ColorPositions { private get; set; }
-
-            public override Shader Resize(int width, int height)
-            {
-                return new LinearGradient(
-                    width * Positions[0],
-                    height * Positions[1],
-                    width * Positions[2],
-                    height * Positions[3],
-                    Colors,
-                    ColorPositions,
-                    Shader.TileMode.Clamp);
-            }
         }
 
         public class Builder

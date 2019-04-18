@@ -4,6 +4,7 @@ using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using Android.Views;
 using System.Collections.Generic;
+using Android.Graphics.Drawables;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -183,27 +184,17 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		#endregion
 
-        public static GradientStrokeDrawable GetGradientDrawable(this AView view, Context context = null)
+        public static GradientStrokeDrawable GetGradientDrawable(this AView view)
         {
-            var constructNew = true;
-            GradientStrokeDrawable gradientStrokeDrawable = null;
-
-            if (view.Background is GradientStrokeDrawable oldGradientStrokeDrawable)
+            switch (view.Background)
             {
-                constructNew = false;
-                gradientStrokeDrawable = oldGradientStrokeDrawable;
+                case GradientStrokeDrawable oldGradientStrokeDrawable:
+                    return oldGradientStrokeDrawable;
+                case RippleDrawable rippleDrawable:
+                    return rippleDrawable.GetDrawable(0) as GradientStrokeDrawable;
             }
-            else if(context != null)
-            {
-                gradientStrokeDrawable = new GradientStrokeDrawable(context);
-            }
-
-            if (!constructNew) return gradientStrokeDrawable;
             
-            view.Background?.Dispose();
-            view.Background = gradientStrokeDrawable;
-
-            return gradientStrokeDrawable;
+            return null;
         }
 	}
 }

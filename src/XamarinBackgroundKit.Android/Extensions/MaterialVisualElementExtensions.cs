@@ -1,7 +1,6 @@
 using Android.Content;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Android.Renderers;
-using AView = Android.Views.View;
 
 namespace XamarinBackgroundKit.Android.Extensions
 {

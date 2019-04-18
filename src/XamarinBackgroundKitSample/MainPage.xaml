@@ -29,7 +29,10 @@
             Margin="16"
             Padding="4"
             Spacing="16">
-            <controls:MaterialCard Margin="8" HeightRequest="60">
+            <controls:MaterialCard
+                Margin="8"
+                Clicked="UpdateRippleOnBelowView"
+                HeightRequest="60">
                 <controls:MaterialCard.Background>
                     <controls:Background Elevation="16" Color="DarkRed" />
                 </controls:MaterialCard.Background>
@@ -37,16 +40,16 @@
                 <Label Margin="8" Text="Material Card with Ripple!" />
             </controls:MaterialCard>
 
-            <controls:MaterialContentView HeightRequest="60">
+            <controls:MaterialContentView x:Name="RippleEnabledView" HeightRequest="60">
                 <controls:MaterialContentView.Background>
                     <controls:Background
                         Angle="0"
                         BorderColor="Brown"
                         BorderWidth="4"
                         CornerRadius="30"
+                        GradientType="Linear"
                         IsRippleEnabled="True"
-                        RippleColor="#F0FF0000"
-                        GradientType="Linear">
+                        RippleColor="#F0FF0000">
                         <controls:Background.Gradients>
                             <controls:GradientStop Offset="0" Color="Blue" />
                             <controls:GradientStop Offset="1" Color="DarkRed" />
@@ -75,7 +78,7 @@
                 <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
             </controls:MaterialContentView>
 
-            <controls:MaterialContentView HeightRequest="60">
+            <controls:MaterialContentView x:Name="GradientBorderView" HeightRequest="60">
                 <controls:MaterialContentView.Background>
                     <controls:Background
                         Angle="0"
