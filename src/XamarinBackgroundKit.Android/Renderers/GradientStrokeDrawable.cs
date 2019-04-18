@@ -3,7 +3,10 @@ using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
 using System.Collections.Generic;
 using System.Linq;
+using Android.Content;
+using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
+using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Extensions;
 using Color = Xamarin.Forms.Color;
@@ -12,29 +15,54 @@ namespace XamarinBackgroundKit.Android.Renderers
 {
     public class GradientStrokeDrawable : PaintDrawable
     {
+        private readonly Context _context;
+        
         private Paint _strokePaint;
         private int[] _strokeColors;
         private float[] _strokePositions;
         private float[] _strokeColorPositions;
 
-        public GradientStrokeDrawable()
+        public GradientStrokeDrawable(Context context, IMaterialVisualElement background = null)
         {
             Initialize();
+
+            _context = context;
+
+            if (background == null) return;
+            
+            SetColor(background.Color);
+            SetCornerRadius(background.CornerRadius);
+            SetGradient(background.Gradients, background.Angle);
+            SetBorderGradient(background.BorderGradients, background.BorderAngle);
+            SetStroke(background.BorderWidth, background.BorderColor);
+            SetDashedBorder(background.DashWidth, background.DashGap);
         }
 
-        public void Initialize()
+        private void Initialize()
         {
+            Shape = new RectShape();
+            
             _strokePaint = new Paint
             {
                 Dither = true,
                 AntiAlias = true
             };
+            
             _strokePaint.SetStyle(Paint.Style.Stroke);
         }
 
-        public void SetStroke(int strokeWidth, Color strokeColor)
+        public void SetColor(Color color)
         {
-            _strokePaint.StrokeWidth = strokeWidth;
+            if (color == Color.Default) return;
+
+            Paint.Color = color.ToAndroid();
+            
+            InvalidateSelf();
+        }
+
+        public void SetStroke(double strokeWidth, Color strokeColor)
+        {
+            _strokePaint.StrokeWidth = (int) _context.ToPixels(strokeWidth);
 
             if (_strokeColors == null)
             {
@@ -44,15 +72,19 @@ namespace XamarinBackgroundKit.Android.Renderers
             InvalidateSelf();
         }
 
-        public void SetDashedBorder(int dashWidth, int dashGap)
+        public void SetDashedBorder(double dashWidth, double dashGap)
         {
-            if (dashWidth == 0 || dashGap == 0)
+            if (dashWidth <= 0 || dashGap <= 0)
             {
                 _strokePaint.SetPathEffect(null);
             }
             else
             {
-                _strokePaint.SetPathEffect(new DashPathEffect(new float[] { dashWidth, dashGap }, 0));
+                _strokePaint.SetPathEffect(new DashPathEffect(new float[]
+                {
+                    (int) _context.ToPixels(dashWidth), 
+                    (int) _context.ToPixels(dashGap)
+                }, 0));
             }
             
             InvalidateSelf();
@@ -89,6 +121,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetGradient(IList<GradientStop> gradients, float angle)
         {
+            if (gradients == null || gradients.Count == 0) return;
+            
             var positions = angle.ToStartEndPoint();
 
             for (var i = 0; i < positions.Length; i++)
@@ -105,6 +139,19 @@ namespace XamarinBackgroundKit.Android.Renderers
             });
         }
 
+        public void SetCornerRadius(CornerRadius cornerRadius)
+        {
+            if (cornerRadius == new CornerRadius(0d)) return;
+
+            var isUniform = cornerRadius.IsAllRadius() && !cornerRadius.IsEmpty();
+
+            var uniformCornerRadius = _context.ToPixels(cornerRadius.TopLeft);
+            var cornerRadii = cornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+
+            if (isUniform) base.SetCornerRadius(uniformCornerRadius);
+            else SetCornerRadii(cornerRadii);
+        }
+        
         protected override void OnDraw(Shape shape, Canvas canvas, Paint paint)
         {
             base.OnDraw(shape, canvas, paint);
@@ -160,6 +207,28 @@ namespace XamarinBackgroundKit.Android.Renderers
                     Colors,
                     ColorPositions,
                     Shader.TileMode.Clamp);
+            }
+        }
+
+        public class Builder
+        {
+            private readonly Context _context;
+            private IMaterialVisualElement _materialVisualElement;
+
+            public Builder(Context context)
+            {
+                _context = context;
+            }
+
+            public Builder SetMaterialElement(IMaterialVisualElement materialVisualElement)
+            {
+                _materialVisualElement = materialVisualElement;
+                return this;
+            }
+
+            public GradientStrokeDrawable Build()
+            {
+                return new GradientStrokeDrawable(_context, _materialVisualElement);
             }
         }
     }

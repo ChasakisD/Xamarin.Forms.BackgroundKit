@@ -4,20 +4,18 @@ using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using System;
 using System.ComponentModel;
+using Android.Graphics.Drawables;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Android.Extensions;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
-using XamarinBackgroundKit.Extensions;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
     public class MaterialVisualElementTracker : VisualElementTracker
 	{
-        private int _oldGradientsCount = -1;
-
         private bool _disposed;
         private Context _context;
 		private VisualElement _visualElement;
@@ -92,52 +90,36 @@ namespace XamarinBackgroundKit.Android.Renderers
             newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
             newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
 
+            _renderer.View.GetGradientDrawable(_context);
+            
             if (oldElement == null)
             {
-                UpdateColor();
+	            UpdateBackground();
                 UpdateElevation();
                 UpdateTranslationZ();
-                UpdateGradients();
-                UpdateBorder();
-                UpdateCornerRadius();
                 return;
             }
             
             var eps = Math.Pow(10, -10);
 
-            if (oldElement.Color != newElement.Color)
-                UpdateColor();
+            if (oldElement != newElement)
+	            UpdateBackground();
 
             if (Math.Abs(oldElement.Elevation - newElement.Elevation) > eps)
                 UpdateElevation();
 
             if (Math.Abs(oldElement.TranslationZ - newElement.TranslationZ) > eps)
                 UpdateTranslationZ();
-
-            if (Math.Abs(oldElement.Angle - newElement.Angle) > eps
-                || oldElement.GradientType != newElement.GradientType
-                || oldElement.Gradients.AreEqual(newElement.Gradients))
-                UpdateGradients();
-
-            if (oldElement.BorderColor != newElement.BorderColor
-                || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps
-                || Math.Abs(oldElement.BorderAngle - newElement.BorderAngle) > eps
-                || oldElement.BorderGradientType != newElement.BorderGradientType
-                || oldElement.BorderGradients.AreEqual(newElement.BorderGradients))
-                UpdateBorder();
-
-            if (oldElement.CornerRadius != newElement.CornerRadius)
-                UpdateCornerRadius();
         }
 
         private void InvalidateGradientsRequested(object sender, EventArgs e)
         {
-            UpdateGradients();
+            UpdateBackground();
         }
 
         private void InvalidateBorderGradientsRequested(object sender, EventArgs e)
         {
-            UpdateBorder();
+	        UpdateBackground();
         }
 
         private void OnRendererElementChanged(object sender, VisualElementChangedEventArgs e)
@@ -149,67 +131,130 @@ namespace XamarinBackgroundKit.Android.Renderers
 		{
 			if (_renderer == null || _disposed) return;
 
-			if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName
-				|| e.PropertyName == GradientElement.AngleProperty.PropertyName
+			if (e.PropertyName == GradientElement.AngleProperty.PropertyName
 				|| e.PropertyName == GradientElement.GradientsProperty.PropertyName
-				|| e.PropertyName == GradientElement.GradientTypeProperty.PropertyName) UpdateGradients();
-			else if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
+				|| e.PropertyName == GradientElement.GradientTypeProperty.PropertyName
+				|| e.PropertyName == BorderElement.BorderColorProperty.PropertyName
 				|| e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
                 || e.PropertyName == BorderElement.BorderAngleProperty.PropertyName
                 || e.PropertyName == BorderElement.BorderGradientsProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName) UpdateBorder();
+                || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName
+				|| e.PropertyName == BorderElement.DashGapProperty.PropertyName
+				|| e.PropertyName == BorderElement.DashWidthProperty.PropertyName
+				|| e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName
+				|| e.PropertyName == Background.ColorProperty.PropertyName
+				|| e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
+				|| e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateBackground();
 			else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
-			else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
-            else if (e.PropertyName == Background.ColorProperty.PropertyName) UpdateColor();
+			else if (e.PropertyName == ElevationElement.TranslationZProperty.PropertyName) UpdateTranslationZ();
         }
 
-        private void UpdateColor()
-        {
-            if (_renderer?.View == null) return;
-
-            switch (_renderer.View)
-            {
-                case MaterialCardView mCardView:
-                    mCardView.CardBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
-                    break;
-                case Chip mChip:
-                    mChip.ChipBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
-                    break;
-                default:
-                    _renderer.View.SetColor(_backgroundElement.Color);
-                    break;
-            }
-        }
-
-		private void UpdateGradients()
+		private void UpdateColor()
 		{
-			if (_renderer?.View == null) return;
+			if (_renderer?.View == null || _backgroundElement == null || _visualElement == null) return;
+		
+			var color = _backgroundElement.Color == Color.Default
+				? _visualElement.BackgroundColor == Color.Default
+					? Color.Default
+					: _visualElement.BackgroundColor
+				: _backgroundElement.Color;
 
-            var gradientCount = _backgroundElement.Gradients?.Count ?? 0;
+			if (color == Color.Default) return;
 
 			switch (_renderer.View)
 			{
-				case Chip mChip when gradientCount == 0:
-					mChip.ChipBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
-					return;
-				case MaterialCardView mCardView when gradientCount == 0:
-					mCardView.CardBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
-					return;
+				case MaterialCardView mCardView:
+					mCardView.CardBackgroundColor = ColorStateList.ValueOf(color.ToAndroid());
+					break;
+				case Chip mChip:
+					mChip.ChipBackgroundColor = ColorStateList.ValueOf(color.ToAndroid());
+					break;
+				default:
+					_renderer.View.SetColor(color);
+					break;
 			}
+		}
 
-			/* Chip does not accept background changes and does not support gradient */
-			if (_renderer.View is Chip || gradientCount == 0) return;
-
+		private void UpdateGradients()
+		{
+			if (_renderer?.View == null || _backgroundElement == null) return;
+			if (_renderer.View is MaterialCardView || _renderer.View is Chip) return;
+			
 			_renderer.View.SetGradient(_backgroundElement);
+		}
 
-            if(_oldGradientsCount == -1)
-            {
-                UpdateBorder();
-                UpdateCornerRadius();
-            }
+		private void UpdateBorder()
+		{
+			if (_renderer?.View == null || _backgroundElement == null) return;
+			
+			switch (_renderer.View)
+			{
+				case MaterialCardView mCardView:
+					mCardView.SetBorder(_context, _backgroundElement);
+					break;
+				case Chip mChip:
+					mChip.SetBorder(_context, _backgroundElement);
+					break;
+				default:
+					_renderer.View.SetBorder(_backgroundElement);
+					break;
+			}
+		}
 
-            _oldGradientsCount = gradientCount;
-        }
+		private void UpdateCornerRadius()
+		{
+			if (_renderer?.View == null || _backgroundElement == null) return;
+			
+			switch (_renderer.View)
+			{
+				case MaterialCardView mCardView:
+					mCardView.SetCornerRadius(_context, _backgroundElement);
+					break;
+				case Chip mChip:
+					mChip.SetCornerRadius(_context, _backgroundElement);
+					break;
+				default:
+					_renderer.View.SetCornerRadius(_backgroundElement);
+					break;
+			}
+		}
+
+		private void UpdateBackground()
+		{
+			if (_renderer?.View == null || _backgroundElement == null) return;
+			
+			switch (_renderer.View)
+			{
+				case MaterialCardView mCardView:
+					mCardView.SetBorder(_context, _backgroundElement);
+					mCardView.SetCornerRadius(_context, _backgroundElement);
+					mCardView.CardBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
+					break;
+				case Chip mChip:
+					mChip.SetBorder(_context, _backgroundElement);
+					mChip.SetCornerRadius(_context, _backgroundElement);
+					mChip.ChipBackgroundColor = ColorStateList.ValueOf(_backgroundElement.Color.ToAndroid());
+					break;
+				default:
+					var backgroundDrawable = new GradientStrokeDrawable(_context, _backgroundElement);
+					
+					_renderer.View.Background?.Dispose();
+					if (_backgroundElement.IsRippleEnabled)
+					{
+						_renderer.View.Background = new RippleDrawable(
+							ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
+							backgroundDrawable,
+							backgroundDrawable);
+					}
+					else
+					{
+						_renderer.View.Background = backgroundDrawable;
+					}
+					
+					_renderer.View.Invalidate();
+					break;
+			}
+		}
 
         private void UpdateTranslationZ()
         {
@@ -227,42 +272,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 					break;
 				default:
 					_renderer.View.SetElevation(_context, _backgroundElement);
-					break;
-			}
-		}
-
-		private void UpdateCornerRadius()
-		{
-			if (_renderer?.View == null) return;
-
-			switch (_renderer.View)
-			{
-				case Chip mChip:
-					mChip.SetCornerRadius(_context, _backgroundElement);
-					break;
-				case MaterialCardView mCardView:
-					mCardView.SetCornerRadius(_context, _backgroundElement);
-					break;
-				default:
-					_renderer.View.SetCornerRadius(_context, _visualElement, _backgroundElement);
-					break;
-			}
-		}
-
-		private void UpdateBorder()
-		{
-			if (_renderer?.View == null) return;
-
-			switch (_renderer.View)
-			{
-				case Chip mChip:
-					mChip.SetBorder(_context, _backgroundElement);
-					break;
-				case MaterialCardView mCardView:
-					mCardView.SetBorder(_context, _backgroundElement);
-					break;
-				default:
-					_renderer.View.SetBorder(_context, _visualElement, _backgroundElement);
 					break;
 			}
 		}

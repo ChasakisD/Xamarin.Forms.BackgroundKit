@@ -6,6 +6,7 @@ using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Abstractions;
+using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Extensions;
 using XamarinBackgroundKit.iOS.Extensions;
@@ -106,10 +107,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (oldElement.CornerRadius != newElement.CornerRadius)
                 UpdateCornerRadius();
 
-            if (oldElement is Layout oldLayout
-                && newElement is Layout newLayout
-                && oldLayout.IsClippedToBounds != newLayout.IsClippedToBounds)
-                UpdateClipToBounds();
+            UpdateClipToBounds();
         }
 
         public void InvalidateLayer()
@@ -119,7 +117,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             UpdateCornerRadius();
             UpdateElevation();
         }
-
+        
         private void InvalidateGradientsRequested(object sender, EventArgs e)
         {
             UpdateGradients();
@@ -137,9 +135,14 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName
                 || e.PropertyName == GradientElement.AngleProperty.PropertyName
                 || e.PropertyName == GradientElement.GradientsProperty.PropertyName
-                || e.PropertyName == GradientElement.GradientTypeProperty.PropertyName) UpdateGradients();
+                || e.PropertyName == GradientElement.GradientTypeProperty.PropertyName
+                || e.PropertyName == Background.ColorProperty.PropertyName) UpdateGradients();
             else if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderWidthProperty.PropertyName) UpdateBorder();
+                || e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
+                || e.PropertyName == BorderElement.BorderGradientsProperty.PropertyName
+                || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName
+                || e.PropertyName == BorderElement.DashGapProperty.PropertyName
+                || e.PropertyName == BorderElement.DashWidthProperty.PropertyName) UpdateBorder();
             else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
             else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
             else if (e.PropertyName == Layout.IsClippedToBoundsProperty.PropertyName) UpdateClipToBounds();
@@ -156,15 +159,15 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 case Card mCard when emptyGradients:
                     using (var themer = new SemanticColorScheme())
                     {
-                        themer.SurfaceColor = _visualElement.BackgroundColor.ToUIColor();
+                        themer.SurfaceColor = _backgroundElement.Color.ToUIColor();
                         CardsColorThemer.ApplySemanticColorScheme(themer, mCard);
                     }
                     return;
                 case ChipView mChip when emptyGradients:
-                    mChip.SetBackgroundColor(_visualElement.BackgroundColor.ToUIColor(), UIControlState.Normal);
+                    mChip.SetBackgroundColor(_backgroundElement.Color.ToUIColor(), UIControlState.Normal);
                     return;
                 case UIView view when emptyGradients:
-                    view.BackgroundColor = _visualElement.BackgroundColor.ToUIColor();
+                    view.BackgroundColor = _backgroundElement.Color.ToUIColor();
                     return;
             }
 

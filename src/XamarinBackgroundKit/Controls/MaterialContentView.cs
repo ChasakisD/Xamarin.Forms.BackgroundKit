@@ -184,6 +184,15 @@ namespace XamarinBackgroundKit.Controls
             get => (bool)GetValue(IsCornerRadiusHalfHeightProperty);
             set => SetValue(IsCornerRadiusHalfHeightProperty, value);
         }
+        
+        public static readonly BindableProperty IsRippleEnabledProperty = BindableProperty.Create(
+	        nameof(IsRippleEnabled), typeof(bool), typeof(MaterialContentView), false);
+
+        public bool IsRippleEnabled
+        {
+	        get => (bool)GetValue(IsRippleEnabledProperty);
+	        set => SetValue(IsRippleEnabledProperty, value);
+        }
 
         #endregion
 

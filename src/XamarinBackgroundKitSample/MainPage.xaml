@@ -44,6 +44,8 @@
                         BorderColor="Brown"
                         BorderWidth="4"
                         CornerRadius="30"
+                        IsRippleEnabled="True"
+                        RippleColor="#F0FF0000"
                         GradientType="Linear">
                         <controls:Background.Gradients>
                             <controls:GradientStop Offset="0" Color="Blue" />

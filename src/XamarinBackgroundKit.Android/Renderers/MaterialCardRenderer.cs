@@ -99,7 +99,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         {
             Element = element as MaterialCard;
 
-            if (string.IsNullOrEmpty(Element?.AutomationId)) return;
+            if (Element == null || string.IsNullOrEmpty(Element.AutomationId)) return;
 
             ContentDescription = Element.AutomationId;
         }

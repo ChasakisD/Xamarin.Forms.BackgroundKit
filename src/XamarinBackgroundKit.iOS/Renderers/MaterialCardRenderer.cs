@@ -43,22 +43,13 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         #endregion
 
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-
-            if (!(_visualElementTracker is MaterialVisualElementTracker supportTracker)) return;
-
-            supportTracker.InvalidateLayer();
-        }
-
         #region IVisualElementRenderer Implementation	
 
         void IVisualElementRenderer.SetElement(VisualElement element)
         {
             Element = element as MaterialCard;
 
-            if (string.IsNullOrEmpty(Element?.AutomationId)) return;
+            if (Element == null || string.IsNullOrEmpty(Element.AutomationId)) return;
 
             AccessibilityIdentifier = Element.AutomationId;
         }
@@ -72,6 +63,18 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             var (width, height) = size;
             Layout.LayoutChildIntoBoundingRegion(Element, new Rectangle(Element.X, Element.Y, width, height));
+        }
+        
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+
+            if (Element?.Content == null) return;
+	        
+            var contentRenderer = Platform.GetRenderer(Element.Content);
+            if (contentRenderer?.NativeView == null) return;
+
+            contentRenderer.NativeView.UserInteractionEnabled = false;
         }
 
         #endregion
@@ -129,14 +132,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (Element.IsFocusable && Element.IsClickable)
             {
                 Interactable = true;
-                MultipleTouchEnabled = true;
-                UserInteractionEnabled = true;
             }
             else
             {
                 Interactable = false;
-                MultipleTouchEnabled = false;
-                UserInteractionEnabled = false;
             }
         }
 

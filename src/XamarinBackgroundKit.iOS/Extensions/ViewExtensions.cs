@@ -256,7 +256,7 @@ namespace XamarinBackgroundKit.iOS.Extensions
                 view.Layer.InsertSublayer(currentLayer, 0);
             }
 
-            if(view.Layer != currentLayer)
+            if(!view.Layer.Equals(currentLayer))
             {
                 currentLayer.Frame = rect;
             }

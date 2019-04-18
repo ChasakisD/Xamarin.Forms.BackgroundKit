@@ -180,6 +180,30 @@ namespace XamarinBackgroundKit.Controls
             get => (Color) GetValue(ColorProperty);
             set => SetValue(ColorProperty, value);
         }
+        
+        public static readonly BindableProperty IsRippleEnabledProperty = BindableProperty.Create(
+            nameof(IsRippleEnabled), typeof(bool), typeof(Background), false);
+
+        /// <summary>
+        /// Gets or sets the Ripple of the Background
+        /// </summary>
+        public bool IsRippleEnabled
+        {
+            get => (bool) GetValue(IsRippleEnabledProperty);
+            set => SetValue(IsRippleEnabledProperty, value);
+        }
+        
+        public static readonly BindableProperty RippleColorProperty = BindableProperty.Create(
+            nameof(RippleColor), typeof(Color), typeof(Background), Color.Default);
+
+        /// <summary>
+        /// Gets or sets the Ripple Color of the Background
+        /// </summary>
+        public Color RippleColor
+        {
+            get => (Color) GetValue(RippleColorProperty);
+            set => SetValue(RippleColorProperty, value);
+        }
 
         public event EventHandler<EventArgs> InvalidateGradientRequested;
         public event EventHandler<EventArgs> InvalidateBorderGradientRequested;

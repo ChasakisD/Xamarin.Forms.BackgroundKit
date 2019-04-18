@@ -65,7 +65,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             Element = element as MaterialContentView;
 
-            if (string.IsNullOrEmpty(Element?.AutomationId)) return;
+            if (Element == null || string.IsNullOrEmpty(Element.AutomationId)) return;
 
             AccessibilityIdentifier = Element.AutomationId;
         }
