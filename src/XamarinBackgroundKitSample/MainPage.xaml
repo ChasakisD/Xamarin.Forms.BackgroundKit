@@ -39,6 +39,32 @@
 
                 <Label Margin="8" Text="Material Card with Ripple!" />
             </controls:MaterialCard>
+            
+            <controls:MaterialContentView x:Name="SimpleView" IsCornerRadiusHalfHeight="True" HeightRequest="60">
+                <controls:MaterialContentView.Background>
+                    <controls:Background
+                        BorderColor="Gray"
+                        BorderWidth="4"
+                        Color="Green"
+                        Elevation="4"
+                        RippleColor="#10000000"
+                        IsRippleEnabled="True" />
+                </controls:MaterialContentView.Background>
+            </controls:MaterialContentView>
+            
+            <controls:MaterialContentView IsCornerRadiusHalfHeight="True" HeightRequest="60">
+                <controls:MaterialContentView.Background>
+                    <controls:Background
+                        BorderColor="Gray"
+                        BorderWidth="4"
+                        Color="Green"
+                        Elevation="4"
+                        DashWidth="8"
+                        DashGap="8"
+                        RippleColor="#10000000"
+                        IsRippleEnabled="True" />
+                </controls:MaterialContentView.Background>
+            </controls:MaterialContentView>
 
             <controls:MaterialContentView x:Name="RippleEnabledView" HeightRequest="60">
                 <controls:MaterialContentView.Background>
@@ -65,8 +91,9 @@
                     <controls:Background
                         Angle="0"
                         BorderColor="DarkCyan"
-                        BorderWidth="4"
+                        BorderWidth="8"
                         CornerRadius="30"
+                        IsRippleEnabled="True"
                         Elevation="8"
                         GradientType="Linear">
                         <controls:Background.Gradients>
@@ -82,7 +109,7 @@
                 <controls:MaterialContentView.Background>
                     <controls:Background
                         Angle="0"
-                        BorderWidth="4"
+                        BorderWidth="8"
                         CornerRadius="30"
                         Elevation="8"
                         GradientType="Linear">
@@ -123,6 +150,7 @@
             </controls:MaterialContentView>
 
             <Button
+                Clicked="OnButtonClicked"
                 BackgroundColor="Transparent"
                 HorizontalOptions="FillAndExpand"
                 Text="Button with gradient">

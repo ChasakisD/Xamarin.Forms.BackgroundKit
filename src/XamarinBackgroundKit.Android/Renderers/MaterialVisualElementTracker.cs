@@ -172,7 +172,9 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             _renderer.View.Background?.Dispose();
 
-            _lastGradientStrokeDrawable = new GradientStrokeDrawable(_context, _backgroundElement);
+            _lastGradientStrokeDrawable = new GradientStrokeDrawable.Builder(_context)
+	            .SetMaterialElement(_backgroundElement)
+	            .Build();
 
             if (_backgroundElement.IsRippleEnabled)
             {

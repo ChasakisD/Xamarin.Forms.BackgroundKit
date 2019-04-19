@@ -1,7 +1,6 @@
 ﻿using MaterialComponents;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -20,6 +19,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
         private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
 
+        private InkTouchController _inkTouchController;
+        
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
 
         public MaterialVisualElementTracker(IVisualElementRenderer renderer) : base(renderer)
@@ -74,6 +75,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             {
                 oldElement.PropertyChanged -= _propertyChangedHandler;
                 oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
+                oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
             }
 
             _backgroundElement = newElement;
@@ -81,16 +83,26 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             newElement.PropertyChanged += _propertyChangedHandler;
             newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
+            newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
 
             if (oldElement == null)
             {
+                _renderer.NativeView.FindLayerOfType<GradientStrokeLayer>();
+                
+                UpdateColor();
+                UpdateGradients();
+                UpdateBorder();
+                UpdateElevation();
+                UpdateCornerRadius();
+                UpdateRipple();
                 UpdateClipToBounds();
-
-                InvalidateLayer();
                 return;
             }
             
             var eps = Math.Pow(10, -10);
+
+            if (oldElement.Color != newElement.Color)
+                UpdateColor();
 
             if (Math.Abs(oldElement.Elevation - newElement.Elevation) > eps)
                 UpdateElevation();
@@ -101,7 +113,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 UpdateGradients();
 
             if (oldElement.BorderColor != newElement.BorderColor
-                || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps)
+                || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps
+                || Math.Abs(oldElement.BorderAngle - newElement.BorderAngle) > eps
+                || oldElement.BorderGradientType != newElement.BorderGradientType
+                || oldElement.BorderGradients.AreEqual(newElement.BorderGradients))
                 UpdateBorder();
 
             if (oldElement.CornerRadius != newElement.CornerRadius)
@@ -112,15 +127,20 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         public void InvalidateLayer()
         {
-            UpdateGradients();
-            UpdateBorder();
-            UpdateCornerRadius();
-            UpdateElevation();
+            var layer = _renderer.NativeView.FindLayerOfType<GradientStrokeLayer>();
+            if(layer == null) return;
+            
+            layer.Frame = _renderer.NativeView.Bounds;
         }
         
         private void InvalidateGradientsRequested(object sender, EventArgs e)
         {
             UpdateGradients();
+        }
+        
+        private void InvalidateBorderGradientsRequested(object sender, EventArgs e)
+        {
+            UpdateBorder();
         }
 
         private void OnRendererElementChanged(object sender, VisualElementChangedEventArgs e)
@@ -132,44 +152,87 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (_renderer == null || _disposed) return;
 
-            if (e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName
-                || e.PropertyName == GradientElement.AngleProperty.PropertyName
+            if (e.PropertyName == GradientElement.AngleProperty.PropertyName
                 || e.PropertyName == GradientElement.GradientsProperty.PropertyName
-                || e.PropertyName == GradientElement.GradientTypeProperty.PropertyName
-                || e.PropertyName == Background.ColorProperty.PropertyName) UpdateGradients();
+                || e.PropertyName == GradientElement.GradientTypeProperty.PropertyName) UpdateGradients();
             else if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderGradientsProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName
-                || e.PropertyName == BorderElement.DashGapProperty.PropertyName
-                || e.PropertyName == BorderElement.DashWidthProperty.PropertyName) UpdateBorder();
-            else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
+                     || e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
+                     || e.PropertyName == BorderElement.BorderAngleProperty.PropertyName
+                     || e.PropertyName == BorderElement.BorderGradientsProperty.PropertyName
+                     || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName
+                     || e.PropertyName == BorderElement.DashGapProperty.PropertyName
+                     || e.PropertyName == BorderElement.DashWidthProperty.PropertyName) UpdateBorder();
             else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
+            else if (e.PropertyName == Background.ColorProperty.PropertyName
+                     || e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName) UpdateColor();
+            else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
+                     || e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
+            else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
             else if (e.PropertyName == Layout.IsClippedToBoundsProperty.PropertyName) UpdateClipToBounds();
         }
 
-        public void UpdateGradients()
+        private void UpdateRipple()
         {
-            if (_renderer?.NativeView == null) return;
+            if (_renderer.NativeView is Card || _renderer.NativeView is ChipView) return;
+            
+            if (_backgroundElement.IsRippleEnabled)
+            {
+                if (_inkTouchController == null)
+                {
+                    _inkTouchController = new InkTouchController(_renderer.NativeView);
+                    _inkTouchController.AddInkView();
+                }
+                
+                if(_inkTouchController?.DefaultInkView == null) return;
+                
+                if (_backgroundElement.RippleColor != Color.Default)
+                {
+                    _inkTouchController.DefaultInkView.InkColor = _backgroundElement.RippleColor.ToUIColor();
+                }
+                
+                _inkTouchController.DefaultInkView.Layer.CornerRadius = (float) _backgroundElement.CornerRadius.TopLeft;
+            }
+            else if (_inkTouchController != null && !_backgroundElement.IsRippleEnabled)
+            {
+                _inkTouchController.CancelInkTouchProcessing();
+                _inkTouchController?.Dispose();
+                _inkTouchController = null;
+            }
+        }
+        
+        private void UpdateColor()
+        {
+            if (_renderer?.NativeView == null || _backgroundElement == null || _visualElement == null) return;
+		
+            var color = _backgroundElement.Color == Color.Default
+                ? _visualElement.BackgroundColor == Color.Default
+                    ? Color.Default
+                    : _visualElement.BackgroundColor
+                : _backgroundElement.Color;
 
-            var emptyGradients = _backgroundElement.Gradients == null || !_backgroundElement.Gradients.Any();
+            if (color == Color.Default) return;
 
             switch (_renderer.NativeView)
             {
-                case Card mCard when emptyGradients:
+                case Card mCard:
                     using (var themer = new SemanticColorScheme())
                     {
                         themer.SurfaceColor = _backgroundElement.Color.ToUIColor();
                         CardsColorThemer.ApplySemanticColorScheme(themer, mCard);
                     }
-                    return;
-                case ChipView mChip when emptyGradients:
+                    break;
+                case ChipView mChip:
                     mChip.SetBackgroundColor(_backgroundElement.Color.ToUIColor(), UIControlState.Normal);
-                    return;
-                case UIView view when emptyGradients:
-                    view.BackgroundColor = _backgroundElement.Color.ToUIColor();
-                    return;
+                    break;
+                default:
+                    _renderer.NativeView.BackgroundColor = _backgroundElement.Color.ToUIColor();
+                    break;
             }
+        }
+        
+        public void UpdateGradients()
+        {
+            if (_renderer?.NativeView == null) return;
 
             /* Chip does not accept background changes and does not support gradient */
             if (_renderer.NativeView is ChipView) return;
@@ -203,6 +266,9 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     break;
                 default:
                     _renderer.NativeView.SetCornerRadius(_backgroundElement);
+                    
+                    if(_inkTouchController?.DefaultInkView?.Layer == null) return;
+                    _inkTouchController.DefaultInkView.Layer.CornerRadius = (float) _backgroundElement.CornerRadius.TopLeft;
                     break;
             }
         }
@@ -246,6 +312,13 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 {
                     _renderer.ElementChanged -= OnRendererElementChanged;
                     _renderer = null;
+                }
+
+                if (_inkTouchController != null)
+                {
+                    _inkTouchController.CancelInkTouchProcessing();
+                    _inkTouchController?.Dispose();
+                    _inkTouchController = null;
                 }
             }
 

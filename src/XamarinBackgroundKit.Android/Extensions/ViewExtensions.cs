@@ -21,9 +21,9 @@ namespace XamarinBackgroundKit.Android.Extensions
 	{
         public static void SetColor(this AView view, Color color)
         {
-            view.GetGradientDrawable().Paint.Color = color == Color.Default
-                ? Color.Black.ToAndroid()
-                : color.ToAndroid();
+	        if (color == Color.Default) return;
+	        
+	        view.GetGradientDrawable().Paint.Color = color.ToAndroid();
         }
 
         #region Border
@@ -41,7 +41,13 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		public static void SetBorder(this MaterialCardView view, Context context, Color color, double width)
 		{
-			view.StrokeColor = color == Color.White ? new global::Android.Graphics.Color(254, 254, 254) : color.ToAndroid();
+			if (color != Color.Default)
+			{
+				view.StrokeColor = color == Color.White 
+					? new global::Android.Graphics.Color(254, 254, 254) 
+					: color.ToAndroid();
+			}
+			
 			view.StrokeWidth = (int)context.ToPixels(width);
 		}
 
@@ -52,17 +58,17 @@ namespace XamarinBackgroundKit.Android.Extensions
             view.SetBorderGradients(borderElement.BorderGradients, borderElement.BorderAngle);
 		}
 
-		public static void SetBorder(this AView view, Color color, double width)
+		private static void SetBorder(this AView view, Color color, double width)
 		{
             view.GetGradientDrawable().SetStroke(width, color);
         }
 
-        public static void SetBorderGradients(this AView view, IList<GradientStop> gradients, float angle)
+		private static void SetBorderGradients(this AView view, IList<GradientStop> gradients, float angle)
         {
             view.GetGradientDrawable().SetBorderGradient(gradients, angle);
         }
 
-        public static void SetDashedBorder(this AView view, double dashWidth, double dashGap)
+		private static void SetDashedBorder(this AView view, double dashWidth, double dashGap)
         {
             view.GetGradientDrawable().SetDashedBorder(dashWidth, dashGap);
         }

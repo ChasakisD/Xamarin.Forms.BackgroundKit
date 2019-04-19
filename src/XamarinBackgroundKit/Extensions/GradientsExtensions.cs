@@ -9,7 +9,9 @@ namespace XamarinBackgroundKit.Extensions
         public static bool AreEqual(this IList<GradientStop> source, IList<GradientStop> dest)
         {
             /* No need to update the layer if the gradients are the same */
-            if (source == null || dest == null || source.Count != dest.Count) return false;
+            if (source == null && dest == null) return true;
+            if (source == null || dest == null) return false;
+            if (source.Count != dest.Count) return false;
             
             /* Find the different gradients */
             var differencesOneWay = source.Where(x => !dest.Any(y => y.Equals(x))).ToList();

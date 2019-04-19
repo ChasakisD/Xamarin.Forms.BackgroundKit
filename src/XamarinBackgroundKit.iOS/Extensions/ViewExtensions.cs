@@ -1,6 +1,4 @@
 ﻿using CoreAnimation;
-using CoreGraphics;
-using Foundation;
 using MaterialComponents;
 using System;
 using System.Collections.Generic;
@@ -10,7 +8,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls;
-using XamarinBackgroundKit.Extensions;
+using XamarinBackgroundKit.iOS.Renderers;
 using IBorderElement = XamarinBackgroundKit.Abstractions.IBorderElement;
 using MCard = MaterialComponents.Card;
 
@@ -30,22 +28,6 @@ namespace XamarinBackgroundKit.iOS.Extensions
             view.SetElevation((nfloat)elevationElement.Elevation, UIControlState.Normal);
         }
 
-        public static void SetElevation(this UIView view, IElevationElement elevationElement)
-        {
-            view.SetElevation(elevationElement.Elevation);
-        }
-
-        public static void SetElevation(this UIView view, double elevation)
-        {
-            if (view?.Layer == null || elevation <= 0) return;
-
-            view.Layer.MasksToBounds = false;
-            view.Layer.ShadowOpacity = 0.24f;
-            view.Layer.ShadowRadius = (float)elevation;
-            view.Layer.ShadowColor = Color.Black.ToCGColor();
-            view.Layer.ShadowOffset = new CGSize(0, elevation);
-        }
-
         public static void SetMaterialElevation(this UIView view, IElevationElement elevationElement)
         {
             view.SetMaterialElevation(elevationElement.Elevation);
@@ -53,32 +35,7 @@ namespace XamarinBackgroundKit.iOS.Extensions
 
         public static void SetMaterialElevation(this UIView view, double elevation)
         {
-            var shadowLayer = view.FindLayerOfType<ShadowLayer>();
-            if (shadowLayer == null)
-            {
-                shadowLayer = new ShadowLayer();
-
-                view.Layer.InsertSublayer(shadowLayer, 0);
-            }
-
-            if(!ReferenceEquals(view.Layer, shadowLayer))
-            {
-                shadowLayer.Frame = view.Bounds;
-            }
-
-            shadowLayer.Elevation = (float) elevation;
-            
-            CALayer currentLayer = view.FindLayerOfType<CAGradientLayer>();
-            if (currentLayer == null)
-            {
-                currentLayer = view.Layer;
-                if (currentLayer == null) return;
-            }
-
-            if (currentLayer.CornerRadius > 0)
-            {
-                shadowLayer.CornerRadius = currentLayer.CornerRadius;
-            }
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetElevation(elevation);
         }
 
         #endregion
@@ -113,28 +70,22 @@ namespace XamarinBackgroundKit.iOS.Extensions
                 view.SetBorderColor(color.ToUIColor(), UIControlState.Normal);
             }
         }
-
+        
         public static void SetBorder(this UIView view, IBorderElement borderElement)
         {
-            view.SetBorder(borderElement.BorderColor, borderElement.BorderWidth);
+            view.SetBorder(borderElement.BorderColor, borderElement.BorderWidth, borderElement.BorderGradients,
+                borderElement.BorderAngle);
+            view.SetDashedBorder(borderElement.DashWidth, borderElement.DashGap);
         }
 
-        public static void SetBorder(this UIView view, Color color, double width)
+        private static void SetBorder(this UIView view, Color color, double width, IList<GradientStop> gradients, float angle)
         {
-            CALayer currentLayer = view.FindLayerOfType<CAGradientLayer>();
-            if (currentLayer == null)
-            {
-                currentLayer = view.Layer;
-                if (currentLayer == null) return;
-            }
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetBorder(width, color, gradients, angle);
+        }
 
-            if (!ReferenceEquals(view.Layer, currentLayer))
-            {
-                currentLayer.Frame = view.Bounds;
-            }
-
-            currentLayer.BorderColor = color.ToCGColor();
-            currentLayer.BorderWidth = (nfloat)width;
+        private static void SetDashedBorder(this UIView view, double dashWidth, double dashGap)
+        {
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetDashedBorder(dashWidth, dashGap);
         }
 
         #endregion
@@ -153,118 +104,21 @@ namespace XamarinBackgroundKit.iOS.Extensions
 
         public static void SetCornerRadius(this UIView view, CornerRadius cornerRadius)
         {
-            if (cornerRadius.IsEmpty()) return;
-
-            CALayer currentLayer = view.FindLayerOfType<CAGradientLayer>();
-            if (currentLayer == null)
-            {
-                currentLayer = view.Layer;
-            }
-
-            if (currentLayer == null) return;
-
-            /* 
-             * Calculate the avg radius, and compare it with one. 
-             * If is the same with one then all corners have the same radius
-            */
-            if (cornerRadius.IsAllRadius())
-            {
-                currentLayer.CornerRadius = (float)cornerRadius.TopLeft;
-                return;
-            }
-
-            var topLeft = (float)cornerRadius.TopLeft;
-            var topRight = (float)cornerRadius.TopRight;
-            var bottomLeft = (float)cornerRadius.BottomLeft;
-            var bottomRight = (float)cornerRadius.BottomRight;
-
-            var bounds = view.Bounds;
-            var bezierPath = new UIBezierPath();
-            bezierPath.AddArc(new CGPoint((float)bounds.X + bounds.Width - topRight, (float)bounds.Y + topRight), topRight, (float)(Math.PI * 1.5), (float)Math.PI * 2, true);
-            bezierPath.AddArc(new CGPoint((float)bounds.X + bounds.Width - bottomRight, (float)bounds.Y + bounds.Height - bottomRight), bottomRight, 0, (float)(Math.PI * .5), true);
-            bezierPath.AddArc(new CGPoint((float)bounds.X + bottomLeft, (float)bounds.Y + bounds.Height - bottomLeft), bottomLeft, (float)(Math.PI * .5), (float)Math.PI, true);
-            bezierPath.AddArc(new CGPoint((float)bounds.X + topLeft, (float)bounds.Y + topLeft), topLeft, (float)Math.PI, (float)(Math.PI * 1.5), true);
-
-            currentLayer.Mask?.Dispose();
-            currentLayer.Mask = new CAShapeLayer { Frame = view.Bounds, Path = bezierPath.CGPath };
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetCornerRadius(cornerRadius);
         }
 
         #endregion
 
         #region Gradients
 
-        public static void SetGradient(this UIView view, VisualElement element)
-        {
-            if (!(element is IMaterialVisualElement supportElement)) return;
-
-            view.SetGradient(supportElement.GradientType, supportElement.Gradients, supportElement.Angle, view.Bounds);
-        }
-
         public static void SetGradient(this UIView view, IGradientElement gradientElement)
         {
-            view.SetGradient(gradientElement.GradientType, gradientElement.Gradients, gradientElement.Angle, view.Bounds);
-        }
-
-        public static void SetGradient(this UIView view, IGradientElement gradientElement, IList<GradientStop> oldGradients)
-        {
-            view.SetGradient(gradientElement.GradientType, gradientElement.Gradients, gradientElement.Angle, view.Bounds, oldGradients);
-        }
-
-        public static void SetGradient(this UIView view, IGradientElement gradientElement, CGRect rect)
-        {
-            view.SetGradient(gradientElement.GradientType, gradientElement.Gradients, gradientElement.Angle, rect);
-        }
-
-        public static void SetGradient(this UIView view, IGradientElement gradientElement, CGRect rect, IList<GradientStop> oldGradients)
-        {
-            view.SetGradient(gradientElement.GradientType, gradientElement.Gradients, gradientElement.Angle, rect, oldGradients);
+            view.SetGradient(gradientElement.GradientType, gradientElement.Gradients, gradientElement.Angle);
         }
 
         public static void SetGradient(this UIView view, GradientType type, IList<GradientStop> gradients, float angle)
         {
-            view.SetGradient(type, gradients, angle, view.Bounds);
-        }
-
-        public static void SetGradient(
-            this UIView view,
-            GradientType type,
-            IList<GradientStop> gradients,
-            float angle,
-            CGRect rect,
-            IList<GradientStop> oldGradients = null)
-        {
-            if (view.Layer == null || !gradients.Any()) return;
-
-            if (gradients.AreEqual(oldGradients)) return;
-
-            var positions = angle.ToStartEndPoint();
-
-            for (var i = 0; i < positions.Length; i++)
-            {
-                if (!(positions[i] > 1)) continue;
-                positions[i] = 1;
-            }
-
-            var colors = gradients.Select(x => x.Color.ToCGColor()).ToArray();
-            var colorPositions = gradients.Select(x => new NSNumber(x.Offset)).ToArray();
-            
-            var currentLayer = view.FindLayerOfType<CAGradientLayer>();
-            if (currentLayer == null)
-            {
-                currentLayer = new CAGradientLayer();
-
-                view.Layer.InsertSublayer(currentLayer, 0);
-            }
-
-            if(!view.Layer.Equals(currentLayer))
-            {
-                currentLayer.Frame = rect;
-            }
-            
-            currentLayer.Colors = colors;
-            currentLayer.Locations = colorPositions;
-            currentLayer.StartPoint = new CGPoint(positions[0], positions[1]);
-            currentLayer.EndPoint = new CGPoint(positions[2], positions[3]);
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetGradient(gradients, angle);
         }
 
         #endregion
@@ -294,6 +148,11 @@ namespace XamarinBackgroundKit.iOS.Extensions
             if (view.Layer is T layer) return layer;
 
             var subLayer = view.Layer?.Sublayers?.FirstOrDefault(x => x is T);
+            if (subLayer == null)
+            {
+                subLayer = new GradientStrokeLayer();
+                view.Layer?.InsertSublayer(subLayer, 0);
+            }
 
             return (T) subLayer;
         }

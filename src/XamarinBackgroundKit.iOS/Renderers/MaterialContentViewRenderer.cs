@@ -47,16 +47,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
         [Export("layerClass")]
         public static Class LayerClass()
         {
-            return new Class(typeof(CAGradientLayer));
-        }
-
-        public override void LayoutSubviews()
-        {
-            base.LayoutSubviews();
-
-            if (!(_visualElementTracker is MaterialVisualElementTracker supportTracker)) return;
-
-            supportTracker.InvalidateLayer();
+            return new Class(typeof(GradientStrokeLayer));
         }
 
         #region IVisualElementRenderer Implementation	

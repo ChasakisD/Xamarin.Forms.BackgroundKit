@@ -50,7 +50,6 @@
     <Compile Include="Effects\BasePlatformEffect.cs" />
     <Compile Include="Effects\NoButtonTextCapsEffect.cs" />
     <Compile Include="Extensions\GradientDrawableExtensions.cs" />
-    <Compile Include="Extensions\MaterialVisualElementExtensions.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />
     <Compile Include="Renderers\GradientStrokeDrawable.cs" />
     <Compile Include="Renderers\MaterialCardRenderer.cs" />

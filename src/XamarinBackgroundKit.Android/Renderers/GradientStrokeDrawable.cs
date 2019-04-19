@@ -15,7 +15,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 {
     public class GradientStrokeDrawable : PaintDrawable
     {
-        private readonly Context _context;
+        private Context _context;
 
         private int[] _colors;
         private float[] _positions;
@@ -200,6 +200,12 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _strokePaint = null;
                 }
 
+                _context = null;
+
+                _colors = null;
+                _positions = null;
+                _colorPositions = null;
+                
                 _strokeColors = null;
                 _strokePositions = null;
                 _strokeColorPositions = null;
