@@ -209,7 +209,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 					break;
 				default:
 					_renderer.View.SetColor(color);
-					break;
+                    InvalidateRipple();
+                    break;
 			}
 		}
 
@@ -219,7 +220,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 			if (_renderer.View is MaterialCardView || _renderer.View is Chip) return;
 			
 			_renderer.View.SetGradient(_backgroundElement);
-		}
+            InvalidateRipple();
+        }
 
 		private void UpdateBorder()
 		{
@@ -235,7 +237,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 					break;
 				default:
 					_renderer.View.SetBorder(_backgroundElement);
-					break;
+                    InvalidateRipple(true);
+                    break;
 			}
 		}
 
@@ -253,7 +256,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 					break;
 				default:
 					_renderer.View.SetCornerRadius(_backgroundElement);
-					break;
+                    InvalidateRipple();
+                    break;
 			}
 		}
 
@@ -271,11 +275,28 @@ namespace XamarinBackgroundKit.Android.Renderers
                 case GradientStrokeDrawable _ when _backgroundElement.IsRippleEnabled:
                     _renderer.View.Background =
                         new RippleDrawable(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
-                            _lastGradientStrokeDrawable, null);
+                            _lastGradientStrokeDrawable, _lastGradientStrokeDrawable);
                     break;
                 case RippleDrawable oldRippleDrawable:
                     oldRippleDrawable.SetColor(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()));
                     break;
+            }
+        }
+
+        private void InvalidateRipple(bool force = false)
+        {
+            if (!(_renderer.View.Background is RippleDrawable rippleDrawable)) return;
+
+            if (force)
+            {
+                _renderer.View.Background?.Dispose();
+                _renderer.View.Background =
+                    new RippleDrawable(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
+                        _lastGradientStrokeDrawable, _lastGradientStrokeDrawable);
+            }
+            else
+            {
+                rippleDrawable.InvalidateSelf();
             }
         }
 

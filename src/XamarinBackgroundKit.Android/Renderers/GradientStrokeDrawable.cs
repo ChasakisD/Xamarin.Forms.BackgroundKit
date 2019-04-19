@@ -96,7 +96,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetBorderGradient(IList<GradientStop> gradients, float angle)
         {
-            if (gradients == null || gradients.Count == 0)
+            if (gradients == null || gradients.Count < 2)
             {
                 _strokeColors = null;
                 _strokePositions = null;
@@ -125,7 +125,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetGradient(IList<GradientStop> gradients, float angle)
         {
-            if (gradients == null || gradients.Count == 0) return;
+            if (gradients == null || gradients.Count < 2) return;
             
             var positions = angle.ToStartEndPoint();
 
@@ -153,6 +153,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (isUniform) base.SetCornerRadius(uniformCornerRadius);
             else SetCornerRadii(cornerRadii);
+
+            InvalidateSelf();
         }
         
         protected override void OnDraw(Shape shape, Canvas canvas, Paint paint)

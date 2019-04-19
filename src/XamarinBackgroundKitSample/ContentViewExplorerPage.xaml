@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="XamarinBackgroundKitSample.ContentViewExplorerPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="http://xamarin.com/schemas/2019/forms/background"
+    BackgroundColor="White">
+    <StackLayout
+        Margin="16"
+        Spacing="8"
+        Visual="Material">
+        <StackLayout.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Margin" Value="0,8,0,0" />
+                <Setter Property="TextColor" Value="#2D2D2D" />
+                <Setter Property="FontSize" Value="16" />
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="Margin" Value="0,8,0,0" />
+            </Style>
+            <Style TargetType="BoxView">
+                <Setter Property="Margin" Value="0,4,0,0" />
+                <Setter Property="WidthRequest" Value="40" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+            </Style>
+        </StackLayout.Resources>
+        <Label
+            Margin="0,8"
+            FontSize="24"
+            HorizontalTextAlignment="Center"
+            Text="MaterialContentView Explorer" />
+
+        <controls:MaterialContentView
+            x:Name="MaterialView"
+            Margin="24,0"
+            HeightRequest="120">
+            <controls:MaterialContentView.Background>
+                <controls:Background
+                    x:Name="Background"
+                    BorderWidth="{Binding Source={x:Reference BorderWidthSlider}, Path=Value}"
+                    CornerRadius="{Binding Source={x:Reference CornerRadiusSlider}, Path=Value}"
+                    Elevation="{Binding Source={x:Reference ElevationSlider}, Path=Value}"
+                    IsRippleEnabled="{Binding Source={x:Reference RippleColorSwitch}, Path=IsToggled}" />
+            </controls:MaterialContentView.Background>
+        </controls:MaterialContentView>
+
+        <ScrollView Margin="0,8,0,0">
+            <StackLayout>
+                <StackLayout Orientation="Horizontal" Spacing="8">
+                    <Entry
+                        HorizontalOptions="FillAndExpand"
+                        Placeholder="Background Color Hex"
+                        TextChanged="OnBackgroundColorChanged" />
+
+                    <BoxView Color="{Binding Source={x:Reference Background}, Path=Color}" />
+                </StackLayout>
+
+                <Label Text="Gradients" />
+
+                <StackLayout x:Name="GradientsLayout">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="{x:Type controls:GradientStop}">
+                            <StackLayout Orientation="Horizontal" Spacing="8">
+                                <Entry
+                                    HorizontalOptions="FillAndExpand"
+                                    Placeholder="Gradient Color Hex"
+                                    TextChanged="OnGradientChanged" />
+
+                                <BoxView Color="{Binding Color}" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+
+                <StackLayout
+                    Margin="0,8,0,16"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <Button Clicked="OnNewGradientAdded" Text="Add" />
+
+                    <Button Clicked="OnNewGradientRemoved" Text="Remove" />
+                </StackLayout>
+
+                <Label Text="{Binding Source={x:Reference ElevationSlider}, Path=Value, StringFormat='{}Elevation: {0}'}" />
+
+                <Slider
+                    x:Name="ElevationSlider"
+                    Maximum="60"
+                    Minimum="0" />
+
+                <Label Text="{Binding Source={x:Reference CornerRadiusSlider}, Path=Value, StringFormat='{}Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="CornerRadiusSlider"
+                    Maximum="60"
+                    Minimum="0" />
+
+                <StackLayout Orientation="Horizontal" Spacing="8">
+                    <Entry
+                        HorizontalOptions="FillAndExpand"
+                        Placeholder="Border Color Hex"
+                        TextChanged="OnBorderColorChanged" />
+
+                    <BoxView Color="{Binding Source={x:Reference Background}, Path=BorderColor}" />
+                </StackLayout>
+
+                <Label Text="{Binding Source={x:Reference BorderWidthSlider}, Path=Value, StringFormat='{}Border Width: {0}'}" />
+
+                <Slider
+                    x:Name="BorderWidthSlider"
+                    Maximum="60"
+                    Minimum="0" />
+
+                <StackLayout Orientation="Horizontal" Spacing="8">
+                    <Entry
+                        HorizontalOptions="FillAndExpand"
+                        Placeholder="Ripple Color Hex"
+                        TextChanged="OnRippleColorChanged" />
+
+                    <BoxView Color="{Binding Source={x:Reference Background}, Path=RippleColor}" />
+
+                    <Switch
+                        x:Name="RippleColorSwitch"
+                        OnColor="Green"
+                        VerticalOptions="Center" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </StackLayout>
+</ContentPage>
