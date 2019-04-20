@@ -1,10 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="XamarinBackgroundKitSample.ContentViewExplorerPage"
+    x:Class="XamarinBackgroundKitSample.ExplorerPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controls="http://xamarin.com/schemas/2019/forms/background"
-    Title="MaterialContentView Explorer"
     BackgroundColor="White">
     <Grid Visual="Material">
         <Grid.Resources>
@@ -30,27 +29,13 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <StackLayout Padding="0,8,0,24" Spacing="8">
+        <StackLayout
+            x:Name="Container"
+            Padding="0,8,0,24"
+            Spacing="8">
             <controls:BackgroundEffect.Background>
                 <controls:Background Elevation="4" Color="White" />
             </controls:BackgroundEffect.Background>
-            <controls:MaterialContentView
-                x:Name="MaterialView"
-                Margin="24,0"
-                HeightRequest="120">
-                <controls:MaterialContentView.Background>
-                    <controls:Background
-                        x:Name="Background"
-                        Angle="{Binding Source={x:Reference GradientAngleSlider}, Path=Value}"
-                        BorderAngle="{Binding Source={x:Reference BorderGradientAngleSlider}, Path=Value}"
-                        BorderWidth="{Binding Source={x:Reference BorderWidthSlider}, Path=Value}"
-                        CornerRadius="{Binding Source={x:Reference CornerRadiusSlider}, Path=Value}"
-                        DashGap="{Binding Source={x:Reference DashGapSlider}, Path=Value}"
-                        DashWidth="{Binding Source={x:Reference DashWidthSlider}, Path=Value}"
-                        Elevation="{Binding Source={x:Reference ElevationSlider}, Path=Value}"
-                        IsRippleEnabled="{Binding Source={x:Reference RippleColorSwitch}, Path=IsToggled}" />
-                </controls:MaterialContentView.Background>
-            </controls:MaterialContentView>
         </StackLayout>
 
         <ScrollView
@@ -58,6 +43,25 @@
             Margin="16,-8,16,0"
             Padding="0,8,0,16">
             <StackLayout>
+                <Label
+                    FontSize="24"
+                    Text="Size"
+                    VerticalTextAlignment="Center" />
+
+                <StackLayout Orientation="Horizontal" Spacing="16">
+                    <Entry
+                        HorizontalOptions="FillAndExpand"
+                        Keyboard="Numeric"
+                        Placeholder="WidthRequest"
+                        TextChanged="OnWidthChanged" />
+
+                    <Entry
+                        HorizontalOptions="FillAndExpand"
+                        Keyboard="Numeric"
+                        Placeholder="HeightRequest"
+                        Text="120"
+                        TextChanged="OnHeightChanged" />
+                </StackLayout>
 
                 <!--#region Background Color-->
 
@@ -79,7 +83,7 @@
                                 Elevation="4"
                                 IsRippleEnabled="True"
                                 RippleColor="White"
-                                Color="{Binding Source={x:Reference Background}, Path=Color}" />
+                                Color="{Binding Background.Color}" />
                         </controls:BackgroundEffect.Background>
                     </BoxView>
                 </StackLayout>
@@ -187,7 +191,7 @@
                                 Elevation="4"
                                 IsRippleEnabled="True"
                                 RippleColor="White"
-                                Color="{Binding Source={x:Reference Background}, Path=BorderColor}" />
+                                Color="{Binding Background.BorderColor}" />
                         </controls:BackgroundEffect.Background>
                     </BoxView>
                 </StackLayout>
@@ -280,7 +284,7 @@
                                 Elevation="4"
                                 IsRippleEnabled="True"
                                 RippleColor="White"
-                                Color="{Binding Source={x:Reference Background}, Path=RippleColor}" />
+                                Color="{Binding Background.RippleColor}" />
                         </controls:BackgroundEffect.Background>
                     </BoxView>
 

@@ -4,43 +4,86 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Controls;
+using XamarinBackgroundKit.Effects;
 
 namespace XamarinBackgroundKitSample
 {
-    public partial class ContentViewExplorerPage
+    public partial class ExplorerPage
     {
+        private Background _background;
+        public Background Background
+        {
+            get => _background;
+            set
+            {
+                _background = value;
+                OnPropertyChanged();
+            }
+        }
+
         private int _offsetCount;
         private int _borderOffsetCount;
+
+        private readonly View _view;
 
         private readonly ObservableCollection<GradientStop> _gradientsStackItems;
         private readonly ObservableCollection<GradientStop> _borderGradientsStackItems;
 
-        public ContentViewExplorerPage()
+        public ExplorerPage(View view)
         {
             InitializeComponent();
 
+            BindingContext = this;
+
+            if (view == null) return;
+
+            Title = $"{view.GetType().Name} Explorer";
+
+            Background = new Background();
+            if (view is MaterialContentView materialView)
+            {
+                materialView.Background = Background;
+            }
+            else
+            {
+                BackgroundEffect.SetBackground(view, Background);
+            }
+
+            Background.SetBinding(Background.AngleProperty, new Binding("Value", source: GradientAngleSlider));
+            Background.SetBinding(Background.BorderAngleProperty, new Binding("Value", source: BorderGradientAngleSlider));
+            Background.SetBinding(Background.BorderWidthProperty, new Binding("Value", source: BorderWidthSlider));
+            Background.SetBinding(Background.CornerRadiusProperty, new Binding("Value", source: CornerRadiusSlider));
+            Background.SetBinding(Background.DashGapProperty, new Binding("Value", source: DashGapSlider));
+            Background.SetBinding(Background.DashWidthProperty, new Binding("Value", source: DashWidthSlider));
+            Background.SetBinding(Background.ElevationProperty, new Binding("Value", source: ElevationSlider));
+            Background.SetBinding(Background.IsRippleEnabledProperty, new Binding("Value", source: RippleColorSwitch));
+
+            Container.Children.Add(view);
+            
             _gradientsStackItems = new ObservableCollection<GradientStop>();
-            MaterialView.Background.Gradients = _gradientsStackItems;
+            Background.Gradients = _gradientsStackItems;
             BindableLayout.SetItemsSource(GradientsLayout, _gradientsStackItems);
 
             _borderGradientsStackItems = new ObservableCollection<GradientStop>();
-            MaterialView.Background.BorderGradients = _borderGradientsStackItems;
+            Background.BorderGradients = _borderGradientsStackItems;
             BindableLayout.SetItemsSource(BorderGradientsLayout, _borderGradientsStackItems);
+
+            _view = view;
         }
 
         private void OnBackgroundColorChanged(object sender, TextChangedEventArgs e)
         {
-            MaterialView.Background.Color = GetColorFromString(e.NewTextValue);
+            Background.Color = GetColorFromString(e.NewTextValue);
         }
 
         private void OnBorderColorChanged(object sender, TextChangedEventArgs e)
         {
-            MaterialView.Background.BorderColor = GetColorFromString(e.NewTextValue);
+            Background.BorderColor = GetColorFromString(e.NewTextValue);
         }
 
         private void OnRippleColorChanged(object sender, TextChangedEventArgs e)
         {
-            MaterialView.Background.RippleColor = GetColorFromString(e.NewTextValue);
+            Background.RippleColor = GetColorFromString(e.NewTextValue);
         }
         
         private void OnNewGradientAdded(object sender, EventArgs e)
@@ -106,6 +149,36 @@ namespace XamarinBackgroundKitSample
             catch (Exception)
             {
                 return Color.Default;
+            }
+        }
+
+        private void OnWidthChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_view == null || !double.TryParse(e.NewTextValue, out var width)) return;
+
+            if (width <= 0)
+            {
+                _view.HorizontalOptions = LayoutOptions.FillAndExpand;
+            }
+            else
+            {
+                _view.WidthRequest = width;
+                _view.HorizontalOptions = LayoutOptions.Center;
+            }
+        }
+
+        private void OnHeightChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_view == null || !double.TryParse(e.NewTextValue, out var height)) return;
+
+            if (height <= 0)
+            {
+                _view.VerticalOptions = LayoutOptions.FillAndExpand;
+            }
+            else
+            {
+                _view.HeightRequest = height;
+                _view.VerticalOptions = LayoutOptions.Center;
             }
         }
     }

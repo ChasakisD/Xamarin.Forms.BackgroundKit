@@ -1,0 +1,115 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="XamarinBackgroundKitSample.ExploreViewsPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="http://xamarin.com/schemas/2019/forms/background"
+    Title="Explore Views"
+    BackgroundColor="White">
+    <ContentPage.Resources>
+        <DataTemplate x:Key="ControlsDataTemplate" x:DataType="{x:Type x:String}">
+            <ContentView Padding="16,8">
+                <controls:MaterialContentView
+                    Padding="8"
+                    Clicked="OnItemClicked"
+                    HeightRequest="96"
+                    VerticalOptions="Start"
+                    WidthRequest="120">
+                    <controls:MaterialContentView.Background>
+                        <controls:Background
+                            CornerRadius="10"
+                            Elevation="4"
+                            IsRippleEnabled="True"
+                            RippleColor="#80FF0000"
+                            Color="#F5F5F5" />
+                    </controls:MaterialContentView.Background>
+
+                    <Label
+                        FontSize="18"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding .}"
+                        VerticalTextAlignment="Center" />
+                </controls:MaterialContentView>
+            </ContentView>
+        </DataTemplate>
+    </ContentPage.Resources>
+    <ScrollView Padding="0,0,0,20">
+        <ScrollView.Resources>
+            <Style TargetType="Label">
+                <Setter Property="Margin" Value="8,0" />
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="TextColor" Value="#2D2D2D" />
+            </Style>
+        </ScrollView.Resources>
+        <StackLayout Spacing="8">
+            <StackLayout>
+                <controls:MaterialContentView
+                    Padding="8"
+                    Clicked="OnItemClicked"
+                    HeightRequest="96"
+                    VerticalOptions="Start"
+                    WidthRequest="120">
+                    <controls:MaterialContentView.Background>
+                        <controls:Background Elevation="4" Color="White" />
+                    </controls:MaterialContentView.Background>
+
+                    <Label
+                        FontSize="28"
+                        HorizontalTextAlignment="Center"
+                        Text="Welcome to Xamarin BackgroundKit"
+                        VerticalTextAlignment="Center" />
+                </controls:MaterialContentView>
+            </StackLayout>
+
+            <StackLayout Margin="8,16,8,0">
+                <Label Text="Custom Views" />
+
+                <CollectionView
+                    x:Name="CustomViewsCollectionView"
+                    HeightRequest="128"
+                    ItemSizingStrategy="MeasureAllItems"
+                    ItemTemplate="{StaticResource ControlsDataTemplate}">
+                    <CollectionView.ItemsLayout>
+                        <ListItemsLayout SnapPointsAlignment="Start" SnapPointsType="Mandatory">
+                            <x:Arguments>
+                                <ItemsLayoutOrientation>Horizontal</ItemsLayoutOrientation>
+                            </x:Arguments>
+                        </ListItemsLayout>
+                    </CollectionView.ItemsLayout>
+                </CollectionView>
+
+                <Label Text="Xamarin Controls" />
+
+                <CollectionView
+                    x:Name="XamarinControlsCollectionView"
+                    HeightRequest="152"
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemTemplate="{StaticResource ControlsDataTemplate}">
+                    <CollectionView.ItemsLayout>
+                        <ListItemsLayout SnapPointsAlignment="Start" SnapPointsType="Mandatory">
+                            <x:Arguments>
+                                <ItemsLayoutOrientation>Horizontal</ItemsLayoutOrientation>
+                            </x:Arguments>
+                        </ListItemsLayout>
+                    </CollectionView.ItemsLayout>
+                </CollectionView>
+
+                <Label Text="Xamarin Layouts" />
+
+                <CollectionView
+                    x:Name="XamarinLayoutsCollectionView"
+                    HeightRequest="152"
+                    ItemSizingStrategy="MeasureFirstItem"
+                    ItemTemplate="{StaticResource ControlsDataTemplate}">
+                    <CollectionView.ItemsLayout>
+                        <ListItemsLayout SnapPointsAlignment="Start" SnapPointsType="Mandatory">
+                            <x:Arguments>
+                                <ItemsLayoutOrientation>Horizontal</ItemsLayoutOrientation>
+                            </x:Arguments>
+                        </ListItemsLayout>
+                    </CollectionView.ItemsLayout>
+                </CollectionView>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
