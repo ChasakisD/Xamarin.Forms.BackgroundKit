@@ -56,7 +56,7 @@ namespace XamarinBackgroundKitSample
             Background.SetBinding(Background.DashGapProperty, new Binding("Value", source: DashGapSlider));
             Background.SetBinding(Background.DashWidthProperty, new Binding("Value", source: DashWidthSlider));
             Background.SetBinding(Background.ElevationProperty, new Binding("Value", source: ElevationSlider));
-            Background.SetBinding(Background.IsRippleEnabledProperty, new Binding("Value", source: RippleColorSwitch));
+            Background.SetBinding(Background.IsRippleEnabledProperty, new Binding("IsToggled", source: RippleColorSwitch));
 
             Container.Children.Add(view);
             

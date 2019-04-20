@@ -5,8 +5,6 @@ using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using System;
 using System.ComponentModel;
-using Android.Graphics;
-using Android.Graphics.Drawables.Shapes;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -26,7 +24,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private bool _disposed;
         private Context _context;
-        private ShapeDrawable _rippleMask;
 		private VisualElement _visualElement;
 		private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
@@ -42,8 +39,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 			_context = renderer.View.Context;
 			_renderer.ElementChanged += OnRendererElementChanged;
-
-            _rippleMask = new ShapeDrawable();
 
             SetVisualElement(null, _renderer.Element);
 		}

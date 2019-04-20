@@ -7,21 +7,17 @@ namespace XamarinBackgroundKitSample
 {
     public partial class ExploreViewsPage
     {
-        private ObservableCollection<string> _customViews;
-        private ObservableCollection<string> _xamarinViews;
-        private ObservableCollection<string> _xamarinLayouts;
-
         public ExploreViewsPage()
         {
             InitializeComponent();
 
-            _customViews = new ObservableCollection<string>
+            var customViews = new ObservableCollection<string>
             {
                 "MaterialCard",
                 "MaterialContentView"
             };
 
-            _xamarinViews = new ObservableCollection<string>
+            var xamarinViews = new ObservableCollection<string>
             {
                 "ActivityIndicator",
                 "BoxView",
@@ -42,7 +38,7 @@ namespace XamarinBackgroundKitSample
                 "WebView"
             };
 
-            _xamarinLayouts = new ObservableCollection<string>
+            var xamarinLayouts = new ObservableCollection<string>
             {
                 "AbsoluteLayout",
                 "CarouselView",
@@ -57,9 +53,9 @@ namespace XamarinBackgroundKitSample
                 "StackLayout"
             };
 
-            CustomViewsCollectionView.ItemsSource = _customViews;
-            XamarinControlsCollectionView.ItemsSource = _xamarinViews;
-            XamarinLayoutsCollectionView.ItemsSource = _xamarinLayouts;
+            CustomViewsCollectionView.ItemsSource = customViews;
+            XamarinControlsCollectionView.ItemsSource = xamarinViews;
+            XamarinLayoutsCollectionView.ItemsSource = xamarinLayouts;
         }
 
         private View GetDataTemplate(string control)
