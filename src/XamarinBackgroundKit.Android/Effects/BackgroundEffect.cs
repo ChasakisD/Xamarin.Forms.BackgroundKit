@@ -23,6 +23,8 @@ namespace XamarinBackgroundKit.Android.Effects
             HandleBackgroundManager();
 
             _background = BackgroundEffect.GetBackground(Element);
+            _background.SetBinding(BindableObject.BindingContextProperty,
+                new Binding("BindingContext", source: Element));
 
             UpdateBackground(null, _background);
         }
@@ -43,6 +45,8 @@ namespace XamarinBackgroundKit.Android.Effects
                 var oldBackground = _background;
 
                 _background = BackgroundEffect.GetBackground(Element);
+                _background.SetBinding(BindableObject.BindingContextProperty,
+                    new Binding("BindingContext", source: Element));
 
                 UpdateBackground(oldBackground, _background);
             }

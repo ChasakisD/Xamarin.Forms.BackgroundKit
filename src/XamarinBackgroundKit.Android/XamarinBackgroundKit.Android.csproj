@@ -51,6 +51,7 @@
     <Compile Include="Effects\NoButtonTextCapsEffect.cs" />
     <Compile Include="Extensions\GradientDrawableExtensions.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />
+    <Compile Include="Renderers\CornerOutlineProvider.cs" />
     <Compile Include="Renderers\GradientStrokeDrawable.cs" />
     <Compile Include="Renderers\MaterialCardRenderer.cs" />
     <Compile Include="Renderers\MaterialContentViewRenderer.cs" />

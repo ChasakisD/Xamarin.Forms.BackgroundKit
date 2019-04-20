@@ -269,7 +269,10 @@ namespace XamarinBackgroundKit.Controls
 
         #region IBackgroundElement Implementation
 
-        void IBackgroundElement.OnBackgroundChanged(Background oldValue, Background newValue) { }
+        void IBackgroundElement.OnBackgroundChanged(Background oldValue, Background newValue)
+        {
+            newValue.SetBinding(BindingContextProperty, new Binding("BindingContext", source: this));
+        }
 
         #endregion
 

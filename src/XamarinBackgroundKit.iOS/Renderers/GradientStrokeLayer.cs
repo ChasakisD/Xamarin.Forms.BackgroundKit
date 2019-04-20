@@ -62,7 +62,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         public void SetGradient(IList<GradientStop> gradients, float angle)
         {
-            if (gradients == null || gradients.Count == 0)
+            if (gradients == null || gradients.Count < 2)
             {
                 _colors = null;
                 _positions = null;
@@ -104,7 +104,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         public void SetBorder(double strokeWidth, Color strokeColor, IList<GradientStop> gradients, float angle)
         {
-            if (gradients == null || gradients.Count <= 0)
+            if (gradients == null || gradients.Count <= 2)
             {
                 _strokeColors = new[] {strokeColor.ToCGColor(), strokeColor.ToCGColor()};
                 _strokePositions = new[] {0f, 0f, 0f, 0f};

@@ -66,7 +66,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetStroke(double strokeWidth, Color strokeColor)
         {
-            _strokePaint.StrokeWidth = (int) _context.ToPixels(strokeWidth);
+            _strokePaint.StrokeWidth = (int) _context.ToPixels(strokeWidth) * 2;
 
             if (_strokeColors == null)
             {
@@ -125,8 +125,16 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetGradient(IList<GradientStop> gradients, float angle)
         {
-            if (gradients == null || gradients.Count < 2) return;
-            
+            if (gradients == null || gradients.Count < 2)
+            {
+                _colors = null;
+                _positions = null;
+                _colorPositions = null;
+
+                InvalidateSelf();
+                return;
+            }
+
             var positions = angle.ToStartEndPoint();
 
             for (var i = 0; i < positions.Length; i++)
@@ -170,6 +178,10 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _colorPositions,
                     Shader.TileMode.Clamp));
             }
+            else
+            {
+                Paint.SetShader(null);
+            }
 
             base.OnDraw(shape, canvas, paint);
 
@@ -185,6 +197,10 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _strokeColors,
                     _strokeColorPositions,
                     Shader.TileMode.Clamp));
+            }
+            else
+            {
+                _strokePaint.SetShader(null);
             }
 
             shape.Draw(canvas, _strokePaint);

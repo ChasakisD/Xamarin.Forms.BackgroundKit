@@ -26,6 +26,8 @@ namespace XamarinBackgroundKit.iOS.Effects
             SetTracker();
 
             _background = BackgroundEffect.GetBackground(Element);
+            _background.SetBinding(BindableObject.BindingContextProperty,
+                new Binding("BindingContext", source: Element));
 
             UpdateBackground(null, _background);
 
@@ -76,6 +78,8 @@ namespace XamarinBackgroundKit.iOS.Effects
                 var oldBackground = _background;
 
                 _background = BackgroundEffect.GetBackground(Element);
+                _background.SetBinding(BindableObject.BindingContextProperty,
+                    new Binding("BindingContext", source: Element));
 
                 UpdateBackground(oldBackground, _background);
             }

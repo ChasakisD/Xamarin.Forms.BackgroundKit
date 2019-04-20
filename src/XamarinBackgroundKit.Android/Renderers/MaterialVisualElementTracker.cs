@@ -1,10 +1,12 @@
 ﻿using Android.Content;
 using Android.Content.Res;
+using Android.Graphics.Drawables;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using System;
 using System.ComponentModel;
-using Android.Graphics.Drawables;
+using Android.Graphics;
+using Android.Graphics.Drawables.Shapes;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -12,13 +14,19 @@ using XamarinBackgroundKit.Android.Extensions;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Extensions;
+using Color = Xamarin.Forms.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
     public class MaterialVisualElementTracker : VisualElementTracker
 	{
+        private bool _areDefaultsSet;
+        private bool _defaultFocusable;
+        private bool _defaultClickable;
+
         private bool _disposed;
         private Context _context;
+        private ShapeDrawable _rippleMask;
 		private VisualElement _visualElement;
 		private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
@@ -34,6 +42,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 			_context = renderer.View.Context;
 			_renderer.ElementChanged += OnRendererElementChanged;
+
+            _rippleMask = new ShapeDrawable();
 
             SetVisualElement(null, _renderer.Element);
 		}
@@ -176,12 +186,23 @@ namespace XamarinBackgroundKit.Android.Renderers
 	            .SetMaterialElement(_backgroundElement)
 	            .Build();
 
+            InvalidateOutline();
+
+            if (!_areDefaultsSet)
+            {
+                _areDefaultsSet = true;
+                _defaultClickable = _renderer.View.Clickable;
+                _defaultFocusable = _renderer.View.Focusable;
+            }
+
             if (_backgroundElement.IsRippleEnabled)
             {
                 _renderer.View.Background = new RippleDrawable(
                     ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
-                    _lastGradientStrokeDrawable,
-                    null);
+                    _lastGradientStrokeDrawable, _lastGradientStrokeDrawable);
+
+                _renderer.View.Clickable = true;
+                _renderer.View.Focusable = true;
             }
             else
             {
@@ -239,7 +260,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 					break;
 				default:
 					_renderer.View.SetBorder(_backgroundElement);
-                    InvalidateRipple(true);
+                    InvalidateRipple();
                     break;
 			}
 		}
@@ -258,6 +279,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 					break;
 				default:
 					_renderer.View.SetCornerRadius(_backgroundElement);
+                    InvalidateOutline();
                     InvalidateRipple();
                     break;
 			}
@@ -267,17 +289,21 @@ namespace XamarinBackgroundKit.Android.Renderers
         {
             if (_renderer?.View == null || _backgroundElement == null) return;
             if (_renderer.View is MaterialCardView || _renderer.View is Chip) return;
-
+            
             switch (_renderer.View?.Background)
             {
                 case RippleDrawable _ when !_backgroundElement.IsRippleEnabled:
                     _renderer.View.Background?.Dispose();
                     _renderer.View.Background = _lastGradientStrokeDrawable;
+                    _renderer.View.Clickable = _defaultClickable;
+                    _renderer.View.Focusable = _defaultFocusable;
                     break;
                 case GradientStrokeDrawable _ when _backgroundElement.IsRippleEnabled:
                     _renderer.View.Background =
                         new RippleDrawable(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
                             _lastGradientStrokeDrawable, _lastGradientStrokeDrawable);
+                    _renderer.View.Clickable = true;
+                    _renderer.View.Focusable = true;
                     break;
                 case RippleDrawable oldRippleDrawable:
                     oldRippleDrawable.SetColor(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()));
@@ -285,21 +311,20 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
         }
 
-        private void InvalidateRipple(bool force = false)
+        private void InvalidateRipple()
         {
             if (!(_renderer.View.Background is RippleDrawable rippleDrawable)) return;
 
-            if (force)
-            {
-                _renderer.View.Background?.Dispose();
-                _renderer.View.Background =
-                    new RippleDrawable(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
-                        _lastGradientStrokeDrawable, _lastGradientStrokeDrawable);
-            }
-            else
-            {
-                rippleDrawable.InvalidateSelf();
-            }
+            rippleDrawable.InvalidateSelf();
+        }
+
+        private void InvalidateOutline()
+        {
+            var cornerRadius = _context.ToPixels(_backgroundElement.CornerRadius.TopLeft);
+
+            _renderer.View.OutlineProvider?.Dispose();
+            _renderer.View.OutlineProvider = new CornerOutlineProvider(cornerRadius);
+            _renderer.View.ClipToOutline = true;
         }
 
         private void UpdateTranslationZ()
