@@ -1,5 +1,7 @@
 # Xamarin.Forms-BackgroundKit
-The way the UI customization in Xamarin.Forms should be
+🎨 🔨 A powerful Kit for customizing the background of Xamarin.Forms views
+
+📐 Corner Radius | 🎨 Background Gradients | 🍩 Borders | 🌈 Border Gradients | 🙏 Shadows
 
 * [Screenshots](#Screenshots)
 * [What is Supported](#What-is-supported)
