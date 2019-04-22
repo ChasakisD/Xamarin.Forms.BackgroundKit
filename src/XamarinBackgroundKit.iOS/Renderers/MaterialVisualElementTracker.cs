@@ -9,6 +9,7 @@ using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Extensions;
 using XamarinBackgroundKit.iOS.Extensions;
+using MButton = MaterialComponents.Button;
 
 namespace XamarinBackgroundKit.iOS.Renderers
 {
@@ -173,7 +174,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         private void UpdateRipple()
         {
-            if (_renderer.NativeView is Card || _renderer.NativeView is ChipView) return;
+            if (_renderer.NativeView is Card || _renderer.NativeView is ChipView || _renderer.NativeView is MButton) return;
             
             if (_backgroundElement.IsRippleEnabled)
             {
@@ -224,6 +225,9 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 case ChipView mChip:
                     mChip.SetBackgroundColor(_backgroundElement.Color.ToUIColor(), UIControlState.Normal);
                     break;
+                case MButton mButton:
+                    mButton.SetBackgroundColor(_backgroundElement.Color.ToUIColor());
+                    break;
                 default:
                     _renderer.NativeView.BackgroundColor = _backgroundElement.Color.ToUIColor();
                     break;
@@ -235,7 +239,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (_renderer?.NativeView == null) return;
 
             /* Chip does not accept background changes and does not support gradient */
-            if (_renderer.NativeView is ChipView) return;
+            if (_renderer.NativeView is ChipView || _renderer.NativeView is MButton) return;
 
             _renderer.NativeView.SetGradient(_backgroundElement);
         }
@@ -248,6 +252,9 @@ namespace XamarinBackgroundKit.iOS.Renderers
             {
                 case Card mCard:
                     mCard.SetElevation(_backgroundElement);
+                    break;
+                case MButton mButton:
+                    mButton.SetElevation((float) _backgroundElement.Elevation, UIControlState.Normal);
                     break;
                 default:
                     _renderer.NativeView.SetMaterialElevation(_backgroundElement);

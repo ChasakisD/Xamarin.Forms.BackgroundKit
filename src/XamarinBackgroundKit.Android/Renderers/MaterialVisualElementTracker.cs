@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
+using Android.Support.Design.Button;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using System;
@@ -225,6 +226,9 @@ namespace XamarinBackgroundKit.Android.Renderers
 				case Chip mChip:
 					mChip.ChipBackgroundColor = ColorStateList.ValueOf(color.ToAndroid());
 					break;
+                case MaterialButton mButton:
+                    mButton.SetBackgroundColor(color.ToAndroid());
+                    break;
 				default:
 					_renderer.View.SetColor(color);
                     InvalidateRipple();
@@ -235,7 +239,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 		private void UpdateGradients()
 		{
 			if (_renderer?.View == null || _backgroundElement == null) return;
-			if (_renderer.View is MaterialCardView || _renderer.View is Chip) return;
+			if (_renderer.View is MaterialCardView || _renderer.View is Chip || _renderer.View is MaterialButton) return;
 			
 			_renderer.View.SetGradient(_backgroundElement);
             InvalidateRipple();
@@ -253,6 +257,9 @@ namespace XamarinBackgroundKit.Android.Renderers
 				case Chip mChip:
 					mChip.SetBorder(_context, _backgroundElement);
 					break;
+                case MaterialButton mButton:
+                    mButton.SetBorder(_context, _backgroundElement);
+                    break;
 				default:
 					_renderer.View.SetBorder(_backgroundElement);
                     InvalidateRipple();
@@ -272,7 +279,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 				case Chip mChip:
 					mChip.SetCornerRadius(_context, _backgroundElement);
 					break;
-				default:
+                case MaterialButton mButton:
+                    mButton.SetCornerRadius(_context, _backgroundElement);
+                    break;
+                default:
 					_renderer.View.SetCornerRadius(_backgroundElement);
                     InvalidateOutline();
                     InvalidateRipple();
@@ -283,7 +293,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         private void UpdateRipple()
         {
             if (_renderer?.View == null || _backgroundElement == null) return;
-            if (_renderer.View is MaterialCardView || _renderer.View is Chip) return;
+            if (_renderer.View is MaterialCardView || _renderer.View is Chip || _renderer.View is MaterialButton) return;
             
             switch (_renderer.View?.Background)
             {

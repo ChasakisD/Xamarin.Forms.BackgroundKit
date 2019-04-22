@@ -5,6 +5,7 @@ using Android.Support.Design.Chip;
 using Android.Views;
 using System.Collections.Generic;
 using Android.Graphics.Drawables;
+using Android.Support.Design.Button;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -34,7 +35,13 @@ namespace XamarinBackgroundKit.Android.Extensions
 			view.ChipStrokeWidth = (int)context.ToPixels(borderElement.BorderWidth);
 		}
 
-		public static void SetBorder(this MaterialCardView view, Context context, IBorderElement borderElement)
+        public static void SetBorder(this MaterialButton view, Context context, IBorderElement borderElement)
+        {
+            view.StrokeColor = ColorStateList.ValueOf(borderElement.BorderColor.ToAndroid());
+            view.StrokeWidth = (int)context.ToPixels(borderElement.BorderWidth);
+        }
+
+        public static void SetBorder(this MaterialCardView view, Context context, IBorderElement borderElement)
 		{
 			view.SetBorder(context, borderElement.BorderColor, borderElement.BorderWidth);
 		}
@@ -87,7 +94,12 @@ namespace XamarinBackgroundKit.Android.Extensions
 			view.Radius = context.ToPixels(cornerElement.CornerRadius.TopLeft);
 		}
 
-		public static void SetCornerRadius(this Chip view, Context context, ICornerElement cornerElement)
+        public static void SetCornerRadius(this MaterialButton view, Context context, ICornerElement cornerElement)
+        {
+            view.CornerRadius = (int) context.ToPixels(cornerElement.CornerRadius.TopLeft);
+        }
+
+        public static void SetCornerRadius(this Chip view, Context context, ICornerElement cornerElement)
 		{
 			view.ChipCornerRadius = context.ToPixels(cornerElement.CornerRadius.TopLeft);
 		}
@@ -122,20 +134,16 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		public static void SetElevation(this MaterialCardView view, Context context, double elevation)
 		{
-			if (view == null) return;
-
 			view.CardElevation = context.ToPixels(elevation);
 		}
 
-		public static void SetElevation(this AView view, Context context, IElevationElement elevationElement)
+        public static void SetElevation(this AView view, Context context, IElevationElement elevationElement)
 		{
 			view.SetElevation(context, elevationElement.Elevation);
 		}
 
 		public static void SetElevation(this AView view, Context context, double elevation)
 		{
-			if (view == null) return;
-
 			view.Elevation = context.ToPixels(elevation);
 		}
 

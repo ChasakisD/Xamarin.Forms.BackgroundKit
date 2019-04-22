@@ -3,8 +3,8 @@
     x:Class="XamarinBackgroundKitSample.ExplorerPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:effects="clr-namespace:XamarinBackgroundKit.Effects;assembly=XamarinBackgroundKit"
     xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
+    xmlns:effects="clr-namespace:XamarinBackgroundKit.Effects;assembly=XamarinBackgroundKit"
     BackgroundColor="White">
     <Grid Visual="Material">
         <Grid.Resources>
@@ -33,7 +33,8 @@
         <StackLayout
             x:Name="Container"
             Padding="0,8,0,24"
-            Spacing="8">
+            Spacing="8"
+            Visual="Default">
             <effects:BackgroundEffect.Background>
                 <controls:Background Elevation="4" Color="White" />
             </effects:BackgroundEffect.Background>
