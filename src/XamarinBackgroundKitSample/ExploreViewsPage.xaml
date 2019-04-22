@@ -3,7 +3,7 @@
     x:Class="XamarinBackgroundKitSample.ExploreViewsPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="http://xamarin.com/schemas/2019/forms/background"
+    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
     Title="Explore Views"
     BackgroundColor="White">
     <ContentPage.Resources>

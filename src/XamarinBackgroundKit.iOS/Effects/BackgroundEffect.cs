@@ -14,6 +14,7 @@ namespace XamarinBackgroundKit.iOS.Effects
 {
     public class BackgroundEffectiOS : BasePlatformEffect<BackgroundEffect, Element, UIView>
     {
+        private bool _isLayerObserver;
         private IDisposable _layoutChangeObserver;
 
         private Background _background;
@@ -35,6 +36,7 @@ namespace XamarinBackgroundKit.iOS.Effects
 
             if (Element is Layout)
             {
+                _isLayerObserver = true;
                 _layoutChangeObserver = View.Layer.AddObserver(
                     "bounds",
                     NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.OldNew,
@@ -53,7 +55,7 @@ namespace XamarinBackgroundKit.iOS.Effects
         {
             if (_layoutChangeObserver is NSObject layoutChangeObserverObject)
             {
-                if (Element is Layout)
+                if (_isLayerObserver)
                 {
                     View?.Layer?.RemoveObserver(layoutChangeObserverObject, "bounds");
                 }
@@ -64,7 +66,7 @@ namespace XamarinBackgroundKit.iOS.Effects
             }
             
             _tracker?.Dispose();
-            _layoutChangeObserver?.Dispose();
+            _layoutChangeObserver = null;
             
             base.OnDetached();
         }

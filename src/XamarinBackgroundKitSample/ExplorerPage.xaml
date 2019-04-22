@@ -3,7 +3,8 @@
     x:Class="XamarinBackgroundKitSample.ExplorerPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="http://xamarin.com/schemas/2019/forms/background"
+    xmlns:effects="clr-namespace:XamarinBackgroundKit.Effects;assembly=XamarinBackgroundKit"
+    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
     BackgroundColor="White">
     <Grid Visual="Material">
         <Grid.Resources>
@@ -33,9 +34,9 @@
             x:Name="Container"
             Padding="0,8,0,24"
             Spacing="8">
-            <controls:BackgroundEffect.Background>
+            <effects:BackgroundEffect.Background>
                 <controls:Background Elevation="4" Color="White" />
-            </controls:BackgroundEffect.Background>
+            </effects:BackgroundEffect.Background>
         </StackLayout>
 
         <ScrollView
@@ -77,14 +78,14 @@
                         TextChanged="OnBackgroundColorChanged" />
 
                     <BoxView>
-                        <controls:BackgroundEffect.Background>
+                        <effects:BackgroundEffect.Background>
                             <controls:Background
                                 CornerRadius="5"
                                 Elevation="4"
                                 IsRippleEnabled="True"
                                 RippleColor="White"
                                 Color="{Binding Background.Color}" />
-                        </controls:BackgroundEffect.Background>
+                        </effects:BackgroundEffect.Background>
                     </BoxView>
                 </StackLayout>
 
@@ -107,14 +108,14 @@
                                     TextChanged="OnGradientChanged" />
 
                                 <BoxView>
-                                    <controls:BackgroundEffect.Background>
+                                    <effects:BackgroundEffect.Background>
                                         <controls:Background
                                             CornerRadius="5"
                                             Elevation="4"
                                             IsRippleEnabled="True"
                                             RippleColor="White"
                                             Color="{Binding Color}" />
-                                    </controls:BackgroundEffect.Background>
+                                    </effects:BackgroundEffect.Background>
                                 </BoxView>
                             </StackLayout>
                         </DataTemplate>
@@ -185,14 +186,14 @@
                         TextChanged="OnBorderColorChanged" />
 
                     <BoxView>
-                        <controls:BackgroundEffect.Background>
+                        <effects:BackgroundEffect.Background>
                             <controls:Background
                                 CornerRadius="5"
                                 Elevation="4"
                                 IsRippleEnabled="True"
                                 RippleColor="White"
                                 Color="{Binding Background.BorderColor}" />
-                        </controls:BackgroundEffect.Background>
+                        </effects:BackgroundEffect.Background>
                     </BoxView>
                 </StackLayout>
 
@@ -232,14 +233,14 @@
                                     TextChanged="OnGradientChanged" />
 
                                 <BoxView>
-                                    <controls:BackgroundEffect.Background>
+                                    <effects:BackgroundEffect.Background>
                                         <controls:Background
                                             CornerRadius="5"
                                             Elevation="4"
                                             IsRippleEnabled="True"
                                             RippleColor="White"
                                             Color="{Binding Color}" />
-                                    </controls:BackgroundEffect.Background>
+                                    </effects:BackgroundEffect.Background>
                                 </BoxView>
                             </StackLayout>
                         </DataTemplate>
@@ -278,14 +279,14 @@
                         TextChanged="OnRippleColorChanged" />
 
                     <BoxView>
-                        <controls:BackgroundEffect.Background>
+                        <effects:BackgroundEffect.Background>
                             <controls:Background
                                 CornerRadius="5"
                                 Elevation="4"
                                 IsRippleEnabled="True"
                                 RippleColor="White"
                                 Color="{Binding Background.RippleColor}" />
-                        </controls:BackgroundEffect.Background>
+                        </effects:BackgroundEffect.Background>
                     </BoxView>
 
                     <Switch
