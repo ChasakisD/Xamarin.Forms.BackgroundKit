@@ -5,16 +5,19 @@ namespace XamarinBackgroundKit.Android.Renderers
 {
     public class CornerOutlineProvider : ViewOutlineProvider
     {
-        private readonly float _cornerRadius;
+        private readonly float[] _cornerRadii;
 
-        public CornerOutlineProvider(float cornerRadius)
+        public CornerOutlineProvider(float[] cornerRadii)
         {
-            _cornerRadius = cornerRadius;
+            _cornerRadii = cornerRadii;
         }
 
         public override void GetOutline(View view, Outline outline)
         {
-            outline.SetRoundRect(-1, 0, view.Width + 2, view.Height, _cornerRadius);
+            var roundPath = new Path();
+            roundPath.AddRoundRect(-1, 0, view.Width + 2, view.Height, _cornerRadii, Path.Direction.Cw);
+
+            outline.SetConvexPath(roundPath);
         }
     }
 }

@@ -164,12 +164,37 @@
                     Text="Corner Radius"
                     VerticalTextAlignment="Center" />
 
-                <Label Text="{Binding Source={x:Reference CornerRadiusSlider}, Path=Value, StringFormat='{}Corner Radius: {0}'}" />
+                <Label Text="{Binding Source={x:Reference TopLeftCornerSlider}, Path=Value, StringFormat='{}Top Left Corner Radius: {0}'}" />
 
                 <Slider
-                    x:Name="CornerRadiusSlider"
+                    x:Name="TopLeftCornerSlider"
                     Maximum="60"
-                    Minimum="0" />
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
+
+                <Label Text="{Binding Source={x:Reference TopRightCornerSlider}, Path=Value, StringFormat='{}Top Right Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="TopRightCornerSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
+
+                <Label Text="{Binding Source={x:Reference BottomLeftCornerSlider}, Path=Value, StringFormat='{}Bottom Left Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="BottomLeftCornerSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
+
+                <Label Text="{Binding Source={x:Reference BottomRightCornerSlider}, Path=Value, StringFormat='{}Bottom Right Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="BottomRightCornerSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
 
                 <!--#endregion-->
 

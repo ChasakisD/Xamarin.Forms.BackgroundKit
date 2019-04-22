@@ -52,7 +52,6 @@ namespace XamarinBackgroundKitSample
             Background.SetBinding(Background.AngleProperty, new Binding("Value", source: GradientAngleSlider));
             Background.SetBinding(Background.BorderAngleProperty, new Binding("Value", source: BorderGradientAngleSlider));
             Background.SetBinding(Background.BorderWidthProperty, new Binding("Value", source: BorderWidthSlider));
-            Background.SetBinding(Background.CornerRadiusProperty, new Binding("Value", source: CornerRadiusSlider));
             Background.SetBinding(Background.DashGapProperty, new Binding("Value", source: DashGapSlider));
             Background.SetBinding(Background.DashWidthProperty, new Binding("Value", source: DashWidthSlider));
             Background.SetBinding(Background.ElevationProperty, new Binding("Value", source: ElevationSlider));
@@ -180,6 +179,12 @@ namespace XamarinBackgroundKitSample
                 _view.HeightRequest = height;
                 _view.VerticalOptions = LayoutOptions.Center;
             }
+        }
+
+        private void OnCornerRadiusChanged(object sender, ValueChangedEventArgs e)
+        {
+            Background.CornerRadius = new CornerRadius(TopLeftCornerSlider.Value, TopRightCornerSlider.Value,
+                BottomLeftCornerSlider.Value, BottomRightCornerSlider.Value);
         }
     }
 }

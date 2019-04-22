@@ -325,10 +325,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void InvalidateOutline()
         {
-            var cornerRadius = _context.ToPixels(_backgroundElement.CornerRadius.TopLeft);
+            var cornerRadii = _backgroundElement.CornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
 
             _renderer.View.OutlineProvider?.Dispose();
-            _renderer.View.OutlineProvider = new CornerOutlineProvider(cornerRadius);
+            _renderer.View.OutlineProvider = new CornerOutlineProvider(cornerRadii);
             _renderer.View.ClipToOutline = true;
         }
 
