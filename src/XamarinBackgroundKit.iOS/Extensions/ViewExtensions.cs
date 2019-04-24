@@ -16,6 +16,13 @@ namespace XamarinBackgroundKit.iOS.Extensions
 {
     public static class ViewExtensions
     {
+        public static void SetColor(this UIView view, Color color)
+        {
+            if (color == Color.Default) return;
+	        
+            view.FindLayerOfType<GradientStrokeLayer>().SetColor(color);
+        }
+        
         #region Elevation
 
         public static void SetElevation(this MCard view, IElevationElement elevationElement)

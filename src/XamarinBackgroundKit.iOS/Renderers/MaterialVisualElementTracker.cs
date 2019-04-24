@@ -229,7 +229,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     mButton.SetBackgroundColor(_backgroundElement.Color.ToUIColor());
                     break;
                 default:
-                    _renderer.NativeView.BackgroundColor = _backgroundElement.Color.ToUIColor();
+                    _renderer.NativeView.BackgroundColor = UIColor.Clear;
+                    _renderer.NativeView.SetColor(_backgroundElement.Color);
                     break;
             }
         }

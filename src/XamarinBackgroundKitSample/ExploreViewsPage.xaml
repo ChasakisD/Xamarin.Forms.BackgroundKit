@@ -14,7 +14,8 @@
                     Clicked="OnItemClicked"
                     HeightRequest="96"
                     VerticalOptions="Start"
-                    WidthRequest="120">
+                    WidthRequest="120"
+                    BackgroundColor="Wheat">
                     <controls:MaterialContentView.Background>
                         <controls:Background
                             CornerRadius="10"
