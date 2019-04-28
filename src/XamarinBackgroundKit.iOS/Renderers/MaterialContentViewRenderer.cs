@@ -1,5 +1,4 @@
-﻿using CoreAnimation;
-using Foundation;
+﻿using Foundation;
 using ObjCRuntime;
 using System;
 using System.ComponentModel;

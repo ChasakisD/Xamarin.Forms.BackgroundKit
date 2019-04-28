@@ -6,6 +6,7 @@ using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using System;
 using System.ComponentModel;
+using Android.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -28,7 +29,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 		private VisualElement _visualElement;
 		private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
-        private GradientStrokeDrawable _lastGradientStrokeDrawable;
 
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
 
@@ -86,8 +86,16 @@ namespace XamarinBackgroundKit.Android.Renderers
 			{
                 _context = null;
                 oldElement.PropertyChanged -= _propertyChangedHandler;
-                oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
-                oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
+
+                if (oldElement.GradientBrush != null)
+                {
+                    oldElement.GradientBrush.InvalidateGradientRequested -= InvalidateGradientsRequested;
+                }
+
+                if (oldElement.BorderGradientBrush != null)
+                {
+                    oldElement.BorderGradientBrush.InvalidateGradientRequested -= InvalidateBorderGradientsRequested;
+                }
             }
 
 			_backgroundElement = newElement;
@@ -95,8 +103,16 @@ namespace XamarinBackgroundKit.Android.Renderers
             
             _context = _renderer.View.Context;
             newElement.PropertyChanged += _propertyChangedHandler;
-            newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
-            newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
+
+            if (newElement.GradientBrush != null)
+            {
+                newElement.GradientBrush.InvalidateGradientRequested += InvalidateGradientsRequested;
+            }
+
+            if (newElement.BorderGradientBrush != null)
+            {
+                newElement.BorderGradientBrush.InvalidateGradientRequested += InvalidateBorderGradientsRequested;
+            }
             
             if (oldElement == null)
             {
@@ -117,16 +133,12 @@ namespace XamarinBackgroundKit.Android.Renderers
             if (Math.Abs(oldElement.TranslationZ - newElement.TranslationZ) > eps)
                 UpdateTranslationZ();
 
-            if (Math.Abs(oldElement.Angle - newElement.Angle) > eps
-                || oldElement.GradientType != newElement.GradientType
-                || oldElement.Gradients.AreEqual(newElement.Gradients))
+            if (oldElement.GradientBrush != newElement.GradientBrush)
                 UpdateGradients();
 
             if (oldElement.BorderColor != newElement.BorderColor
                 || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps
-                || Math.Abs(oldElement.BorderAngle - newElement.BorderAngle) > eps
-                || oldElement.BorderGradientType != newElement.BorderGradientType
-                || oldElement.BorderGradients.AreEqual(newElement.BorderGradients))
+                || oldElement.BorderGradientBrush != newElement.BorderGradientBrush)
                 UpdateBorder();
 
             if (oldElement.CornerRadius != newElement.CornerRadius)
@@ -152,14 +164,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 		{
 			if (_renderer == null || _disposed) return;
 
-			if (e.PropertyName == GradientElement.AngleProperty.PropertyName
-				|| e.PropertyName == GradientElement.GradientsProperty.PropertyName
-				|| e.PropertyName == GradientElement.GradientTypeProperty.PropertyName) UpdateGradients();
-			else if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
+			if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
 				|| e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderAngleProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderGradientsProperty.PropertyName
-                || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName
 				|| e.PropertyName == BorderElement.DashGapProperty.PropertyName
 				|| e.PropertyName == BorderElement.DashWidthProperty.PropertyName) UpdateBorder();
 			else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
@@ -176,14 +182,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             if (_renderer?.View == null || _backgroundElement == null) return;
             if (_renderer.View is MaterialCardView || _renderer.View is Chip) return;
 
-            _renderer.View.Background?.Dispose();
-
-            _lastGradientStrokeDrawable = new GradientStrokeDrawable.Builder(_context)
-	            .SetMaterialElement(_backgroundElement)
-	            .Build();
-
-            InvalidateOutline();
-
             if (!_areDefaultsSet)
             {
                 _areDefaultsSet = true;
@@ -191,19 +189,13 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _defaultFocusable = _renderer.View.Focusable;
             }
 
-            if (_backgroundElement.IsRippleEnabled)
-            {
-                _renderer.View.Background = new RippleDrawable(
-                    ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
-                    _lastGradientStrokeDrawable, _lastGradientStrokeDrawable);
+            _renderer.View.Background?.Dispose();
+            _renderer.View.Background = new GradientStrokeDrawable.Builder(_context)
+                .SetMaterialElement(_backgroundElement)
+                .Build();
 
-                _renderer.View.Clickable = true;
-                _renderer.View.Focusable = true;
-            }
-            else
-            {
-                _renderer.View.Background = _lastGradientStrokeDrawable;
-            }
+            UpdateRipple();
+            InvalidateOutline();
         }
 
         private void UpdateColor()
@@ -231,7 +223,6 @@ namespace XamarinBackgroundKit.Android.Renderers
                     break;
 				default:
 					_renderer.View.SetColor(color);
-                    InvalidateRipple();
                     break;
 			}
 		}
@@ -242,7 +233,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 			if (_renderer.View is MaterialCardView || _renderer.View is Chip || _renderer.View is MaterialButton) return;
 			
 			_renderer.View.SetGradient(_backgroundElement);
-            InvalidateRipple();
         }
 
 		private void UpdateBorder()
@@ -262,7 +252,6 @@ namespace XamarinBackgroundKit.Android.Renderers
                     break;
 				default:
 					_renderer.View.SetBorder(_backgroundElement);
-                    InvalidateRipple();
                     break;
 			}
 		}
@@ -285,7 +274,6 @@ namespace XamarinBackgroundKit.Android.Renderers
                 default:
 					_renderer.View.SetCornerRadius(_backgroundElement);
                     InvalidateOutline();
-                    InvalidateRipple();
                     break;
 			}
 		}
@@ -294,33 +282,25 @@ namespace XamarinBackgroundKit.Android.Renderers
         {
             if (_renderer?.View == null || _backgroundElement == null) return;
             if (_renderer.View is MaterialCardView || _renderer.View is Chip || _renderer.View is MaterialButton) return;
-            
-            switch (_renderer.View?.Background)
+
+            switch (_renderer.View?.Foreground)
             {
                 case RippleDrawable _ when !_backgroundElement.IsRippleEnabled:
-                    _renderer.View.Background?.Dispose();
-                    _renderer.View.Background = _lastGradientStrokeDrawable;
+                    _renderer.View.Foreground?.Dispose();
+                    _renderer.View.Foreground = null;
                     _renderer.View.Clickable = _defaultClickable;
                     _renderer.View.Focusable = _defaultFocusable;
-                    break;
-                case GradientStrokeDrawable _ when _backgroundElement.IsRippleEnabled:
-                    _renderer.View.Background =
-                        new RippleDrawable(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
-                            _lastGradientStrokeDrawable, _lastGradientStrokeDrawable);
-                    _renderer.View.Clickable = true;
-                    _renderer.View.Focusable = true;
                     break;
                 case RippleDrawable oldRippleDrawable:
                     oldRippleDrawable.SetColor(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()));
                     break;
+                case null when _backgroundElement.IsRippleEnabled:
+                    _renderer.View.Foreground = new RippleDrawable(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
+                        null, _renderer.View.Background);
+                    _renderer.View.Clickable = true;
+                    _renderer.View.Focusable = true;
+                    break;
             }
-        }
-
-        private void InvalidateRipple()
-        {
-            if (!(_renderer.View.Background is RippleDrawable rippleDrawable)) return;
-
-            rippleDrawable.InvalidateSelf();
         }
 
         private void InvalidateOutline()
@@ -329,7 +309,13 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             _renderer.View.OutlineProvider?.Dispose();
             _renderer.View.OutlineProvider = new CornerOutlineProvider(cornerRadii);
+
             _renderer.View.ClipToOutline = true;
+
+            if (_renderer.View is MaterialContentViewRenderer contentViewRenderer)
+            {
+                contentViewRenderer.UpdateClipBounds();
+            }
         }
 
         private void UpdateTranslationZ()
@@ -368,7 +354,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 
                     _context = null;
                     _renderer = null;
-                    _lastGradientStrokeDrawable = null;
                 }
 			}
 

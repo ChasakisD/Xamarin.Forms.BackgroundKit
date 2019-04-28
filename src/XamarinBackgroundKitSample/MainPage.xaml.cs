@@ -19,10 +19,10 @@ namespace XamarinBackgroundKitSample
             SimpleView.Background.Elevation = r.Next(0, 4);
             
             var color = Color.FromRgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
-            RippleEnabledView.Background.Gradients[0].Color = color;
+            RippleEnabledView.Background.GradientBrush.Gradients[0].Color = color;
 
             var borderColor = Color.FromRgb(r.Next(0, 255), r.Next(0, 255), r.Next(0, 255));
-            GradientBorderView.Background.BorderGradients[0].Color = borderColor;
+            GradientBorderView.Background.BorderGradientBrush.Gradients[0].Color = borderColor;
         }
 
         private async void OnButtonClicked(object sender, EventArgs e)

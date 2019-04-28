@@ -80,8 +80,8 @@ namespace XamarinBackgroundKit.iOS.Extensions
         
         public static void SetBorder(this UIView view, IBorderElement borderElement)
         {
-            view.SetBorder(borderElement.BorderColor, borderElement.BorderWidth, borderElement.BorderGradients,
-                borderElement.BorderAngle);
+            view.SetBorder(borderElement.BorderColor, borderElement.BorderWidth,
+                borderElement.BorderGradientBrush?.Gradients, borderElement.BorderGradientBrush?.Angle ?? 0);
             view.SetDashedBorder(borderElement.DashWidth, borderElement.DashGap);
         }
 
@@ -120,10 +120,10 @@ namespace XamarinBackgroundKit.iOS.Extensions
 
         public static void SetGradient(this UIView view, IGradientElement gradientElement)
         {
-            view.SetGradient(gradientElement.GradientType, gradientElement.Gradients, gradientElement.Angle);
+            view.SetGradient(gradientElement.GradientBrush?.Gradients, gradientElement.GradientBrush?.Angle ?? 0);
         }
 
-        public static void SetGradient(this UIView view, GradientType type, IList<GradientStop> gradients, float angle)
+        public static void SetGradient(this UIView view, IList<GradientStop> gradients, float angle)
         {
             view.FindLayerOfType<GradientStrokeLayer>()?.SetGradient(gradients, angle);
         }

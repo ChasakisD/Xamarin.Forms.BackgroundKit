@@ -6,7 +6,7 @@ namespace XamarinBackgroundKit.Extensions
 {
     public static class CornerRadiusExtensions
     {
-        private static CornerRadius DefaultCornerRadius = new CornerRadius(0d);
+        private static readonly CornerRadius DefaultCornerRadius = new CornerRadius(0d);
 
         public static bool IsEmpty(this ICornerElement cornerRadius)
         {

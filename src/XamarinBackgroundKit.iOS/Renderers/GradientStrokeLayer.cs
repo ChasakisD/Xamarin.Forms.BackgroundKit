@@ -1,10 +1,9 @@
+using CoreAnimation;
+using CoreGraphics;
+using MaterialComponents;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CoreAnimation;
-using CoreGraphics;
-using Foundation;
-using MaterialComponents;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;

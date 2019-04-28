@@ -141,13 +141,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             PreventCornerOverlap = true;
 
-            using (var rippleTypedValue = new TypedValue())
-            {
-                Context.Theme.ResolveAttribute(global::Android.Resource.Attribute.SelectableItemBackground, rippleTypedValue, true);
-
-                Foreground = ContextCompat.GetDrawable(Context, rippleTypedValue.ResourceId);
-            }
-
             if (_visualElementTracker == null)
             {
                 _visualElementTracker = new MaterialVisualElementTracker(this);

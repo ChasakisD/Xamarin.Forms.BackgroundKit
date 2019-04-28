@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using IBorderElement = XamarinBackgroundKit.Abstractions.IBorderElement;
 
 namespace XamarinBackgroundKit.Controls.Base
@@ -23,17 +21,10 @@ namespace XamarinBackgroundKit.Controls.Base
             nameof(IBorderElement.DashWidth), typeof(double), typeof(IBorderElement), 0d,
             propertyChanged: OnDashWidthPropertyChanged);
 
-        public static readonly BindableProperty BorderAngleProperty = BindableProperty.Create(
-            nameof(IBorderElement.BorderAngle), typeof(float), typeof(IBorderElement), 0f,
-            propertyChanged: OnBorderAnglePropertyChanged);
-        
-        public static readonly BindableProperty BorderGradientTypeProperty = BindableProperty.Create(
-            nameof(IBorderElement.BorderGradientType), typeof(GradientType), typeof(IBorderElement), GradientType.Linear,
-            propertyChanged: OnBorderGradientTypePropertyChanged);
-        
-        public static readonly BindableProperty BorderGradientsProperty = BindableProperty.Create(
-            nameof(IBorderElement.BorderGradients), typeof(IList<GradientStop>), typeof(IBorderElement),
-            propertyChanged: OnBorderGradientsPropertyChanged, defaultValueCreator: b => new ObservableCollection<GradientStop>());
+        public static readonly BindableProperty BorderGradientBrushProperty = BindableProperty.Create(
+            nameof(IBorderElement.BorderGradientBrush), typeof(LinearGradientBrush), typeof(IBorderElement), new LinearGradientBrush(),
+            propertyChanged: OnBorderGradientBrushPropertyChanged,
+            defaultValueCreator: b => new LinearGradientBrush());
         
         private static void OnBorderColorPropertyChanged(BindableObject bindable, object oldValue, object newValue)
 		{
@@ -55,19 +46,9 @@ namespace XamarinBackgroundKit.Controls.Base
             ((IBorderElement)bindable).OnDashWidthPropertyChanged((double)oldValue, (double)newValue);
         }
 
-        private static void OnBorderAnglePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        private static void OnBorderGradientBrushPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            ((IBorderElement)bindable).OnBorderAnglePropertyChanged((float)oldValue, (float)newValue);
-        }
-
-        private static void OnBorderGradientTypePropertyChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            ((IBorderElement)bindable).OnBorderGradientTypePropertyChanged((GradientType)oldValue, (GradientType)newValue);
-        }
-
-        private static void OnBorderGradientsPropertyChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            ((IBorderElement)bindable).OnBorderGradientsPropertyChanged((IList<GradientStop>)oldValue, (IList<GradientStop>)newValue);
+            ((IBorderElement)bindable).OnBorderGradientBrushPropertyChanged((LinearGradientBrush)oldValue, (LinearGradientBrush)newValue);
         }
     }
 }

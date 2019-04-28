@@ -7,7 +7,6 @@ using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
-using XamarinBackgroundKit.Extensions;
 using XamarinBackgroundKit.iOS.Extensions;
 using MButton = MaterialComponents.Button;
 
@@ -75,16 +74,32 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (oldElement != null)
             {
                 oldElement.PropertyChanged -= _propertyChangedHandler;
-                oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
-                oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
+
+                if (oldElement.GradientBrush != null)
+                {
+                    oldElement.GradientBrush.InvalidateGradientRequested -= InvalidateGradientsRequested;
+                }
+
+                if (oldElement.BorderGradientBrush != null)
+                {
+                    oldElement.BorderGradientBrush.InvalidateGradientRequested -= InvalidateBorderGradientsRequested;
+                }
             }
 
             _backgroundElement = newElement;
             if (newElement == null) return;
 
             newElement.PropertyChanged += _propertyChangedHandler;
-            newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
-            newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
+
+            if (newElement.GradientBrush != null)
+            {
+                newElement.GradientBrush.InvalidateGradientRequested += InvalidateGradientsRequested;
+            }
+
+            if (newElement.BorderGradientBrush != null)
+            {
+                newElement.BorderGradientBrush.InvalidateGradientRequested += InvalidateBorderGradientsRequested;
+            }
 
             if (oldElement == null)
             {
@@ -108,16 +123,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (Math.Abs(oldElement.Elevation - newElement.Elevation) > eps)
                 UpdateElevation();
 
-            if (Math.Abs(oldElement.Angle - newElement.Angle) > eps
-                || oldElement.GradientType != newElement.GradientType
-                || oldElement.Gradients.AreEqual(newElement.Gradients))
+            if (oldElement.GradientBrush != newElement.GradientBrush)
                 UpdateGradients();
 
             if (oldElement.BorderColor != newElement.BorderColor
                 || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps
-                || Math.Abs(oldElement.BorderAngle - newElement.BorderAngle) > eps
-                || oldElement.BorderGradientType != newElement.BorderGradientType
-                || oldElement.BorderGradients.AreEqual(newElement.BorderGradients))
+                || oldElement.BorderGradientBrush != newElement.BorderGradientBrush)
                 UpdateBorder();
 
             if (oldElement.CornerRadius != newElement.CornerRadius)
@@ -153,14 +164,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (_renderer == null || _disposed) return;
 
-            if (e.PropertyName == GradientElement.AngleProperty.PropertyName
-                || e.PropertyName == GradientElement.GradientsProperty.PropertyName
-                || e.PropertyName == GradientElement.GradientTypeProperty.PropertyName) UpdateGradients();
-            else if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
+            if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
                      || e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
-                     || e.PropertyName == BorderElement.BorderAngleProperty.PropertyName
-                     || e.PropertyName == BorderElement.BorderGradientsProperty.PropertyName
-                     || e.PropertyName == BorderElement.BorderGradientTypeProperty.PropertyName
                      || e.PropertyName == BorderElement.DashGapProperty.PropertyName
                      || e.PropertyName == BorderElement.DashWidthProperty.PropertyName) UpdateBorder();
             else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();

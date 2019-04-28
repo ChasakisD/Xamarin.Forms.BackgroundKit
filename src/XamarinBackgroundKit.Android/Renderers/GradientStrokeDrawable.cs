@@ -1,9 +1,9 @@
-﻿using Android.Graphics;
+﻿using Android.Content;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
 using System.Collections.Generic;
 using System.Linq;
-using Android.Content;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -16,6 +16,8 @@ namespace XamarinBackgroundKit.Android.Renderers
     public class GradientStrokeDrawable : PaintDrawable
     {
         private Context _context;
+
+        private CornerRadius _cornerRadius;
 
         private int[] _colors;
         private float[] _positions;
@@ -36,10 +38,10 @@ namespace XamarinBackgroundKit.Android.Renderers
             
             SetColor(background.Color);
             SetCornerRadius(background.CornerRadius);
-            SetGradient(background.Gradients, background.Angle);
-            SetBorderGradient(background.BorderGradients, background.BorderAngle);
             SetStroke(background.BorderWidth, background.BorderColor);
             SetDashedBorder(background.DashWidth, background.DashGap);
+            SetGradient(background.GradientBrush?.Gradients, background.GradientBrush?.Angle ?? 0);
+            SetBorderGradient(background.BorderGradientBrush?.Gradients, background.BorderGradientBrush?.Angle ?? 0);
         }
         
         private void Initialize()
@@ -152,12 +154,12 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetCornerRadius(CornerRadius cornerRadius)
         {
-            if (cornerRadius == new CornerRadius(0d)) return;
+            _cornerRadius = cornerRadius;
 
-            var isUniform = cornerRadius.IsAllRadius() && !cornerRadius.IsEmpty();
+            var isUniform = _cornerRadius.IsAllRadius() && !_cornerRadius.IsEmpty();
 
-            var uniformCornerRadius = _context.ToPixels(cornerRadius.TopLeft);
-            var cornerRadii = cornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+            var uniformCornerRadius = _context.ToPixels(_cornerRadius.TopLeft);
+            var cornerRadii = _cornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
 
             if (isUniform) base.SetCornerRadius(uniformCornerRadius);
             else SetCornerRadii(cornerRadii);
@@ -202,6 +204,13 @@ namespace XamarinBackgroundKit.Android.Renderers
             {
                 _strokePaint.SetShader(null);
             }
+
+            var cornerRadii = _cornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+
+            var roundClipPath = new Path();
+            roundClipPath.AddRoundRect(0, 0, canvas.Width, canvas.Height, cornerRadii, Path.Direction.Cw);
+
+            canvas.ClipPath(roundClipPath);
 
             shape.Draw(canvas, _strokePaint);
         }

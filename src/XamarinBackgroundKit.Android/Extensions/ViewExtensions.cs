@@ -22,9 +22,7 @@ namespace XamarinBackgroundKit.Android.Extensions
 	{
         public static void SetColor(this AView view, Color color)
         {
-	        if (color == Color.Default) return;
-	        
-	        view.GetGradientDrawable().Paint.Color = color.ToAndroid();
+	        view.GetGradientDrawable().SetColor(color);
         }
 
         #region Border
@@ -62,7 +60,7 @@ namespace XamarinBackgroundKit.Android.Extensions
         {
             view.SetBorder(borderElement.BorderColor, borderElement.BorderWidth);
             view.SetDashedBorder(borderElement.DashWidth, borderElement.DashGap);
-            view.SetBorderGradients(borderElement.BorderGradients, borderElement.BorderAngle);
+            view.SetBorderGradients(borderElement.BorderGradientBrush?.Gradients, borderElement.BorderGradientBrush?.Angle ?? 0);
 		}
 
 		private static void SetBorder(this AView view, Color color, double width)
@@ -115,8 +113,8 @@ namespace XamarinBackgroundKit.Android.Extensions
 
 		public static void SetGradient(this AView view, IGradientElement gradientElement)
 		{
-			view.SetGradient(gradientElement.Gradients, gradientElement.Angle);
-		}
+            view.SetGradient(gradientElement.GradientBrush?.Gradients, gradientElement.GradientBrush?.Angle ?? 0);
+        }
 
         private static void SetGradient(this AView view, IList<GradientStop> gradients, float angle)
         {

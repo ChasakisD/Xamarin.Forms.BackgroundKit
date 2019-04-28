@@ -15,11 +15,15 @@
         </Style>
     </ContentPage.Resources>
     <effects:BackgroundEffect.Background>
-        <controls:Background Angle="135">
-            <controls:Background.Gradients>
-                <controls:GradientStop Offset="0" Color="Gray" />
-                <controls:GradientStop Offset="1" Color="White" />
-            </controls:Background.Gradients>
+        <controls:Background>
+            <controls:Background.GradientBrush>
+                <controls:LinearGradientBrush Angle="135">
+                    <controls:LinearGradientBrush.Gradients>
+                        <controls:GradientStop Offset="0" Color="Gray" />
+                        <controls:GradientStop Offset="1" Color="White" />
+                    </controls:LinearGradientBrush.Gradients>
+                </controls:LinearGradientBrush>
+            </controls:Background.GradientBrush>
         </controls:Background>
     </effects:BackgroundEffect.Background>
 
@@ -39,47 +43,52 @@
 
                 <Label Margin="8" Text="Material Card with Ripple!" />
             </controls:MaterialCard>
-            
-            <controls:MaterialContentView x:Name="SimpleView" IsCornerRadiusHalfHeight="True" HeightRequest="60">
+
+            <controls:MaterialContentView
+                x:Name="SimpleView"
+                HeightRequest="60"
+                IsCornerRadiusHalfHeight="True">
                 <controls:MaterialContentView.Background>
                     <controls:Background
                         BorderColor="Gray"
                         BorderWidth="4"
-                        Color="Green"
                         Elevation="4"
+                        IsRippleEnabled="True"
                         RippleColor="#10000000"
-                        IsRippleEnabled="True" />
+                        Color="Green" />
                 </controls:MaterialContentView.Background>
             </controls:MaterialContentView>
-            
-            <controls:MaterialContentView IsCornerRadiusHalfHeight="True" HeightRequest="60">
+
+            <controls:MaterialContentView HeightRequest="60" IsCornerRadiusHalfHeight="True">
                 <controls:MaterialContentView.Background>
                     <controls:Background
                         BorderColor="Gray"
                         BorderWidth="4"
-                        Color="Green"
-                        Elevation="4"
-                        DashWidth="8"
                         DashGap="8"
+                        DashWidth="8"
+                        Elevation="4"
+                        IsRippleEnabled="True"
                         RippleColor="#10000000"
-                        IsRippleEnabled="True" />
+                        Color="Green" />
                 </controls:MaterialContentView.Background>
             </controls:MaterialContentView>
 
             <controls:MaterialContentView x:Name="RippleEnabledView" HeightRequest="60">
                 <controls:MaterialContentView.Background>
                     <controls:Background
-                        Angle="0"
                         BorderColor="Brown"
                         BorderWidth="4"
                         CornerRadius="30"
-                        GradientType="Linear"
                         IsRippleEnabled="True"
                         RippleColor="#F0FF0000">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
                     </controls:Background>
                 </controls:MaterialContentView.Background>
 
@@ -89,17 +98,19 @@
             <controls:MaterialContentView HeightRequest="60">
                 <controls:MaterialContentView.Background>
                     <controls:Background
-                        Angle="0"
                         BorderColor="DarkCyan"
                         BorderWidth="8"
                         CornerRadius="30"
-                        IsRippleEnabled="True"
                         Elevation="8"
-                        GradientType="Linear">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
+                        IsRippleEnabled="True">
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
                     </controls:Background>
                 </controls:MaterialContentView.Background>
                 <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
@@ -108,19 +119,26 @@
             <controls:MaterialContentView x:Name="GradientBorderView" HeightRequest="60">
                 <controls:MaterialContentView.Background>
                     <controls:Background
-                        Angle="0"
                         BorderWidth="8"
                         CornerRadius="30"
-                        Elevation="8"
-                        GradientType="Linear">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
-                        <controls:Background.BorderGradients>
-                            <controls:GradientStop Offset="0" Color="Green" />
-                            <controls:GradientStop Offset="1" Color="Yellow" />
-                        </controls:Background.BorderGradients>
+                        Elevation="8">
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
+
+                        <controls:Background.BorderGradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Green" />
+                                    <controls:GradientStop Offset="1" Color="Yellow" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.BorderGradientBrush>
                     </controls:Background>
                 </controls:MaterialContentView.Background>
                 <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
@@ -129,54 +147,63 @@
             <controls:MaterialContentView HeightRequest="60">
                 <controls:MaterialContentView.Background>
                     <controls:Background
-                        Angle="0"
                         BorderWidth="4"
                         CornerRadius="30"
                         DashGap="8"
                         DashWidth="8"
-                        Elevation="8"
-                        GradientType="Linear">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
-                        <controls:Background.BorderGradients>
-                            <controls:GradientStop Offset="0" Color="Green" />
-                            <controls:GradientStop Offset="1" Color="Yellow" />
-                        </controls:Background.BorderGradients>
+                        Elevation="8">
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
+
+                        <controls:Background.BorderGradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Green" />
+                                    <controls:GradientStop Offset="1" Color="Yellow" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.BorderGradientBrush>
                     </controls:Background>
                 </controls:MaterialContentView.Background>
                 <Label Text="Material ContentView with Gradient and Offsets and Elevation" />
             </controls:MaterialContentView>
 
             <Button
-                Clicked="OnButtonClicked"
                 BackgroundColor="Transparent"
+                Clicked="OnButtonClicked"
                 HorizontalOptions="FillAndExpand"
                 Text="Button with gradient">
                 <effects:BackgroundEffect.Background>
-                    <controls:Background
-                        Angle="0"
-                        Elevation="16"
-                        GradientType="Linear">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
+                    <controls:Background Elevation="16">
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
                     </controls:Background>
                 </effects:BackgroundEffect.Background>
             </Button>
 
             <Label HorizontalOptions="FillAndExpand" Text="Label with gradient">
                 <effects:BackgroundEffect.Background>
-                    <controls:Background
-                        Angle="0"
-                        Elevation="16"
-                        GradientType="Linear">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
+                    <controls:Background Elevation="16">
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
                     </controls:Background>
                 </effects:BackgroundEffect.Background>
             </Label>
@@ -186,15 +213,15 @@
                 Padding="16"
                 HorizontalOptions="FillAndExpand">
                 <effects:BackgroundEffect.Background>
-                    <controls:Background
-                        Angle="0"
-                        CornerRadius="20"
-                        Elevation="16"
-                        GradientType="Linear">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
+                    <controls:Background CornerRadius="20" Elevation="16">
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
                     </controls:Background>
                 </effects:BackgroundEffect.Background>
 
@@ -206,15 +233,15 @@
                 Padding="16"
                 HorizontalOptions="FillAndExpand">
                 <effects:BackgroundEffect.Background>
-                    <controls:Background
-                        Angle="0"
-                        CornerRadius="20"
-                        Elevation="16"
-                        GradientType="Linear">
-                        <controls:Background.Gradients>
-                            <controls:GradientStop Offset="0" Color="Blue" />
-                            <controls:GradientStop Offset="1" Color="DarkRed" />
-                        </controls:Background.Gradients>
+                    <controls:Background CornerRadius="20" Elevation="16">
+                        <controls:Background.GradientBrush>
+                            <controls:LinearGradientBrush Angle="0">
+                                <controls:LinearGradientBrush.Gradients>
+                                    <controls:GradientStop Offset="0" Color="Blue" />
+                                    <controls:GradientStop Offset="1" Color="DarkRed" />
+                                </controls:LinearGradientBrush.Gradients>
+                            </controls:LinearGradientBrush>
+                        </controls:Background.GradientBrush>
                     </controls:Background>
                 </effects:BackgroundEffect.Background>
 

@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using XamarinBackgroundKit.Controls;
+﻿using XamarinBackgroundKit.Controls;
 
 namespace XamarinBackgroundKit.Abstractions
 {
     public interface IGradientElement
     {
-        float Angle { get; }
-        GradientType GradientType { get; }
-        IList<GradientStop> Gradients { get; }
+        LinearGradientBrush GradientBrush { get; }
 
-        event EventHandler<EventArgs> InvalidateGradientRequested;
-
-        void OnAnglePropertyChanged(float oldValue, float newValue);
-        void OnGradientTypePropertyChanged(GradientType oldValue, GradientType newValue);
-        void OnGradientsPropertyChanged(IList<GradientStop> oldValue, IList<GradientStop> newValue);
+        void OnGradientBrushPropertyChanged(LinearGradientBrush oldValue, LinearGradientBrush newValue);
     }
 }

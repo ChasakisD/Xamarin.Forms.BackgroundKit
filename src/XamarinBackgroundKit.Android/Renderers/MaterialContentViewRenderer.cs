@@ -1,4 +1,5 @@
 ﻿using Android.Content;
+using Android.Graphics;
 using Android.Support.V4.View;
 using Android.Views;
 using System;
@@ -21,10 +22,11 @@ namespace XamarinBackgroundKit.Android.Renderers
         IEffectControlProvider,
         AView.IOnClickListener
 	{
-		private bool _disposed;
+        private bool _disposed;
 		private bool _isClickListenerSet;
-		private int? _defaultLabelFor;
+        private int? _defaultLabelFor;
 
+        private ClipPathManager _clipPathManager;
 		private VisualElementTracker _visualElementTracker;
 		private VisualElementPackager _visualElementPackager;
 
@@ -123,6 +125,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 		{
             this.EnsureId();
 
+            SetWillNotDraw(false);
+
             EffectUtilities.RegisterEffectControlProvider(this, e.OldElement, e.NewElement);
 
             ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
@@ -136,7 +140,8 @@ namespace XamarinBackgroundKit.Android.Renderers
                         
 			if (_visualElementTracker == null)
 			{
-				_visualElementTracker = new MaterialVisualElementTracker(this);
+                _clipPathManager = new ClipPathManager();
+                _visualElementTracker = new MaterialVisualElementTracker(this);
 				_visualElementPackager = new VisualElementPackager(this);
 				_visualElementPackager.Load();
 			}
@@ -150,7 +155,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 		#region Layout Children
 
-		protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
+        protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
 		{
 			if (Element == null) return;
 
@@ -161,9 +166,31 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 				Platform.GetRenderer(visualElement)?.UpdateLayout();
 			}
+
+            if (changed)
+            {
+                UpdateClipBounds();
+            }
 		}
 
-		#endregion
+        public void UpdateClipBounds()
+        { 
+            _clipPathManager?.UpdateClipBounds();
+
+            PostInvalidate();
+        }
+        
+        protected override void DispatchDraw(Canvas canvas)
+        {
+            if (Element.IsClippedToBounds)
+            {
+                _clipPathManager.ClipCanvas(Context, canvas, Element.Background.CornerRadius);
+            }
+
+            base.DispatchDraw(canvas);
+        }
+
+        #endregion
 
 		#region Property Changed
 

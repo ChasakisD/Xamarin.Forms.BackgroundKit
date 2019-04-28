@@ -49,22 +49,22 @@ namespace XamarinBackgroundKitSample
                 BackgroundEffect.SetBackground(view, Background);
             }
 
-            Background.SetBinding(Background.AngleProperty, new Binding("Value", source: GradientAngleSlider));
-            Background.SetBinding(Background.BorderAngleProperty, new Binding("Value", source: BorderGradientAngleSlider));
             Background.SetBinding(Background.BorderWidthProperty, new Binding("Value", source: BorderWidthSlider));
             Background.SetBinding(Background.DashGapProperty, new Binding("Value", source: DashGapSlider));
             Background.SetBinding(Background.DashWidthProperty, new Binding("Value", source: DashWidthSlider));
             Background.SetBinding(Background.ElevationProperty, new Binding("Value", source: ElevationSlider));
             Background.SetBinding(Background.IsRippleEnabledProperty, new Binding("IsToggled", source: RippleColorSwitch));
+            Background.GradientBrush.SetBinding(LinearGradientBrush.AngleProperty, new Binding("Value", source: GradientAngleSlider));
+            Background.BorderGradientBrush.SetBinding(LinearGradientBrush.AngleProperty, new Binding("Value", source: BorderGradientAngleSlider));
 
             Container.Children.Add(view);
             
             _gradientsStackItems = new ObservableCollection<GradientStop>();
-            Background.Gradients = _gradientsStackItems;
+            Background.GradientBrush.Gradients = _gradientsStackItems;
             BindableLayout.SetItemsSource(GradientsLayout, _gradientsStackItems);
 
             _borderGradientsStackItems = new ObservableCollection<GradientStop>();
-            Background.BorderGradients = _borderGradientsStackItems;
+            Background.BorderGradientBrush.Gradients = _borderGradientsStackItems;
             BindableLayout.SetItemsSource(BorderGradientsLayout, _borderGradientsStackItems);
 
             _view = view;
