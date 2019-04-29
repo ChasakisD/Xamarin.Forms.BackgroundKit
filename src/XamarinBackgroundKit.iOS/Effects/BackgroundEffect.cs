@@ -27,6 +27,8 @@ namespace XamarinBackgroundKit.iOS.Effects
             SetTracker();
 
             _background = BackgroundEffect.GetBackground(Element);
+            if (_background == null) return;
+
             _background.SetBinding(BindableObject.BindingContextProperty,
                 new Binding("BindingContext", source: Element));
 
@@ -53,20 +55,23 @@ namespace XamarinBackgroundKit.iOS.Effects
 
         protected override void OnDetached()
         {
-            if (_layoutChangeObserver is NSObject layoutChangeObserverObject)
+            if (_background != null)
             {
-                if (_isLayerObserver)
+                if (_layoutChangeObserver is NSObject layoutChangeObserverObject)
                 {
-                    View?.Layer?.RemoveObserver(layoutChangeObserverObject, "bounds");
+                    if (_isLayerObserver)
+                    {
+                        View?.Layer?.RemoveObserver(layoutChangeObserverObject, "bounds");
+                    }
+                    else
+                    {
+                        View?.RemoveObserver(layoutChangeObserverObject, "frame");
+                    }
                 }
-                else
-                {
-                    View?.RemoveObserver(layoutChangeObserverObject, "frame");
-                }
+
+                _tracker?.Dispose();
+                _layoutChangeObserver = null;
             }
-            
-            _tracker?.Dispose();
-            _layoutChangeObserver = null;
             
             base.OnDetached();
         }
@@ -80,6 +85,8 @@ namespace XamarinBackgroundKit.iOS.Effects
                 var oldBackground = _background;
 
                 _background = BackgroundEffect.GetBackground(Element);
+                if (_background == null) return;
+
                 _background.SetBinding(BindableObject.BindingContextProperty,
                     new Binding("BindingContext", source: Element));
 

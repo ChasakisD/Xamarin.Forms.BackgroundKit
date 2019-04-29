@@ -157,6 +157,18 @@ namespace XamarinBackgroundKit.Controls
             get => (Color) GetValue(RippleColorProperty);
             set => SetValue(RippleColorProperty, value);
         }
+        
+        public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(
+            nameof(IsClippedToBounds), typeof(bool), typeof(Background), true);
+
+        /// <summary>
+        /// Gets or sets if the background is clipped to bounds
+        /// </summary>
+        public bool IsClippedToBounds
+        {
+            get => (bool)GetValue(IsClippedToBoundsProperty);
+            set => SetValue(IsClippedToBoundsProperty, value);
+        }
 
         #region IElevation Implementation
 

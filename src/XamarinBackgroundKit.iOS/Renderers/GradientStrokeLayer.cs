@@ -140,22 +140,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
             return _strokeColors != null && _strokePositions != null && _strokeColorPositions != null;
         }
 
-        private UIBezierPath GetRoundCornersPath(CGRect bounds)
-        {
-            var topLeft = (float)_cornerRadius.TopLeft;
-            var topRight = (float)_cornerRadius.TopRight;
-            var bottomLeft = (float)_cornerRadius.BottomLeft;
-            var bottomRight = (float)_cornerRadius.BottomRight;
+        public UIBezierPath GetRoundCornersPath() => GetRoundCornersPath(Bounds);
 
-            var bezierPath = new UIBezierPath();
-            bezierPath.AddArc(new CGPoint((float)bounds.X + bounds.Width - topRight, (float)bounds.Y + topRight), topRight, (float)(Math.PI * 1.5), (float)Math.PI * 2, true);
-            bezierPath.AddArc(new CGPoint((float)bounds.X + bounds.Width - bottomRight, (float)bounds.Y + bounds.Height - bottomRight), bottomRight, 0, (float)(Math.PI * .5), true);
-            bezierPath.AddArc(new CGPoint((float)bounds.X + bottomLeft, (float)bounds.Y + bounds.Height - bottomLeft), bottomLeft, (float)(Math.PI * .5), (float)Math.PI, true);
-            bezierPath.AddArc(new CGPoint((float)bounds.X + topLeft, (float)bounds.Y + topLeft), topLeft, (float)Math.PI, (float)(Math.PI * 1.5), true);
-            bezierPath.ClosePath();
-
-            return bezierPath;
-        }
+        public UIBezierPath GetRoundCornersPath(CGRect bounds) =>
+            BackgroundKit.GetRoundCornersPath(bounds, _cornerRadius);
 
         #endregion
         

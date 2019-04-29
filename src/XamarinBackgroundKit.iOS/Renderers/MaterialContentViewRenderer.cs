@@ -49,6 +49,14 @@ namespace XamarinBackgroundKit.iOS.Renderers
             return new Class(typeof(GradientStrokeLayer));
         }
 
+        public override void LayoutSubviews()
+        {
+            base.LayoutSubviews();
+
+            if (!(_visualElementTracker is MaterialVisualElementTracker tracker)) return;
+            tracker.InvalidateLayer();
+        }
+
         #region IVisualElementRenderer Implementation	
 
         void IVisualElementRenderer.SetElement(VisualElement element)

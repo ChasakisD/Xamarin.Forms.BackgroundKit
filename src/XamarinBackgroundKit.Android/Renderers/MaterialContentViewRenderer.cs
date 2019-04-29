@@ -182,7 +182,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         
         protected override void DispatchDraw(Canvas canvas)
         {
-            if (Element.IsClippedToBounds)
+            if (Element.Background.IsClippedToBounds)
             {
                 _clipPathManager.ClipCanvas(Context, canvas, Element.Background.CornerRadius);
             }

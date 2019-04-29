@@ -49,6 +49,7 @@ namespace XamarinBackgroundKitSample
                 BackgroundEffect.SetBackground(view, Background);
             }
 
+            Background.IsClippedToBounds = true;
             Background.SetBinding(Background.BorderWidthProperty, new Binding("Value", source: BorderWidthSlider));
             Background.SetBinding(Background.DashGapProperty, new Binding("Value", source: DashGapSlider));
             Background.SetBinding(Background.DashWidthProperty, new Binding("Value", source: DashWidthSlider));

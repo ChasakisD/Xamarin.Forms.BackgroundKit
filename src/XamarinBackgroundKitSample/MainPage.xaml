@@ -44,19 +44,24 @@
                 <Label Margin="8" Text="Material Card with Ripple!" />
             </controls:MaterialCard>
 
-            <controls:MaterialContentView
-                x:Name="SimpleView"
-                HeightRequest="60"
-                IsCornerRadiusHalfHeight="True">
+            <controls:MaterialContentView x:Name="SimpleView" HeightRequest="120">
                 <controls:MaterialContentView.Background>
                     <controls:Background
                         BorderColor="Gray"
                         BorderWidth="4"
+                        CornerRadius="40,40,0,0"
                         Elevation="4"
+                        IsClippedToBounds="True"
                         IsRippleEnabled="True"
                         RippleColor="#10000000"
                         Color="Green" />
                 </controls:MaterialContentView.Background>
+
+                <Image
+                    Aspect="AspectFill"
+                    HorizontalOptions="FillAndExpand"
+                    Source="https://devblogs.microsoft.com/xamarin/wp-content/uploads/sites/44/2018/11/Codemonkeys2.jpg"
+                    VerticalOptions="FillAndExpand" />
             </controls:MaterialContentView>
 
             <controls:MaterialContentView HeightRequest="60" IsCornerRadiusHalfHeight="True">

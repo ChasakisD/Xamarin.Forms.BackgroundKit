@@ -36,7 +36,11 @@
             Spacing="8"
             Visual="Default">
             <effects:BackgroundEffect.Background>
-                <controls:Background Elevation="4" Color="White" />
+                <OnPlatform x:TypeArguments="controls:Background">
+                    <On Platform="Android">
+                        <controls:Background Elevation="4" Color="White" />
+                    </On>
+                </OnPlatform>
             </effects:BackgroundEffect.Background>
         </StackLayout>
 

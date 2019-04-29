@@ -10,5 +10,7 @@ namespace XamarinBackgroundKit.Abstractions
         bool IsRippleEnabled { get; }
         
         Color RippleColor { get; }
+
+        bool IsClippedToBounds { get; }
     }
 }

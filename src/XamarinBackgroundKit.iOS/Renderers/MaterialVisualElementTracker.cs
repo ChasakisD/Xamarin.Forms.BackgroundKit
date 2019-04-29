@@ -1,6 +1,8 @@
 ﻿using MaterialComponents;
 using System;
 using System.ComponentModel;
+using System.Linq;
+using CoreAnimation;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -111,7 +113,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 UpdateElevation();
                 UpdateCornerRadius();
                 UpdateRipple();
-                UpdateClipToBounds();
+                InvalidateClipToBounds();
                 return;
             }
             
@@ -134,15 +136,21 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (oldElement.CornerRadius != newElement.CornerRadius)
                 UpdateCornerRadius();
 
-            UpdateClipToBounds();
+            InvalidateClipToBounds();
         }
 
         public void InvalidateLayer()
         {
-            var layer = _renderer.NativeView.FindLayerOfType<GradientStrokeLayer>();
-            if(layer == null) return;
-            
-            layer.Frame = _renderer.NativeView.Bounds;
+            if (!(_renderer.NativeView is MaterialContentViewRenderer))
+            {
+                var layer = _renderer.NativeView.FindLayerOfType<GradientStrokeLayer>();
+                if (layer == null) return;
+
+                layer.Frame = _renderer.NativeView.Bounds;
+            }
+
+            InvalidateClipToBounds();
+            EnsureRippleOnFront();
         }
         
         private void InvalidateGradientsRequested(object sender, EventArgs e)
@@ -174,7 +182,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
                      || e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
             else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
-            else if (e.PropertyName == Layout.IsClippedToBoundsProperty.PropertyName) UpdateClipToBounds();
+            else if (e.PropertyName == Background.IsClippedToBoundsProperty.PropertyName) InvalidateClipToBounds();
         }
 
         private void UpdateRipple()
@@ -188,19 +196,21 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     _inkTouchController = new InkTouchController(_renderer.NativeView);
                     _inkTouchController.AddInkView();
                 }
-                
-                if(_inkTouchController?.DefaultInkView == null) return;
-                
+
+                InvalidateClipToBounds();
+
+                if (_inkTouchController?.DefaultInkView == null) return;
+                _inkTouchController.DefaultInkView.UsesLegacyInkRipple = false;
+
                 if (_backgroundElement.RippleColor != Color.Default)
                 {
                     _inkTouchController.DefaultInkView.InkColor = _backgroundElement.RippleColor.ToUIColor();
                 }
-                
-                _inkTouchController.DefaultInkView.Layer.CornerRadius = (float) _backgroundElement.CornerRadius.TopLeft;
             }
             else if (_inkTouchController != null && !_backgroundElement.IsRippleEnabled)
             {
                 _inkTouchController.CancelInkTouchProcessing();
+                _inkTouchController?.DefaultInkView?.RemoveFromSuperview();
                 _inkTouchController?.Dispose();
                 _inkTouchController = null;
             }
@@ -215,12 +225,11 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     ? Color.Default
                     : _visualElement.BackgroundColor
                 : _backgroundElement.Color;
-
-            if (color == Color.Default) return;
-
+            
             switch (_renderer.NativeView)
             {
                 case Card mCard:
+                    if (color == Color.Default) return;
                     using (var themer = new SemanticColorScheme())
                     {
                         themer.SurfaceColor = _backgroundElement.Color.ToUIColor();
@@ -228,13 +237,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     }
                     break;
                 case ChipView mChip:
+                    if (color == Color.Default) return;
                     mChip.SetBackgroundColor(_backgroundElement.Color.ToUIColor(), UIControlState.Normal);
                     break;
                 case MButton mButton:
+                    if (color == Color.Default) return;
                     mButton.SetBackgroundColor(_backgroundElement.Color.ToUIColor());
                     break;
                 default:
                     _renderer.NativeView.BackgroundColor = UIColor.Clear;
+
+                    if (color == Color.Default) return;
                     _renderer.NativeView.SetColor(_backgroundElement.Color);
                     break;
             }
@@ -279,9 +292,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     break;
                 default:
                     _renderer.NativeView.SetCornerRadius(_backgroundElement);
-                    
-                    if(_inkTouchController?.DefaultInkView?.Layer == null) return;
-                    _inkTouchController.DefaultInkView.Layer.CornerRadius = (float) _backgroundElement.CornerRadius.TopLeft;
+                    InvalidateClipToBounds();
                     break;
             }
         }
@@ -304,11 +315,47 @@ namespace XamarinBackgroundKit.iOS.Renderers
             }
         }
 
-        private void UpdateClipToBounds()
+        public void InvalidateClipToBounds()
         {
-            if (_renderer?.NativeView == null || !(_visualElement is Layout layout)) return;
+            if (_renderer.NativeView?.Subviews == null || _renderer.NativeView.Subviews.Length <= 0) return;
 
-            _renderer.NativeView.ClipsToBounds = layout.IsClippedToBounds;
+            foreach (var subView in _renderer.NativeView.Subviews)
+            {
+                ApplyMaskToView(subView);
+            }
+        }
+
+        private void ApplyMaskToView(UIView view)
+        {
+            if (view?.Layer == null) return;
+
+            view.Layer.Mask?.Dispose();
+            if (_backgroundElement.IsClippedToBounds)
+            {
+                view.Layer.Mask = new CAShapeLayer
+                {
+                    Frame = view.Layer.Bounds,
+                    Path = BackgroundKit
+                        .GetRoundCornersPath(view.Layer.Bounds, _backgroundElement.CornerRadius).CGPath
+                };
+                view.Layer.MasksToBounds = true;
+            }
+            else
+            {
+                view.Layer.Mask = null;
+                view.Layer.MasksToBounds = false;
+            }
+        }
+
+        public void EnsureRippleOnFront()
+        {
+            if (_renderer.NativeView?.Subviews == null || _renderer.NativeView.Subviews.Length <= 0) return;
+
+            foreach (var subView in _renderer.NativeView.Subviews)
+            {
+                if (!(subView is InkView)) continue;
+                _renderer.NativeView.BringSubviewToFront(subView);
+            }
         }
 
         protected override void Dispose(bool disposing)
