@@ -14,13 +14,17 @@
 
 #### Android
 <img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/contentViewAndroid.gif" width="280" /> | 
-<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/searchBarAndroid.gif" width="280" /> | 
-<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/cornerRadiiElevation.png" width="280" /> | 
-<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_android.png" width="280" />
+<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/searchBarAndroid.gif" width="280" />
 
-#### iOS
-<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/cornerRadiiElevation-iOS.png" width="280" /> |
-<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_ios.png" width="280" />
+#### iOS (Gifs coming soon...)
+
+### Clipping and Shadow Support
+<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/cornerRadiiElevation.png" height="450" width="280" /> | 
+<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/cornerRadiiElevation-iOS.png" height="560" width="280" /> 
+
+<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_android.png" height="450" width="280" /> |
+<img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_ios.png" height="560" width="280" />
+
 
 ### What was hard
 
