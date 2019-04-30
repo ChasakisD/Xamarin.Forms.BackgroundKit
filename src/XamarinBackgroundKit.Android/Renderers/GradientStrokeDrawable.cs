@@ -2,6 +2,7 @@
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
+using Android.OS;
 using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
@@ -23,6 +24,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         private float[] _positions;
         private float[] _colorPositions;
 
+        private Path _clipPath;
+        private Paint _emptyPaint;
         private Paint _strokePaint;
         private int[] _strokeColors;
         private float[] _strokePositions;
@@ -35,7 +38,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             _context = context;
 
             if (background == null) return;
-            
             SetColor(background.Color);
             SetCornerRadius(background.CornerRadius);
             SetStroke(background.BorderWidth, background.BorderColor);
@@ -47,13 +49,11 @@ namespace XamarinBackgroundKit.Android.Renderers
         private void Initialize()
         {
             Shape = new RectShape();
-            
-            _strokePaint = new Paint
-            {
-                Dither = true,
-                AntiAlias = true
-            };
-            
+
+            _clipPath = new Path();
+
+            _emptyPaint = new Paint(PaintFlags.AntiAlias);
+            _strokePaint = new Paint(PaintFlags.AntiAlias);
             _strokePaint.SetStyle(Paint.Style.Stroke);
         }
         
@@ -74,7 +74,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             {
                 _strokePaint.Color = strokeColor.ToAndroid();
             }
-            
+
             InvalidateSelf();
         }
 
@@ -169,6 +169,30 @@ namespace XamarinBackgroundKit.Android.Renderers
         
         protected override void OnDraw(Shape shape, Canvas canvas, Paint paint)
         {
+            InitializePaints(canvas);
+            InitializeClippingPath(canvas);
+
+            /*
+             * On Android Pie when drawing stroke via DrawPath()
+             * after clipping the mask, when CornerRadius was set,
+             * the outer stroke was not clipped.
+             *
+             * By drawing on a bitmap and then draw that bitmap
+             * inside the clipped canvas outer stroke was clipped!
+             */
+            if (Build.VERSION.SdkInt > BuildVersionCodes.OMr1)
+            {
+                DrawApi28(canvas);
+            }
+            else
+            {
+                base.OnDraw(shape, canvas, paint);
+                canvas.DrawPath(_clipPath, _strokePaint);
+            }
+        }
+
+        private void InitializePaints(Canvas canvas)
+        {
             if (_colors != null && _positions != null && _colorPositions != null)
             {
                 Paint.SetShader(new LinearGradient(
@@ -185,10 +209,6 @@ namespace XamarinBackgroundKit.Android.Renderers
                 Paint.SetShader(null);
             }
 
-            base.OnDraw(shape, canvas, paint);
-
-            if (_strokePaint == null) return;
-
             if (_strokeColors != null && _strokePositions != null && _strokeColorPositions != null)
             {
                 _strokePaint.SetShader(new LinearGradient(
@@ -204,15 +224,32 @@ namespace XamarinBackgroundKit.Android.Renderers
             {
                 _strokePaint.SetShader(null);
             }
+        }
 
+        private void InitializeClippingPath(Canvas canvas)
+        {
             var cornerRadii = _cornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+            var bounds = new RectF(0, 0, canvas.Width, canvas.Height);
 
-            var roundClipPath = new Path();
-            roundClipPath.AddRoundRect(0, 0, canvas.Width, canvas.Height, cornerRadii, Path.Direction.Cw);
+            _clipPath.Reset();
+            _clipPath.AddRoundRect(bounds, cornerRadii, Path.Direction.Cw);
 
-            canvas.ClipPath(roundClipPath);
+            canvas.ClipPath(_clipPath);
+        }
 
-            shape.Draw(canvas, _strokePaint);
+        private void DrawApi28(Canvas canvas)
+        {
+            if (canvas.Width <= 0 || canvas.Height <= 0) return;
+
+            using (var config = Bitmap.Config.Argb8888)
+            using (var bitmap = Bitmap.CreateBitmap(canvas.Width, canvas.Height, config))
+            using (var copyCanvas = new Canvas(bitmap))
+            {
+                copyCanvas.DrawPath(_clipPath, Paint);
+                copyCanvas.DrawPath(_clipPath, _strokePaint);
+
+                canvas.DrawBitmap(bitmap, 0, 0, _emptyPaint);
+            }
         }
 
         protected override void Dispose(bool disposing)

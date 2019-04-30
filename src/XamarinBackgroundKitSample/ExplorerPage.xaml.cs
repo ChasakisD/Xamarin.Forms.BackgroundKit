@@ -64,7 +64,7 @@ namespace XamarinBackgroundKitSample
             Background.BorderGradientBrush.SetBinding(LinearGradientBrush.AngleProperty, new Binding("Value", source: BorderGradientAngleSlider));
 
             Container.Children.Add(view);
-            
+
             _gradientsStackItems = new ObservableCollection<GradientStop>();
             Background.GradientBrush.Gradients = _gradientsStackItems;
             BindableLayout.SetItemsSource(GradientsLayout, _gradientsStackItems);
