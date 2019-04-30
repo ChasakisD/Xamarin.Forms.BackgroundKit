@@ -3,34 +3,34 @@
     x:Class="XamarinBackgroundKitSample.ExploreViewsPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:controls="clr-namespace:XamarinBackgroundKit.Controls;assembly=XamarinBackgroundKit"
+    xmlns:background="http://xamarin.com/schemas/2014/forms/background"
     Title="Explore Views"
     BackgroundColor="White">
     <ContentPage.Resources>
         <DataTemplate x:Key="ControlsDataTemplate" x:DataType="{x:Type x:String}">
             <ContentView Padding="16,8">
-                <controls:MaterialContentView
+                <background:MaterialContentView
                     Padding="8"
+                    BackgroundColor="Wheat"
                     Clicked="OnItemClicked"
                     HeightRequest="96"
                     VerticalOptions="Start"
-                    WidthRequest="120"
-                    BackgroundColor="Wheat">
-                    <controls:MaterialContentView.Background>
-                        <controls:Background
+                    WidthRequest="120">
+                    <background:MaterialContentView.Background>
+                        <background:Background
                             CornerRadius="10"
                             Elevation="4"
                             IsRippleEnabled="True"
                             RippleColor="#80FF0000"
                             Color="#F5F5F5" />
-                    </controls:MaterialContentView.Background>
+                    </background:MaterialContentView.Background>
 
                     <Label
                         FontSize="18"
                         HorizontalTextAlignment="Center"
                         Text="{Binding .}"
                         VerticalTextAlignment="Center" />
-                </controls:MaterialContentView>
+                </background:MaterialContentView>
             </ContentView>
         </DataTemplate>
     </ContentPage.Resources>
@@ -44,22 +44,22 @@
         </ScrollView.Resources>
         <StackLayout Spacing="8">
             <StackLayout>
-                <controls:MaterialContentView
+                <background:MaterialContentView
                     Padding="8"
                     Clicked="OnItemClicked"
                     HeightRequest="96"
                     VerticalOptions="Start"
                     WidthRequest="120">
-                    <controls:MaterialContentView.Background>
-                        <controls:Background Elevation="4" Color="White" />
-                    </controls:MaterialContentView.Background>
+                    <background:MaterialContentView.Background>
+                        <background:Background Elevation="4" Color="White" />
+                    </background:MaterialContentView.Background>
 
                     <Label
                         FontSize="28"
                         HorizontalTextAlignment="Center"
                         Text="Welcome to Xamarin BackgroundKit"
                         VerticalTextAlignment="Center" />
-                </controls:MaterialContentView>
+                </background:MaterialContentView>
             </StackLayout>
 
             <StackLayout Margin="8,16,8,0">
