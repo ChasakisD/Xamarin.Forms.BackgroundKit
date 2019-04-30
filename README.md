@@ -34,7 +34,7 @@ Mixing Gradient on border with gradient on background was a really painful chall
 
 ### Break some limitations 
 
-#### Android
+### Android
 
 ViewOutlineProvider only supports clipping that can be represented as a rectangle, circle, or round rect. See more at [documentation](https://developer.android.com/reference/android/graphics/Outline.html#canClip()).
 Setting ```SetConvexPath()``` to the outline has no effect on clipping the view, since the ```CanClip()``` method returns false.
