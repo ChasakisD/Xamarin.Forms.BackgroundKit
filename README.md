@@ -3,6 +3,8 @@
 
 📐 Corner Radius | 🎨 Background Gradients | 🍩 Borders | 🌈 Border Gradients | 🙏 Shadows
 
+[![NuGet Version](https://buildstats.info/nuget/Xamarin.Forms.BackgroundKit)](https://www.nuget.org/packages/Xamarin.Forms.BackgroundKit)
+
 * [Screenshots](#Screenshots)
 * [What was hard](#What-was-hard)
 * [Break some limitations](#Break-some-limitations)

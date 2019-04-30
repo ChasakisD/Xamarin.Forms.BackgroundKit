@@ -189,8 +189,6 @@ namespace XamarinBackgroundKit.Controls
 
         #region Setup Circle
 
-        private bool _blockFirstTime = true;
-
         protected override void OnSizeAllocated(double width, double height)
         {
             base.OnSizeAllocated(width, height);

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package>
   <metadata>
     <id>Xamarin.Forms.BackgroundKit</id>
     <version>1.0.0</version>
@@ -10,7 +10,7 @@
     <description>The way the Xamarin.Forms Background Customization in Xamarin.Forms should be</description>
     <summary>Xamarin.Forms Background Customization Library</summary>
     <projectUrl>https://github.com/ChasakisD/Xamarin.Forms.BackgroundKit</projectUrl>
-    <licenseUrl>https://github.com/ChasakisD/Xamarin.Forms.BackgroundKit/blob/master/LICENSE</licenseUrl>
+    <license type="file">LICENSE.md</license>
     <copyright>Copyright 2018</copyright>
     <tags>background, material, cardview, card, corner, cornerradius, radius, border, ripple, gradient, elevation, xamarin, forms, android, xamarin.forms, ios</tags>
     <dependencies>
@@ -29,6 +29,8 @@
   </metadata>
 
   <files>
+
+    <file src="..\LICENSE.md" target="" />
 
     <!--netstandard-->
 
