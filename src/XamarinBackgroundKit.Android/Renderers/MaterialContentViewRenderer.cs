@@ -9,6 +9,7 @@ using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
+using XamarinBackgroundKit.Extensions;
 using AView = Android.Views.View;
 
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
