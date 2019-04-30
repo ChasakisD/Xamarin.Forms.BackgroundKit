@@ -1,8 +1,7 @@
-﻿using MaterialComponents;
+﻿using CoreAnimation;
+using MaterialComponents;
 using System;
 using System.ComponentModel;
-using System.Linq;
-using CoreAnimation;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -198,7 +197,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 }
 
                 InvalidateClipToBounds();
-
+                
                 if (_inkTouchController?.DefaultInkView == null) return;
                 _inkTouchController.DefaultInkView.UsesLegacyInkRipple = false;
 
@@ -317,8 +316,31 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         public void InvalidateClipToBounds()
         {
-            if (_renderer.NativeView?.Subviews == null || _renderer.NativeView.Subviews.Length <= 0) return;
+            if (_renderer.NativeView == null) return;
+            if (_renderer.NativeView.Layer != null)
+            {
+                /*
+                 * MDCInkView
+                 * From https://github.com/material-components/material-components-ios-codelabs/blob/master/MDC-111/Swift/Starter/Pods/MaterialComponents/components/Ink/src/MDCInkView.m
+                 * MDCInkView uses SuperView's ShadowPath in order to mask the ripple
+                 * So we calculate the rounded corners path and we set it to the ShadowPath
+                 * but with ShadowOpacity to 0 in order to not overlap the MDCShadowLayer
+                 */
 
+                _renderer.NativeView.Layer.ShadowPath?.Dispose();
+                if (_backgroundElement.IsRippleEnabled)
+                {
+                    _renderer.NativeView.Layer.ShadowOpacity = 0;
+                    _renderer.NativeView.Layer.ShadowPath = BackgroundKit
+                        .GetRoundCornersPath(_renderer.NativeView.Layer.Bounds, _backgroundElement.CornerRadius).CGPath;
+                }
+                else
+                {
+                    _renderer.NativeView.Layer.ShadowPath = null;
+                }
+            }
+            
+            if (_renderer.NativeView.Subviews == null) return;
             foreach (var subView in _renderer.NativeView.Subviews)
             {
                 ApplyMaskToView(subView);
