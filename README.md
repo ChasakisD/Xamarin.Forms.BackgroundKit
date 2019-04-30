@@ -27,7 +27,6 @@
 <img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_android.png" width="280" /> |
 <img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_ios.png" height="560" width="280" />
 
-
 ### What was hard
 
 Mixing Gradient on border with gradient on background was a really painful challenge. On Android I had to deal with custom Drawables and CALayers on iOS. Also, on Android, making elevation and clipping work for different radius on each corner was a trial and error pain. An outline provider has been made in order to support cornerRadii. GradientStrokeDrawable extends GradientDrawable and draws a custom paint(to replicate the border) into the shape of the view. On iOS, the GradientStrokeLayer also extends CAGradientLayer and it has a ShadowLayer and another one CAGradientLayer for the border. Clipping on iOS is done through a CAShapeLayer.
@@ -39,11 +38,11 @@ Mixing Gradient on border with gradient on background was a really painful chall
 ViewOutlineProvider only supports clipping that can be represented as a rectangle, circle, or round rect. See more at [documentation](https://developer.android.com/reference/android/graphics/Outline.html#canClip()).
 Setting ```SetConvexPath()``` to the outline has no effect on clipping the view, since the ```CanClip()``` method returns false.
 
-##### Clipping SubViews
+#### Clipping SubViews
 
 Clipping subviews (e.g. clip an image inside a stacklayout with rounded corners) is only supported by ```MaterialContentView``` and it clips its subviews by clipping the Canvas on ```DispatchDraw()```. Since ```DispatchDraw``` must be overwritten in order to make clip to a path happen, clipping on xamarin.forms views is not supported. If there is any other way, i'm glad to accept it as a PR.
 
-##### Clipping Drawable
+#### Clipping Drawable
 
 On Android, the GradientStrokeDrawable is clipping the outer stroke by ```Canvas.ClipPath()```, and sets the stroke the double value. Although, this seems to work on API <= 27, on API 28, outer stroke was not clipped by the ```ClipPath()``` method. To resolve this issue, instead of drawing directly to the canvas, it draws to a bitmap, then clips the canvas by ```ClipPath()``` and then ```DrawBitmap()``` is called.
 
