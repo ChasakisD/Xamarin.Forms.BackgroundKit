@@ -7,6 +7,7 @@ using XamarinBackgroundKit.Abstractions;
 
 namespace XamarinBackgroundKit.Controls
 {
+    [ContentProperty(nameof(Gradients))]
     public class LinearGradientBrush : BindableObject
     {
         public static readonly BindableProperty AngleProperty = BindableProperty.Create(

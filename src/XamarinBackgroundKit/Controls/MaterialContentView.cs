@@ -201,29 +201,11 @@ namespace XamarinBackgroundKit.Controls
 
         public virtual void InvalidateCircle(double width, double height)
         {
-            if (!IsCircle) return;
+            if (!IsCircle || width <= 0 || height <= 0) return;
 
             var desiredCircleSize = Math.Max(width, height);
 
             InvalidateCircleCorner(desiredCircleSize / 2);
-
-            /*
-             * HACK THE BOX:
-             * In iOS, while in the Layout Process, at first it calculates the paddings,
-             * and second it measures the View. So the actual width and height comes at the second
-             * time. So it will update the circle dimensions according to latest ones.
-             * This hack prevents to set WidthRequest with only the Padding.
-             * If we make this mistake, our view, will have Width = Padding.Left + Padding.Right.
-             */
-            if (Device.RuntimePlatform == Device.iOS)
-            {
-                if (_blockFirstTime)
-                {
-                    _blockFirstTime = false;
-                    return;
-                }
-            }
-
             InvalidateCircleDimensions(desiredCircleSize);
         }
 
