@@ -1,72 +1,71 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <metadata>
-        <id>XamarinBackgroundKit</id>
-        <version>1.0.0</version>
-        <title>XamarinBackgroundKit</title>
-        <authors>ChasakisD</authors>
-        <owners>ChasakisD</owners>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>The way the Xamarin.Forms Background Customization in Xamarin.Forms should be</description>
-        <summary>Xamarin.Forms Background Customization Library</summary>
-        <releaseNotes>
-          [1.0.0] Initial Release
-        </releaseNotes>
-        <copyright>Copyright 2018</copyright>
-        <tags>background, material, cardview, card, corner, cornerradius, gradient, elevation, xamarin, forms, android, xamarin.forms, ios</tags>
-        <dependencies>
-            <group targetFramework="netstandard2.0">
-                <dependency id="Xamarin.Forms" version="4.0.0.250467-pre7" />
-            </group>
-            <group targetFramework="MonoAndroid90">
-                <dependency id="Xamarin.Forms" version="4.0.0.250467-pre7" />
-                <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.250467-pre7" />
-            </group>
-            <group targetFramework="Xamarin.iOS10">
-                <dependency id="Xamarin.Forms" version="4.0.0.250467-pre7" />
-                <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.250467-pre7" />
-            </group>
-        </dependencies>
-    </metadata>
-    
-    <files>
+  <metadata>
+    <id>Xamarin.Forms.BackgroundKit</id>
+    <version>1.0.0</version>
+    <title>Xamarin.Forms.BackgroundKit</title>
+    <authors>ChasakisD</authors>
+    <owners>ChasakisD</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>The way the Xamarin.Forms Background Customization in Xamarin.Forms should be</description>
+    <summary>Xamarin.Forms Background Customization Library</summary>
+    <projectUrl>https://github.com/ChasakisD/Xamarin.Forms.BackgroundKit</projectUrl>
+    <licenseUrl>https://github.com/ChasakisD/Xamarin.Forms.BackgroundKit/blob/master/LICENSE</licenseUrl>
+    <copyright>Copyright 2018</copyright>
+    <tags>background, material, cardview, card, corner, cornerradius, radius, border, ripple, gradient, elevation, xamarin, forms, android, xamarin.forms, ios</tags>
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Xamarin.Forms" version="4.0.0.346134-pre9" />
+      </group>
+      <group targetFramework="MonoAndroid90">
+        <dependency id="Xamarin.Forms" version="4.0.0.346134-pre9" />
+        <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.346134-pre9" />
+      </group>
+      <group targetFramework="Xamarin.iOS10">
+        <dependency id="Xamarin.Forms" version="4.0.0.346134-pre9" />
+        <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.346134-pre9" />
+      </group>
+    </dependencies>
+  </metadata>
 
-      <!--netstandard-->
-    
-        <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.dll" 
-            target="lib\netstandard2.0" />
-        <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.pdb" 
-            target="lib\netstandard2.0" />
-    
+  <files>
+
     <!--netstandard-->
-    
+
+    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.dll"
+        target="lib\netstandard2.0" />
+    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.pdb"
+        target="lib\netstandard2.0" />
+
+    <!--netstandard-->
+
     <!--Android-->
-    
-        <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.dll" 
-            target="lib\MonoAndroid90" />
-        <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.pdb" 
-            target="lib\MonoAndroid90" />
-    
-        <file src="..\src\XamarinBackgroundKit.Android\bin\Release\XamarinBackgroundKit.Android.dll" 
-            target="lib\MonoAndroid90" />
-        <file src="..\src\XamarinBackgroundKit.Android\bin\Release\XamarinBackgroundKit.Android.pdb" 
-            target="lib\MonoAndroid90" />
-    
+
+    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.dll"
+        target="lib\MonoAndroid90" />
+    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.pdb"
+        target="lib\MonoAndroid90" />
+
+    <file src="..\src\XamarinBackgroundKit.Android\bin\Release\XamarinBackgroundKit.Android.dll"
+        target="lib\MonoAndroid90" />
+    <file src="..\src\XamarinBackgroundKit.Android\bin\Release\XamarinBackgroundKit.Android.pdb"
+        target="lib\MonoAndroid90" />
+
     <!--Android-->
-    
+
     <!--iOS-->
 
-        <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.dll"
-              target="lib\Xamarin.iOS10" />
-        <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.pdb"
-              target="lib\Xamarin.iOS10" />
+    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.dll"
+          target="lib\Xamarin.iOS10" />
+    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.pdb"
+          target="lib\Xamarin.iOS10" />
 
-        <file src="..\src\XamarinBackgroundKit.iOS\bin\Release\XamarinBackgroundKit.iOS.dll" 
-            target="lib\Xamarin.iOS10" />
-        <file src="..\src\XamarinBackgroundKit.iOS\bin\Release\XamarinBackgroundKit.iOS.pdb" 
-            target="lib\Xamarin.iOS10" />
-    
+    <file src="..\src\XamarinBackgroundKit.iOS\bin\Release\XamarinBackgroundKit.iOS.dll"
+        target="lib\Xamarin.iOS10" />
+    <file src="..\src\XamarinBackgroundKit.iOS\bin\Release\XamarinBackgroundKit.iOS.pdb"
+        target="lib\Xamarin.iOS10" />
+
     <!--iOS-->
-    
-    </files>
+
+  </files>
 </package>
