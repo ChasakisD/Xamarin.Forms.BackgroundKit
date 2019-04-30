@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Controls;
-using XamarinBackgroundKit.Extensions;
 
 namespace XamarinBackgroundKitSample
 {

@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms" Version="4.0.0.250467-pre7" />
+    <PackageReference Include="Xamarin.Forms" Version="4.0.0.346134-pre9" />
   </ItemGroup>
 
 </Project>

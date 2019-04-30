@@ -43,7 +43,7 @@ namespace XamarinBackgroundKitSample
             {
                 button.Text = "Test Text";
             }
-
+            
             Background = new Background();
             if (view is MaterialContentView materialView)
             {
