@@ -30,6 +30,20 @@
             Margin="16"
             Padding="4"
             Spacing="16">
+            <BoxView
+                HeightRequest="40"
+                HorizontalOptions="Center"
+                WidthRequest="40">
+                <background:BackgroundEffect.Background>
+                    <background:Background
+                        CornerRadius="10"
+                        Elevation="4"
+                        IsRippleEnabled="True"
+                        RippleColor="WhiteSmoke"
+                        Color="DarkRed" />
+                </background:BackgroundEffect.Background>
+            </BoxView>
+
             <background:MaterialContentView
                 Padding="8"
                 HorizontalOptions="Center"
@@ -238,7 +252,11 @@
                 Padding="16"
                 HorizontalOptions="FillAndExpand">
                 <background:BackgroundEffect.Background>
-                    <background:Background CornerRadius="20" Elevation="16">
+                    <background:Background
+                        CornerRadius="20"
+                        Elevation="16"
+                        IsRippleEnabled="True"
+                        RippleColor="White">
                         <background:Background.GradientBrush>
                             <background:LinearGradientBrush Angle="0">
                                 <background:LinearGradientBrush.Gradients>

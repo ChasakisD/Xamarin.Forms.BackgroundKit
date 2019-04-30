@@ -36,8 +36,13 @@ namespace XamarinBackgroundKit.iOS.Effects
 
             if (View?.Layer == null) return;
 
-            if (Element is Layout)
+            if (Element is Layout || Container is BoxRenderer)
             {
+                if (Container != null)
+                {
+                    Container.UserInteractionEnabled = true;
+                }
+
                 _isLayerObserver = true;
                 _layoutChangeObserver = View.Layer.AddObserver(
                     "bounds",
