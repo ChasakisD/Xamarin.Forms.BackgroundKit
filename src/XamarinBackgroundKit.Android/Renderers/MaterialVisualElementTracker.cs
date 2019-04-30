@@ -6,8 +6,6 @@ using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using System;
 using System.ComponentModel;
-using Android.Graphics;
-using Android.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;

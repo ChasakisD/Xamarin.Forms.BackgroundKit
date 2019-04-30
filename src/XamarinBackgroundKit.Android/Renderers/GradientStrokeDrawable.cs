@@ -82,7 +82,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         {
             if (dashWidth <= 0 || dashGap <= 0)
             {
-                _strokePaint.SetPathEffect(new PathEffect());
+                _strokePaint.SetPathEffect(null);
             }
             else
             {
