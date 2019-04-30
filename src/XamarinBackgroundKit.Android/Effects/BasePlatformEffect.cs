@@ -17,7 +17,7 @@ namespace XamarinBackgroundKit.Android.Effects
 
         protected bool IsDisposed =>
             (Container as IVisualElementRenderer)?.Element == null ||
-            (View == null || View?.Handle == IntPtr.Zero);
+            View == null || View?.Handle == IntPtr.Zero;
 
         protected override void OnAttached()
         {
@@ -25,7 +25,6 @@ namespace XamarinBackgroundKit.Android.Effects
             XElement = Element as TElement;
 
             if (Element?.Effects == null || Element.Effects.Count == 0) return;
-
             Effect = (TEffect)Element.Effects.FirstOrDefault(x => x is TEffect);
         }
 
