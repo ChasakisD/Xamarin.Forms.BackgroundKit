@@ -39,6 +39,11 @@ namespace XamarinBackgroundKitSample
 
             Title = $"{view.GetType().Name} Explorer";
 
+            if (view is Button button)
+            {
+                button.Text = "Test Text";
+            }
+
             Background = new Background();
             if (view is MaterialContentView materialView)
             {

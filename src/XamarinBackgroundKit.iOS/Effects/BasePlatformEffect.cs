@@ -15,19 +15,23 @@ namespace XamarinBackgroundKit.iOS.Effects
         protected TElement XElement;
         protected TNativeView View;
 
-        protected bool IsDisposed => (Container as IVisualElementRenderer)?.Element == null || View.Handle == IntPtr.Zero;
+        protected bool IsDisposed =>
+            (Container as IVisualElementRenderer)?.Element == null ||
+            View == null || View.Handle == IntPtr.Zero;
 
-        protected override void OnAttached() => SetUpEffectProperties();
-
-        protected override void OnDetached() => SetUpEffectProperties();
-
-        private void SetUpEffectProperties()
+        protected override void OnAttached()
         {
             View = (Control ?? Container) as TNativeView;
             XElement = Element as TElement;
 
             if (Element?.Effects == null || Element.Effects.Count == 0) return;
-            Effect = Element.Effects.FirstOrDefault(x => x is TEffect) as TEffect;
+            Effect = (TEffect)Element.Effects.FirstOrDefault(x => x is TEffect);
+        }
+
+        protected override void OnDetached()
+        {
+            View = (Control ?? Container) as TNativeView;
+            XElement = Element as TElement;
         }
     }
 }
