@@ -1,178 +1,56 @@
 ﻿using Android.Content;
 using Android.Graphics;
-using Android.Support.V4.View;
 using Android.Views;
-using System;
 using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
-using XamarinBackgroundKit.Extensions;
 using AView = Android.Views.View;
+using View = Xamarin.Forms.View;
 
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
     [Preserve(AllMembers = true)]
-    public class MaterialContentViewRenderer : 
-        FormsViewGroup, 
-        IViewRenderer, 
-        IVisualElementRenderer,
-        IEffectControlProvider,
-        AView.IOnClickListener
+    public class MaterialContentViewRenderer : ViewRenderer, AView.IOnClickListener
 	{
         private bool _disposed;
 		private bool _isClickListenerSet;
-        private int? _defaultLabelFor;
 
         private ClipPathManager _clipPathManager;
-		private VisualElementTracker _visualElementTracker;
-		private VisualElementPackager _visualElementPackager;
+		private MaterialBackgroundManager _materialBackgroundManager;
 
-		#region IVisualElementRenderer Properties
+        private MaterialContentView ElementController => Element as MaterialContentView;
 
-		private MaterialContentView _element;
-		protected MaterialContentView Element
-		{
-			get => _element;
-			set
-			{
-				if (_element == value) return;
-				var oldElement = _element;
-				_element = value;
+        public MaterialContentViewRenderer(Context context) : base(context) { }
 
-				OnElementChanged(new ElementChangedEventArgs<MaterialContentView>(oldElement, _element));
-			}
-		}
-
-		AView IVisualElementRenderer.View => this;
-		ViewGroup IVisualElementRenderer.ViewGroup => this;
-		VisualElement IVisualElementRenderer.Element => Element;
-		VisualElementTracker IVisualElementRenderer.Tracker => _visualElementTracker;
-
-		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
-		public event EventHandler<PropertyChangedEventArgs> ElementPropertyChanged;
-
-		#endregion
-
-		public MaterialContentViewRenderer(Context context) : base(context) { }
-
-		#region IViewRenderer Implementation
-
-		void IViewRenderer.MeasureExactly()
-		{
-			if (Element == null) return;
-
-			if (Element.Width <= 0 || Element.Height <= 0) return;
-
-			var widthPixels = (int)Context.ToPixels(Element.Width);
-			var heightPixels = (int)Context.ToPixels(Element.Height);
-
-			var widthMeasureSpec = MeasureSpec.MakeMeasureSpec(widthPixels, MeasureSpecMode.Exactly);
-			var heightMeasureSpec = MeasureSpec.MakeMeasureSpec(heightPixels, MeasureSpecMode.Exactly);
-
-			Measure(widthMeasureSpec, heightMeasureSpec);
-		}
-
-		#endregion
-
-		#region IVisualRenderer Implementation
-
-		void IVisualElementRenderer.SetLabelFor(int? id)
-		{
-			if (_defaultLabelFor == null)
-				_defaultLabelFor = ViewCompat.GetLabelFor(this);
-
-			ViewCompat.SetLabelFor(this, (int)(id ?? _defaultLabelFor));
-		}
-
-		void IVisualElementRenderer.UpdateLayout()
-		{
-			_visualElementTracker?.UpdateLayout();
-		}
-
-		void IVisualElementRenderer.SetElement(VisualElement element)
-		{
-			Element = element as MaterialContentView;
-
-			if (Element == null || string.IsNullOrEmpty(Element?.AutomationId)) return;
-
-			ContentDescription = Element.AutomationId;
-		}
-
-		SizeRequest IVisualElementRenderer.GetDesiredSize(int widthConstraint, int heightConstraint)
-		{
-			return new SizeRequest(new Size(Context.ToPixels(20), Context.ToPixels(20)));
-		}
-
-        #endregion
-
-        #region IEffectControlProvider Implementation
-
-        void IEffectControlProvider.RegisterEffect(Effect effect)
+        protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
-            if (!(effect is PlatformEffect platformEffect)) return;
+            base.OnElementChanged(e);
 
-            platformEffect.SetContainer(this);
+            if (e.NewElement == null) return;
+            if (_materialBackgroundManager == null)
+            {
+                _clipPathManager = new ClipPathManager();
+                _materialBackgroundManager = new MaterialBackgroundManager(this);
+            }
+
+            UpdateAll();
         }
 
-        #endregion
+		#region Clip Subviews
 
-        #region Element Changed
-
-        protected virtual void OnElementChanged(ElementChangedEventArgs<MaterialContentView> e)
-		{
-            this.EnsureId();
-
-            SetWillNotDraw(false);
-
-            EffectUtilities.RegisterEffectControlProvider(this, e.OldElement, e.NewElement);
-
-            ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
-
-			if (e.OldElement != null)
-			{
-				e.OldElement.PropertyChanged -= OnElementPropertyChanged;
-			}
-
-			if (e.NewElement == null) return;
-                        
-			if (_visualElementTracker == null)
-			{
-                _clipPathManager = new ClipPathManager();
-                _visualElementTracker = new MaterialVisualElementTracker(this);
-				_visualElementPackager = new VisualElementPackager(this);
-				_visualElementPackager.Load();
-			}
-
-			UpdateAll();
-
-			e.NewElement.PropertyChanged += OnElementPropertyChanged;
-		}
-
-		#endregion
-
-		#region Layout Children
-
-        protected override void OnLayout(bool changed, int left, int top, int right, int bottom)
-		{
-			if (Element == null) return;
-
-			var children = ((IElementController)Element).LogicalChildren;
-			foreach (var child in children)
-			{
-				if (!(child is VisualElement visualElement)) continue;
-
-				Platform.GetRenderer(visualElement)?.UpdateLayout();
-			}
+        protected override void OnLayout(bool changed, int l, int t, int r, int b)
+        {
+            base.OnLayout(changed, l, t, r, b);
 
             if (changed)
             {
                 UpdateClipBounds();
             }
-		}
+        }
 
         public void UpdateClipBounds()
         { 
@@ -183,9 +61,9 @@ namespace XamarinBackgroundKit.Android.Renderers
         
         protected override void DispatchDraw(Canvas canvas)
         {
-            if (Element.Background.IsClippedToBounds)
+            if (ElementController.Background.IsClippedToBounds)
             {
-                _clipPathManager.ClipCanvas(Context, canvas, Element.Background.CornerRadius);
+                _clipPathManager.ClipCanvas(Context, canvas, ElementController.Background.CornerRadius);
             }
 
             base.DispatchDraw(canvas);
@@ -195,12 +73,12 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 		#region Property Changed
 
-		protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (_disposed) return;
 
-			ElementPropertyChanged?.Invoke(this, e);
-
+            base.OnElementPropertyChanged(sender, e);
+            
 			if (e.PropertyName == MaterialContentView.IsFocusableProperty.PropertyName) UpdateIsFocusable();
 			else if (e.PropertyName == MaterialContentView.IsClickableProperty.PropertyName) UpdateIsClickable();
 		}
@@ -213,18 +91,18 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 		private void UpdateIsFocusable()
         {
-            Focusable = Element.IsFocusable;
+            Focusable = ElementController.IsFocusable;
 		}
 
 		private void UpdateIsClickable()
 		{
-			if (_isClickListenerSet && !Element.IsClickable)
+			if (_isClickListenerSet && !ElementController.IsClickable)
 			{
 				Clickable = false;
 				SetOnClickListener(null);
 				_isClickListenerSet = false;
 			}
-			else if (!_isClickListenerSet && Element.IsClickable)
+			else if (!_isClickListenerSet && ElementController.IsClickable)
 			{
 				Clickable = true;
 				SetOnClickListener(this);
@@ -241,15 +119,15 @@ namespace XamarinBackgroundKit.Android.Renderers
             switch (e.Action)
             {
                 case MotionEventActions.Down:
-                    Element?.OnPressed();
+                    ElementController?.OnPressed();
                     break;
                 case MotionEventActions.Cancel:
-                    Element?.OnCancelled();
-                    Element?.OnReleasedOrCancelled();
+                    ElementController?.OnCancelled();
+                    ElementController?.OnReleasedOrCancelled();
                     break;
                 case MotionEventActions.Up:
-                    Element?.OnReleased();
-                    Element?.OnReleasedOrCancelled();
+                    ElementController?.OnReleased();
+                    ElementController?.OnReleasedOrCancelled();
                     break;
             }
             
@@ -262,7 +140,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 		public void OnClick(AView v)
 		{
-			Element?.OnClicked();
+            ElementController?.OnClicked();
 		}
 
 		#endregion
@@ -277,35 +155,21 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 			if (disposing)
 			{
-                EffectUtilities.UnregisterEffectControlProvider(this, Element);
+                if (_clipPathManager != null)
+                {
+                    _clipPathManager.Dispose();
+                    _clipPathManager = null;
+                }
+
+                if (_materialBackgroundManager != null)
+                {
+                    _materialBackgroundManager.Dispose();
+                    _materialBackgroundManager = null;
+                }
 
                 if (_isClickListenerSet)
 				{
 					SetOnClickListener(null);
-				}
-                
-				if (_visualElementTracker != null)
-				{
-					_visualElementTracker.Dispose();
-					_visualElementTracker = null;
-				}
-
-				if (_visualElementPackager != null)
-				{
-					_visualElementPackager.Dispose();
-					_visualElementPackager = null;
-				}
-
-				for (var i = 0; i < ChildCount; i++)
-				{
-					GetChildAt(i)?.Dispose();
-				}
-
-				if (Element != null)
-				{
-					Element.PropertyChanged -= OnElementPropertyChanged;
-
-					((IVisualElementRenderer)this).SetElement(null);
 				}
 			}
 

@@ -18,7 +18,7 @@ namespace XamarinBackgroundKit.iOS.Effects
         private IDisposable _layoutChangeObserver;
 
         private Background _background;
-        private MaterialVisualElementTracker _tracker;
+        private MaterialBackgroundManager _backgroundManager;
 
         protected override void OnAttached()
         {
@@ -27,17 +27,13 @@ namespace XamarinBackgroundKit.iOS.Effects
             SetTracker();
 
             _background = BackgroundEffect.GetBackground(Element);
-            if (_background == null) return;
-
-            _background.SetBinding(BindableObject.BindingContextProperty,
+            _background?.SetBinding(BindableObject.BindingContextProperty,
                 new Binding("BindingContext", source: Element));
-
-            UpdateBackground(null, _background);
-
-            if (View?.Layer == null) return;
 
             if (Element is Layout || Container is BoxRenderer)
             {
+                if (View?.Layer == null) return;
+
                 if (Container != null)
                 {
                     Container.UserInteractionEnabled = true;
@@ -47,14 +43,16 @@ namespace XamarinBackgroundKit.iOS.Effects
                 _layoutChangeObserver = View.Layer.AddObserver(
                     "bounds",
                     NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.OldNew,
-                    c => _tracker?.InvalidateLayer());
+                    c => _backgroundManager?.InvalidateLayer());
             }
             else
             {
+                if (View == null) return;
+
                 _layoutChangeObserver = View.AddObserver(
                     "frame",
                     NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.OldNew,
-                    c => _tracker?.InvalidateLayer());
+                    c => _backgroundManager?.InvalidateLayer());
             }
         }
 
@@ -74,7 +72,7 @@ namespace XamarinBackgroundKit.iOS.Effects
                     }
                 }
 
-                _tracker?.Dispose();
+                _backgroundManager?.Dispose();
                 _layoutChangeObserver = null;
             }
             
@@ -85,35 +83,27 @@ namespace XamarinBackgroundKit.iOS.Effects
         {
             base.OnElementPropertyChanged(args);
 
-            if (args.PropertyName == BackgroundEffect.BackgroundProperty.PropertyName)
-            {
-                var oldBackground = _background;
+            if (args.PropertyName != BackgroundEffect.BackgroundProperty.PropertyName) return;
 
-                _background = BackgroundEffect.GetBackground(Element);
-                if (_background == null) return;
+            var oldBackground = _background;
 
-                _background.SetBinding(BindableObject.BindingContextProperty,
-                    new Binding("BindingContext", source: Element));
+            _background = BackgroundEffect.GetBackground(Element);
+            _background?.SetBinding(BindableObject.BindingContextProperty,
+                new Binding("BindingContext", source: Element));
 
-                UpdateBackground(oldBackground, _background);
-            }
+            _backgroundManager?.SetBackgroundElement(oldBackground, _background);
         }
 
         private void SetTracker()
         {
             if (Control is IVisualElementRenderer controlRenderer)
             {
-                _tracker = new MaterialVisualElementTracker(controlRenderer);
+                _backgroundManager = new MaterialBackgroundManager(controlRenderer);
             }
             else if (Container is IVisualElementRenderer containerRenderer)
             {
-                _tracker = new MaterialVisualElementTracker(containerRenderer);
+                _backgroundManager = new MaterialBackgroundManager(containerRenderer);
             }
-        }
-
-        private void UpdateBackground(Background oldBackground, Background newBackground)
-        {
-            _tracker?.SetElement(oldBackground, newBackground);
         }
     }
 }

@@ -4,22 +4,23 @@ using Android.Graphics.Drawables;
 using Android.Support.Design.Button;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
+using Android.Support.V4.View;
 using System;
 using System.ComponentModel;
-using Android.Support.V4.View;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Android.Extensions;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
+using XamarinBackgroundKit.Effects;
 using XamarinBackgroundKit.Extensions;
-using Color = Xamarin.Forms.Color;
 using AView = Android.Views.View;
+using Color = Xamarin.Forms.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
-    public class MaterialVisualElementTracker : VisualElementTracker
+    public class MaterialBackgroundManager : IDisposable
 	{
         private bool _areDefaultsSet;
         private bool _defaultFocusable;
@@ -34,13 +35,13 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
 
-        public static readonly int[][] ButtonStates =
+        private static readonly int[][] ButtonStates =
         {
             new [] { global::Android.Resource.Attribute.StateEnabled },
             new int[] { }
         };
 
-        public MaterialVisualElementTracker(IVisualElementRenderer renderer) : base(renderer)
+        public MaterialBackgroundManager(IVisualElementRenderer renderer)
 		{
 			_renderer = renderer ?? throw new ArgumentNullException(nameof(renderer), "Renderer cannot be null");
 
@@ -64,6 +65,9 @@ namespace XamarinBackgroundKit.Android.Renderers
                 case IButtonLayoutRenderer buttonRenderer:
                     _nativeView = buttonRenderer.View;
                     break;
+                case EntryRenderer entryRenderer:
+                    _nativeView = entryRenderer.Control;
+                    break;
                 default:
                     _nativeView = _renderer.View;
                     break;
@@ -84,7 +88,7 @@ namespace XamarinBackgroundKit.Android.Renderers
                     oldMaterialVisualElement = oldMaterialElement;
                     break;
                 default:
-                    oldMaterialVisualElement = null;
+                    oldMaterialVisualElement = oldElement == null ? null : BackgroundEffect.GetBackground(oldElement);
                     break;
             }
 
@@ -97,16 +101,16 @@ namespace XamarinBackgroundKit.Android.Renderers
                     newMaterialVisualElement = newMaterialElement;
                     break;
                 default:
-                    newMaterialVisualElement = null;
+                    newMaterialVisualElement = newElement == null ? null : BackgroundEffect.GetBackground(newElement);
                     break;
             }
 
             _visualElement = newElement;
 
-            SetElement(oldMaterialVisualElement, newMaterialVisualElement);
+            SetBackgroundElement(oldMaterialVisualElement, newMaterialVisualElement);
         }
 
-		public void SetElement(IMaterialVisualElement oldElement, IMaterialVisualElement newElement)
+		public void SetBackgroundElement(IMaterialVisualElement oldElement, IMaterialVisualElement newElement)
 		{
 			if (oldElement != null)
 			{
@@ -114,16 +118,8 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _nativeView = null;
 
                 oldElement.PropertyChanged -= _propertyChangedHandler;
-
-                if (oldElement.GradientBrush != null)
-                {
-                    oldElement.GradientBrush.InvalidateGradientRequested -= InvalidateGradientsRequested;
-                }
-
-                if (oldElement.BorderGradientBrush != null)
-                {
-                    oldElement.BorderGradientBrush.InvalidateGradientRequested -= InvalidateBorderGradientsRequested;
-                }
+                oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
+                oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
             }
 
 			_backgroundElement = newElement;
@@ -133,16 +129,8 @@ namespace XamarinBackgroundKit.Android.Renderers
             _context = _nativeView.Context;
 
             newElement.PropertyChanged += _propertyChangedHandler;
-
-            if (newElement.GradientBrush != null)
-            {
-                newElement.GradientBrush.InvalidateGradientRequested += InvalidateGradientsRequested;
-            }
-
-            if (newElement.BorderGradientBrush != null)
-            {
-                newElement.BorderGradientBrush.InvalidateGradientRequested += InvalidateBorderGradientsRequested;
-            }
+            newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
+            newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
             
             if (oldElement == null)
             {
@@ -265,7 +253,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 		{
 			if (_nativeView == null || _backgroundElement == null) return;
 			if (_nativeView is MaterialCardView || _nativeView is Chip || _nativeView is MaterialButton) return;
-			
+
 			_nativeView.SetGradient(_backgroundElement);
         }
 
@@ -372,27 +360,27 @@ namespace XamarinBackgroundKit.Android.Renderers
 			}
 		}
 
-		protected override void Dispose(bool disposing)
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+		protected virtual void Dispose(bool disposing)
 		{
 			if (_disposed) return;
 
 			_disposed = true;
 
-			if (disposing)
-			{
-				SetVisualElement(_visualElement, null);
+            if (!disposing) return;
 
-				if (_renderer != null)
-				{
-					_renderer.ElementChanged -= OnRendererElementChanged;
+            SetVisualElement(_visualElement, null);
 
-                    _context = null;
-                    _nativeView = null;
-                    _renderer = null;
-                }
-			}
+            if (_renderer == null) return;
+            _renderer.ElementChanged -= OnRendererElementChanged;
 
-			base.Dispose(disposing);
-		}
+            _context = null;
+            _nativeView = null;
+            _renderer = null;
+        }
 	}
 }

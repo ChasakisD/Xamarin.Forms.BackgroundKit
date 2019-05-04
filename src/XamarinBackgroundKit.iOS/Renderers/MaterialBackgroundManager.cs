@@ -8,12 +8,13 @@ using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
+using XamarinBackgroundKit.Effects;
 using XamarinBackgroundKit.iOS.Extensions;
 using MButton = MaterialComponents.Button;
 
 namespace XamarinBackgroundKit.iOS.Renderers
 {
-    public class MaterialVisualElementTracker : VisualElementTracker
+    public class MaterialBackgroundManager : IDisposable
     {
         private bool _disposed;
         private VisualElement _visualElement;
@@ -24,7 +25,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
         
         private readonly PropertyChangedEventHandler _propertyChangedHandler;
 
-        public MaterialVisualElementTracker(IVisualElementRenderer renderer) : base(renderer)
+        public MaterialBackgroundManager(IVisualElementRenderer renderer)
         {
             _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer), "Renderer cannot be null");
 
@@ -48,7 +49,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     oldMaterialVisualElement = oldMaterialElement;
                     break;
                 default:
-                    oldMaterialVisualElement = null;
+                    oldMaterialVisualElement = oldElement == null ? null : BackgroundEffect.GetBackground(oldElement);
                     break;
             }
 
@@ -61,46 +62,30 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     newMaterialVisualElement = newMaterialElement;
                     break;
                 default:
-                    newMaterialVisualElement = null;
+                    newMaterialVisualElement = newElement == null ? null : BackgroundEffect.GetBackground(newElement);
                     break;
             }
 
             _visualElement = newElement;
 
-            SetElement(oldMaterialVisualElement, newMaterialVisualElement);
+            SetBackgroundElement(oldMaterialVisualElement, newMaterialVisualElement);
         }
 
-        public void SetElement(IMaterialVisualElement oldElement, IMaterialVisualElement newElement)
+        public void SetBackgroundElement(IMaterialVisualElement oldElement, IMaterialVisualElement newElement)
         {
             if (oldElement != null)
             {
                 oldElement.PropertyChanged -= _propertyChangedHandler;
-
-                if (oldElement.GradientBrush != null)
-                {
-                    oldElement.GradientBrush.InvalidateGradientRequested -= InvalidateGradientsRequested;
-                }
-
-                if (oldElement.BorderGradientBrush != null)
-                {
-                    oldElement.BorderGradientBrush.InvalidateGradientRequested -= InvalidateBorderGradientsRequested;
-                }
+                oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
+                oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
             }
 
             _backgroundElement = newElement;
             if (newElement == null) return;
 
             newElement.PropertyChanged += _propertyChangedHandler;
-
-            if (newElement.GradientBrush != null)
-            {
-                newElement.GradientBrush.InvalidateGradientRequested += InvalidateGradientsRequested;
-            }
-
-            if (newElement.BorderGradientBrush != null)
-            {
-                newElement.BorderGradientBrush.InvalidateGradientRequested += InvalidateBorderGradientsRequested;
-            }
+            newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
+            newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
 
             if (oldElement == null)
             {
@@ -380,31 +365,32 @@ namespace XamarinBackgroundKit.iOS.Renderers
             }
         }
 
-        protected override void Dispose(bool disposing)
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (_disposed) return;
 
             _disposed = true;
 
-            if (disposing)
+            if (!disposing) return;
+            SetVisualElement(_visualElement, null);
+
+            if (_renderer != null)
             {
-                SetVisualElement(_visualElement, null);
-
-                if (_renderer != null)
-                {
-                    _renderer.ElementChanged -= OnRendererElementChanged;
-                    _renderer = null;
-                }
-
-                if (_inkTouchController != null)
-                {
-                    _inkTouchController.CancelInkTouchProcessing();
-                    _inkTouchController?.Dispose();
-                    _inkTouchController = null;
-                }
+                _renderer.ElementChanged -= OnRendererElementChanged;
+                _renderer = null;
             }
 
-            base.Dispose(disposing);
+            if (_inkTouchController != null)
+            {
+                _inkTouchController.CancelInkTouchProcessing();
+                _inkTouchController?.Dispose();
+                _inkTouchController = null;
+            }
         }
     }
 }
