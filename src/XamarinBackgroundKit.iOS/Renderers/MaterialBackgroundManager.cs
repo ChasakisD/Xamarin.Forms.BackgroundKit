@@ -1,7 +1,9 @@
-﻿using CoreAnimation;
-using MaterialComponents;
-using System;
+﻿using System;
 using System.ComponentModel;
+using System.Linq;
+using CoreAnimation;
+using CoreGraphics;
+using MaterialComponents;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -125,13 +127,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         public void InvalidateLayer()
         {
-            if (!(_renderer.NativeView is MaterialContentViewRenderer))
-            {
-                var layer = _renderer.NativeView.FindLayerOfType<GradientStrokeLayer>();
-                if (layer == null) return;
+            var layer = _renderer.NativeView.FindLayerOfType<GradientStrokeLayer>();
+            if (layer == null) return;
 
-                layer.Frame = _renderer.NativeView.Bounds;
-            }
+            layer.Frame = _renderer.NativeView.Bounds;
 
             InvalidateClipToBounds();
             EnsureRippleOnFront();
@@ -328,22 +327,23 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (_renderer.NativeView.Subviews == null) return;
             foreach (var subView in _renderer.NativeView.Subviews)
             {
-                ApplyMaskToView(subView);
+                ApplyMaskToView(subView, _renderer.NativeView.Bounds);
             }
         }
 
-        private void ApplyMaskToView(UIView view)
+        private void ApplyMaskToView(UIView view, CGRect bounds)
         {
             if (view?.Layer == null) return;
 
             view.Layer.Mask?.Dispose();
-            if (_backgroundElement.IsClippedToBounds)
+            if (_backgroundElement.IsClippedToBounds && 
+                view.Layer.Sublayers?.FirstOrDefault(l => l is GradientStrokeLayer) == null)
             {
                 view.Layer.Mask = new CAShapeLayer
                 {
-                    Frame = view.Layer.Bounds,
+                    Frame = bounds,
                     Path = BackgroundKit
-                        .GetRoundCornersPath(view.Layer.Bounds, _backgroundElement.CornerRadius).CGPath
+                        .GetRoundCornersPath(bounds, _backgroundElement.CornerRadius).CGPath
                 };
                 view.Layer.MasksToBounds = true;
             }

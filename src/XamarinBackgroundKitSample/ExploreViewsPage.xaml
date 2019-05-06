@@ -11,7 +11,6 @@
             <ContentView Padding="16,8">
                 <background:MaterialContentView
                     Padding="8"
-                    BackgroundColor="Wheat"
                     Clicked="OnItemClicked"
                     HeightRequest="96"
                     VerticalOptions="Start"
@@ -74,7 +73,7 @@
 
                 <CollectionView
                     x:Name="CustomViewsCollectionView"
-                    HeightRequest="128"
+                    HeightRequest="152"
                     ItemSizingStrategy="MeasureAllItems"
                     ItemTemplate="{StaticResource ControlsDataTemplate}">
                     <CollectionView.ItemsLayout>
