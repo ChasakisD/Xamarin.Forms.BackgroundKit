@@ -2,6 +2,7 @@
 using Android.Content.PM;
 using Android.Runtime;
 using Android.OS;
+using Rg.Plugins.Popup;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android;
@@ -25,6 +26,8 @@ namespace XamarinBackgroundKitSample.Droid
             base.OnCreate(savedInstanceState);
 
             BackgroundKit.Init();
+
+            Popup.Init(this, savedInstanceState);
             XEPlatform.Init(this, savedInstanceState);
 
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental");

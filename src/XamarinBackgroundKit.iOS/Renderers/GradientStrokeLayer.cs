@@ -36,8 +36,15 @@ namespace XamarinBackgroundKit.iOS.Renderers
         private void Initialize()
         {
             _shadowLayer = new ShadowLayer();
-            
+
             InsertSublayer(_shadowLayer, 0);
+
+            /*
+             When creating custom layers, the contentsScale must
+             be set in order to draw smooth lines. Without this line,
+             context clipping is blurry and not smooth at all! 
+             */
+            ContentsScale = UIScreen.MainScreen.Scale;
         }
 
         public override void LayoutSublayers()
@@ -84,8 +91,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (!HasBorder()) return;
             
-            ctx.SaveState();
-            
             if (IsBorderDashed())
             {
                 ctx.SetLineDash(0, new [] {(nfloat)_dashWidth, (nfloat)_dashGap});
@@ -112,8 +117,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 ctx.SetStrokeColor(_strokeColor.CGColor);
                 ctx.DrawPath(CGPathDrawingMode.Stroke);
             }
-            
-            ctx.RestoreState();
         }
 
         #endregion

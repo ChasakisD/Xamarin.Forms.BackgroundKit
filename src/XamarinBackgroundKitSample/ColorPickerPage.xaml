@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<rg:PopupPage
+    x:Class="XamarinBackgroundKitSample.ColorPickerPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:controls="http://xamarin.com/schemas/2014/forms/background"
+    xmlns:models="clr-namespace:XamarinBackgroundKitSample.Models;assembly=XamarinBackgroundKitSample"
+    xmlns:rg="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup">
+    <Grid>
+        <controls:MaterialContentView BackgroundColor="Black" Clicked="OnBackgroundClick" Opacity=".3" />
+
+        <controls:MaterialContentView
+            Margin="32,16"
+            Padding="16"
+            Background="{controls:BgProvider Color=White, CornerRadius=8, Elevation=8}"
+            VerticalOptions="Center">
+            <StackLayout Spacing="8">
+                <ScrollView>
+                    <FlexLayout
+                        x:Name="ColorsLayout"
+                        Direction="Row"
+                        JustifyContent="Center"
+                        Wrap="Wrap">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="{x:Type models:ColorSource}">
+                                <controls:MaterialContentView
+                                    Margin="4"
+                                    Clicked="OnColorSourceClick"
+                                    HeightRequest="48"
+                                    WidthRequest="48">
+                                    <controls:MaterialContentView.Background>
+                                        <controls:Background
+                                            BorderColor="Gray"
+                                            BorderWidth="2"
+                                            CornerRadius="24"
+                                            IsRippleEnabled="True"
+                                            RippleColor="#30000000"
+                                            Color="{Binding Color}" />
+                                    </controls:MaterialContentView.Background>
+
+                                    <Image
+                                        HorizontalOptions="Center"
+                                        IsVisible="{Binding IsSelected}"
+                                        Source="ic_done_grey.png"
+                                        VerticalOptions="Center" />
+                                </controls:MaterialContentView>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </ScrollView>
+
+
+                <StackLayout HorizontalOptions="End" Orientation="Horizontal">
+                    <Button
+                        BackgroundColor="Transparent"
+                        Clicked="OnCancelClick"
+                        FontAttributes="Bold"
+                        Text="CANCEL"
+                        TextColor="Purple" />
+
+                    <Button
+                        BackgroundColor="Transparent"
+                        Clicked="OnOkClick"
+                        FontAttributes="Bold"
+                        Text="OK"
+                        TextColor="Purple" />
+                </StackLayout>
+            </StackLayout>
+        </controls:MaterialContentView>
+    </Grid>
+</rg:PopupPage>
