@@ -15,7 +15,6 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <MonoAndroidResourcePrefix>Resources</MonoAndroidResourcePrefix>
     <MonoAndroidAssetsPrefix>Assets</MonoAndroidAssetsPrefix>
-    <AndroidUseLatestPlatformSdk>false</AndroidUseLatestPlatformSdk>
     <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
     <AndroidHttpClientHandlerType>Xamarin.Android.Net.AndroidClientHandler</AndroidHttpClientHandlerType>
     <NuGetPackageImportStamp>
@@ -106,7 +105,7 @@
       <Name>XamarinBackgroundKit</Name>
     </ProjectReference>
     <ProjectReference Include="..\XamarinBackgroundKitSample\XamarinBackgroundKitSample.csproj">
-      <Project>{AA6AA9CE-77F0-4294-837F-E5A788CC441B}</Project>
+      <Project>{720B8AE8-3D81-4A1F-961A-DF0EDD5CBD0C}</Project>
       <Name>XamarinBackgroundKitSample</Name>
     </ProjectReference>
   </ItemGroup>

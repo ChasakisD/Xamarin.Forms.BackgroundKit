@@ -56,6 +56,9 @@
     <PackageReference Include="Xamarin.Forms.Visual.Material">
       <Version>4.0.0.394984-pre10</Version>
     </PackageReference>
+    <PackageReference Include="Naxam.KVOController.iOS">
+      <Version>1.2.0</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamarinBackgroundKit\XamarinBackgroundKit.csproj">

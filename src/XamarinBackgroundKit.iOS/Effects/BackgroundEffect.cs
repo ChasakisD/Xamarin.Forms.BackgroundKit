@@ -1,6 +1,6 @@
-﻿using Foundation;
-using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using FBKVOControllerNS;
+using Foundation;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -14,8 +14,10 @@ namespace XamarinBackgroundKit.iOS.Effects
 {
     public class BackgroundEffectiOS : BasePlatformEffect<BackgroundEffect, Element, UIView>
     {
-        private bool _isLayerObserver;
-        private IDisposable _layoutChangeObserver;
+        private class KVOObserver : NSObject { }
+
+        private KVOObserver _observer;
+        private FBKVOController _kvoController;
 
         private Background _background;
         private MaterialBackgroundManager _backgroundManager;
@@ -25,6 +27,8 @@ namespace XamarinBackgroundKit.iOS.Effects
             base.OnAttached();
 
             SetTracker();
+
+            AddViewObservers();
 
             _background = BackgroundEffect.GetBackground(Element);
             _background?.SetBinding(BindableObject.BindingContextProperty,
@@ -38,42 +42,17 @@ namespace XamarinBackgroundKit.iOS.Effects
                 {
                     Container.UserInteractionEnabled = true;
                 }
-
-                _isLayerObserver = true;
-                _layoutChangeObserver = View.Layer.AddObserver(
-                    "bounds",
-                    NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.OldNew,
-                    c => _backgroundManager?.InvalidateLayer());
-            }
-            else
-            {
-                if (View == null) return;
-
-                _layoutChangeObserver = View.AddObserver(
-                    "frame",
-                    NSKeyValueObservingOptions.Initial | NSKeyValueObservingOptions.OldNew,
-                    c => _backgroundManager?.InvalidateLayer());
             }
         }
 
         protected override void OnDetached()
         {
-            if (_background != null)
-            {
-                if (_layoutChangeObserver is NSObject layoutChangeObserverObject)
-                {
-                    if (_isLayerObserver)
-                    {
-                        View?.Layer?.RemoveObserver(layoutChangeObserverObject, "bounds");
-                    }
-                    else
-                    {
-                        View?.RemoveObserver(layoutChangeObserverObject, "frame");
-                    }
-                }
+            RemoveViewObservers();
 
-                _backgroundManager?.Dispose();
-                _layoutChangeObserver = null;
+            if(_backgroundManager != null)
+            {
+                _backgroundManager.Dispose();
+                _backgroundManager = null;
             }
             
             base.OnDetached();
@@ -104,6 +83,35 @@ namespace XamarinBackgroundKit.iOS.Effects
             {
                 _backgroundManager = new MaterialBackgroundManager(containerRenderer);
             }
+        }
+
+        private void AddViewObservers()
+        {
+            _observer = new KVOObserver();
+            _kvoController = FBKVOController.ControllerWithObserver(_observer);
+            _kvoController.Observe(View, "frame", NSKeyValueObservingOptions.OldNew, CallbackFromKVO);
+            _kvoController.Observe(View.Layer, "bounds", NSKeyValueObservingOptions.OldNew, CallbackFromKVO);
+        }
+
+        private void RemoveViewObservers()
+        {
+            if(_kvoController != null)
+            {
+                _kvoController.UnobserveAll();
+                _kvoController.Dispose();
+                _kvoController = null;
+            }
+
+            if(_observer != null)
+            {
+                _observer.Dispose();
+                _observer = null;
+            }
+        }
+
+        private void CallbackFromKVO(NSObject observer, NSObject observed, NSDictionary<NSString, NSObject> change)
+        {
+            _backgroundManager?.InvalidateLayer();
         }
     }
 }
