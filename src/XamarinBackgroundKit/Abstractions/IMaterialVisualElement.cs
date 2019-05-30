@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Xamarin.Forms;
 
 namespace XamarinBackgroundKit.Abstractions
@@ -12,5 +13,9 @@ namespace XamarinBackgroundKit.Abstractions
         Color RippleColor { get; }
 
         bool IsClippedToBounds { get; }
+
+        event EventHandler<EventArgs> InvalidateGradientRequested;
+
+        event EventHandler<EventArgs> InvalidateBorderGradientRequested;
     }
 }

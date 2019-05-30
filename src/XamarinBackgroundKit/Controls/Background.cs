@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System;
+using Xamarin.Forms;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls.Base;
 using IBorderElement = XamarinBackgroundKit.Abstractions.IBorderElement;
@@ -7,6 +8,8 @@ namespace XamarinBackgroundKit.Controls
 {
     public class Background : BindableObject, IMaterialVisualElement
     {
+        #region Bindable Properties
+
         #region IElevation Properties
 
         public static readonly BindableProperty ElevationProperty = ElevationElement.ElevationProperty;
@@ -170,6 +173,11 @@ namespace XamarinBackgroundKit.Controls
             set => SetValue(IsClippedToBoundsProperty, value);
         }
 
+        #endregion
+
+        public event EventHandler<EventArgs> InvalidateGradientRequested;
+        public event EventHandler<EventArgs> InvalidateBorderGradientRequested;
+
         #region IElevation Implementation
 
         void IElevationElement.OnElevationPropertyChanged(double oldValue, double newValue) { }
@@ -185,8 +193,26 @@ namespace XamarinBackgroundKit.Controls
         #endregion
 
         #region IGradientElement Implementation
-        
-        void IGradientElement.OnGradientBrushPropertyChanged(LinearGradientBrush oldValue, LinearGradientBrush newValue) { }
+
+        void IGradientElement.OnGradientBrushPropertyChanged(LinearGradientBrush oldValue, LinearGradientBrush newValue)
+        {
+            if (oldValue != null)
+            {
+                oldValue.InvalidateGradientRequested -= OnInvalidateGradientRequested;
+            }
+
+            if (newValue != null)
+            {
+                newValue.InvalidateGradientRequested += OnInvalidateGradientRequested;
+            }
+
+            OnInvalidateGradientRequested(this, EventArgs.Empty);
+        }
+
+        private void OnInvalidateGradientRequested(object sender, EventArgs e)
+        {
+            InvalidateGradientRequested?.Invoke(this, EventArgs.Empty);
+        }
 
         #endregion
 
@@ -200,8 +226,27 @@ namespace XamarinBackgroundKit.Controls
 
         void IBorderElement.OnDashWidthPropertyChanged(double oldValue, double newValue) { }
 
-        void IBorderElement.OnBorderGradientBrushPropertyChanged(LinearGradientBrush oldValue, LinearGradientBrush newValue) { }
-        
+        void IBorderElement.OnBorderGradientBrushPropertyChanged(LinearGradientBrush oldValue,
+            LinearGradientBrush newValue)
+        {
+            if (oldValue != null)
+            {
+                oldValue.InvalidateGradientRequested -= OnInvalidateBorderGradientRequested;
+            }
+
+            if (newValue != null)
+            {
+                newValue.InvalidateGradientRequested += OnInvalidateBorderGradientRequested;
+            }
+
+            OnInvalidateBorderGradientRequested(this, EventArgs.Empty);
+        }
+
+        private void OnInvalidateBorderGradientRequested(object sender, EventArgs e)
+        {
+            InvalidateBorderGradientRequested?.Invoke(this, EventArgs.Empty);
+        }
+
         #endregion
     }
 }

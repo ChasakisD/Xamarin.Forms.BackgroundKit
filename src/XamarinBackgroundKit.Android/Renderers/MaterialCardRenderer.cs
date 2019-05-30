@@ -32,6 +32,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private VisualElementTracker _visualElementTracker;
         private VisualElementPackager _visualElementPackager;
+        private MaterialBackgroundManager _materialBackgroundManager;
 
         #region IVisualElementRenderer Properties
 
@@ -143,9 +144,11 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (_visualElementTracker == null)
             {
-                _visualElementTracker = new MaterialVisualElementTracker(this);
+                _visualElementTracker = new VisualElementTracker(this);
                 _visualElementPackager = new VisualElementPackager(this);
                 _visualElementPackager.Load();
+
+                _materialBackgroundManager = new MaterialBackgroundManager(this);
             }
 
             UpdateAll();
@@ -273,6 +276,12 @@ namespace XamarinBackgroundKit.Android.Renderers
                 {
                     _visualElementPackager.Dispose();
                     _visualElementPackager = null;
+                }
+
+                if (_materialBackgroundManager != null)
+                {
+                    _materialBackgroundManager.Dispose();
+                    _materialBackgroundManager = null;
                 }
 
                 for (var i = 0; i < ChildCount; i++)

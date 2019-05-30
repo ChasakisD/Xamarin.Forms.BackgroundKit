@@ -26,14 +26,8 @@
 
     <ScrollView>
 
-        <StackLayout
-            Margin="16"
-            Padding="4"
-            Spacing="16">
-            <BoxView
-                HeightRequest="40"
-                HorizontalOptions="Center"
-                WidthRequest="40">
+        <StackLayout Margin="16" Padding="4" Spacing="16">
+            <BoxView HeightRequest="40" HorizontalOptions="Center" WidthRequest="40">
                 <background:BackgroundEffect.Background>
                     <background:Background
                         CornerRadius="10"
@@ -44,10 +38,7 @@
                 </background:BackgroundEffect.Background>
             </BoxView>
 
-            <background:MaterialContentView
-                Padding="8"
-                HorizontalOptions="Center"
-                IsCircle="True">
+            <background:MaterialContentView Padding="8" HorizontalOptions="Center" IsCircle="True">
                 <background:MaterialContentView.Background>
                     <background:Background Elevation="4">
                         <background:Background.GradientBrush>
@@ -67,10 +58,7 @@
                     VerticalTextAlignment="Center" />
             </background:MaterialContentView>
 
-            <background:MaterialCard
-                Margin="8"
-                Clicked="UpdateRippleOnBelowView"
-                HeightRequest="60">
+            <background:MaterialCard Margin="8" Clicked="UpdateRippleOnBelowView" HeightRequest="60">
                 <background:MaterialCard.Background>
                     <background:Background Elevation="16" Color="DarkRed" />
                 </background:MaterialCard.Background>
@@ -157,10 +145,7 @@
 
             <background:MaterialContentView x:Name="GradientBorderView" HeightRequest="60">
                 <background:MaterialContentView.Background>
-                    <background:Background
-                        BorderWidth="8"
-                        CornerRadius="30"
-                        Elevation="8">
+                    <background:Background BorderWidth="8" CornerRadius="30" Elevation="8">
                         <background:Background.GradientBrush>
                             <background:LinearGradientBrush Angle="0">
                                 <background:LinearGradientBrush.Gradients>
@@ -247,10 +232,7 @@
                 </background:BackgroundEffect.Background>
             </Label>
 
-            <StackLayout
-                Margin="16"
-                Padding="16"
-                HorizontalOptions="FillAndExpand">
+            <StackLayout Margin="16" Padding="16" HorizontalOptions="FillAndExpand">
                 <background:BackgroundEffect.Background>
                     <background:Background
                         CornerRadius="20"
@@ -271,10 +253,7 @@
                 <Label Text="I am inside a stack layout" />
             </StackLayout>
 
-            <Grid
-                Margin="16"
-                Padding="16"
-                HorizontalOptions="FillAndExpand">
+            <Grid Margin="16" Padding="16" HorizontalOptions="FillAndExpand">
                 <background:BackgroundEffect.Background>
                     <background:Background CornerRadius="20" Elevation="16">
                         <background:Background.GradientBrush>

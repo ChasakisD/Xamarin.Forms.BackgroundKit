@@ -28,24 +28,31 @@ namespace XamarinBackgroundKit.iOS.Renderers
         private CGColor[] _strokeColors;
         private float[] _strokePositions;
         private nfloat[] _strokeColorPositions;
-        
-        public ShadowLayer ShadowLayer { get; private set; }
+
+        private ShadowLayer _shadowLayer;
 
         public GradientStrokeLayer() => Initialize();
 
         private void Initialize()
         {
-            ShadowLayer = new ShadowLayer();
-            
-            InsertSublayer(ShadowLayer, 0);
+            _shadowLayer = new ShadowLayer();
+
+            InsertSublayer(_shadowLayer, 0);
+
+            /*
+             When creating custom layers, the contentsScale must
+             be set in order to draw smooth lines. Without this line,
+             context clipping is blurry and not smooth at all! 
+             */
+            ContentsScale = UIScreen.MainScreen.Scale;
         }
 
         public override void LayoutSublayers()
         {
             base.LayoutSublayers();
             
-            ShadowLayer.Frame = Bounds;
-            ShadowLayer.ShadowPath = GetRoundCornersPath(Bounds).CGPath; 
+            _shadowLayer.Frame = Bounds;
+            _shadowLayer.ShadowPath = GetRoundCornersPath(Bounds).CGPath; 
         }
 
         #region Actual Draw
@@ -84,8 +91,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (!HasBorder()) return;
             
-            ctx.SaveState();
-            
             if (IsBorderDashed())
             {
                 ctx.SetLineDash(0, new [] {(nfloat)_dashWidth, (nfloat)_dashGap});
@@ -112,8 +117,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 ctx.SetStrokeColor(_strokeColor.CGColor);
                 ctx.DrawPath(CGPathDrawingMode.Stroke);
             }
-            
-            ctx.RestoreState();
         }
 
         #endregion
@@ -158,14 +161,14 @@ namespace XamarinBackgroundKit.iOS.Renderers
         
         public void SetElevation(double elevation)
         {
-            ShadowLayer.Elevation = (float) elevation;
+            _shadowLayer.Elevation = (float) elevation;
         }
 
         public void SetCornerRadius(CornerRadius cornerRadius)
         {
             _cornerRadius = cornerRadius;
             
-            ShadowLayer.ShadowPath = GetRoundCornersPath(Bounds).CGPath; 
+            _shadowLayer.ShadowPath = GetRoundCornersPath(Bounds).CGPath; 
             
             SetNeedsDisplay();
         }
@@ -230,21 +233,23 @@ namespace XamarinBackgroundKit.iOS.Renderers
             
             SetNeedsDisplay();
         }
-        
+
         #endregion
-        
+
+        #region LifeCycle
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                ShadowLayer.RemoveFromSuperLayer();
-                ShadowLayer.Dispose();
-                ShadowLayer = null;
-                
+                _shadowLayer.RemoveFromSuperLayer();
+                _shadowLayer.Dispose();
+                _shadowLayer = null;
+
                 _colors = null;
                 _positions = null;
                 _colorPositions = null;
-                
+
                 _strokeColors = null;
                 _strokePositions = null;
                 _strokeColorPositions = null;
@@ -252,5 +257,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             base.Dispose(disposing);
         }
+
+        #endregion
     }
 }

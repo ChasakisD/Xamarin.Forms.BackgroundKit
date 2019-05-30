@@ -1,4 +1,5 @@
 ﻿using Foundation;
+using Rg.Plugins.Popup;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -11,6 +12,7 @@ namespace XamarinBackgroundKitSample.iOS
     {
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            Popup.Init();
             BackgroundKit.Init();
 
             Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");

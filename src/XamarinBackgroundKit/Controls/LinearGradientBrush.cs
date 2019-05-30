@@ -83,6 +83,8 @@ namespace XamarinBackgroundKit.Controls
             {
                 newStop.PropertyChanged += GradientStopPropertyChanged;
             }
+
+            InvalidateGradientRequested?.Invoke(this, EventArgs.Empty);
         }
 
         private void GradientsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

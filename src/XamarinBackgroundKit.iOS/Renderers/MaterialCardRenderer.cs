@@ -18,6 +18,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
         private bool _disposed;
         private VisualElementTracker _visualElementTracker;
         private VisualElementPackager _visualElementPackager;
+        private MaterialBackgroundManager _materialBackgroundManager;
 
         #region IVisualElementRenderer Properties
 
@@ -107,9 +108,11 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             if (_visualElementTracker == null)
             {
-                _visualElementTracker = new MaterialVisualElementTracker(this);
+                _visualElementTracker = new VisualElementTracker(this);
                 _visualElementPackager = new VisualElementPackager(this);
                 _visualElementPackager.Load();
+
+                _materialBackgroundManager = new MaterialBackgroundManager(this);
             }
 
             UpdateIsFocusable();
@@ -204,6 +207,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 {
                     _visualElementPackager.Dispose();
                     _visualElementPackager = null;
+                }
+
+                if (_materialBackgroundManager != null)
+                {
+                    _materialBackgroundManager.Dispose();
+                    _materialBackgroundManager = null;
                 }
 
                 if (Element != null)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Effects;
@@ -191,6 +192,21 @@ namespace XamarinBackgroundKitSample
         {
             Background.CornerRadius = new CornerRadius(TopLeftCornerSlider.Value, TopRightCornerSlider.Value,
                 BottomLeftCornerSlider.Value, BottomRightCornerSlider.Value);
+        }
+
+        private async void OnColorPickerClick(object sender, EventArgs e)
+        {
+            if (!(sender is MaterialContentView contentView) || !(contentView.Parent is Layout<View> layout)) return;
+
+            var selectedColor = await ColorPickerPage.ShowAsync();
+            if (selectedColor == null) return;
+
+            if (!(layout.Children.FirstOrDefault() is Entry entry)) return;
+
+            var red = (int) (selectedColor.Value.R * 255);
+            var green = (int) (selectedColor.Value.G * 255);
+            var blue = (int) (selectedColor.Value.B * 255);
+            entry.Text = $"#{red:X2}{green:X2}{blue:X2}";
         }
     }
 }

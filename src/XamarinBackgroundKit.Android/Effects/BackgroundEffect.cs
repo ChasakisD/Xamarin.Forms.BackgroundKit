@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
+using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Android.Effects;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
@@ -13,7 +14,7 @@ namespace XamarinBackgroundKit.Android.Effects
     public class BackgroundEffectDroid : BasePlatformEffect<BackgroundEffect, Element, AView>
     {
         private Background _background;
-        private MaterialVisualElementTracker _tracker;
+        private MaterialBackgroundManager _backgroundManager;
 
         protected override void OnAttached()
         {
@@ -23,12 +24,9 @@ namespace XamarinBackgroundKit.Android.Effects
             HandleBackgroundManager();
 
             _background = BackgroundEffect.GetBackground(Element);
-            if (_background == null) return;
 
-            _background.SetBinding(BindableObject.BindingContextProperty,
+            _background?.SetBinding(BindableObject.BindingContextProperty,
                 new Binding("BindingContext", source: Element));
-
-            UpdateBackground(null, _background);
         }
 
         protected override void OnDetached()
@@ -42,29 +40,26 @@ namespace XamarinBackgroundKit.Android.Effects
         {
             base.OnElementPropertyChanged(args);
 
-            if (args.PropertyName == BackgroundEffect.BackgroundProperty.PropertyName)
-            {
-                var oldBackground = _background;
+            if (args.PropertyName != BackgroundEffect.BackgroundProperty.PropertyName) return;
 
-                _background = BackgroundEffect.GetBackground(Element);
-                if (_background == null) return;
+            var oldBackground = _background;
 
-                _background.SetBinding(BindableObject.BindingContextProperty,
-                    new Binding("BindingContext", source: Element));
+            _background = BackgroundEffect.GetBackground(Element);
+            _background?.SetBinding(BindableObject.BindingContextProperty,
+                new Binding("BindingContext", source: Element));
 
-                UpdateBackground(oldBackground, _background);
-            }
+            UpdateBackground(oldBackground, _background);
         }
 
         private void SetTracker()
         {
             if (Control is IVisualElementRenderer controlRenderer)
             {
-                _tracker = new MaterialVisualElementTracker(controlRenderer);
+                _backgroundManager = new MaterialBackgroundManager(controlRenderer);
             }
             else if (Container is IVisualElementRenderer containerRenderer)
             {
-                _tracker = new MaterialVisualElementTracker(containerRenderer);
+                _backgroundManager = new MaterialBackgroundManager(containerRenderer);
             }
         }
         
@@ -97,14 +92,14 @@ namespace XamarinBackgroundKit.Android.Effects
             UpdateBackground(null, _background);
         }
 
-        private void UpdateBackground(Background oldBackground, Background newBackground)
+        private void UpdateBackground(IMaterialVisualElement oldBackground, IMaterialVisualElement newBackground)
         {           
-            _tracker?.SetElement(oldBackground, newBackground);
+            _backgroundManager?.SetBackgroundElement(oldBackground, newBackground);
         }
 
         private void Dispose()
         {
-            _tracker?.Dispose();
+            _backgroundManager?.Dispose();
 
             if (!(Element is Image) && !(Element is Label)) return;
 

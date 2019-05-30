@@ -1,10 +1,7 @@
 ﻿using Foundation;
-using ObjCRuntime;
-using System;
 using System.ComponentModel;
 using UIKit;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.iOS.Renderers;
@@ -13,125 +10,53 @@ using XamarinBackgroundKit.iOS.Renderers;
 namespace XamarinBackgroundKit.iOS.Renderers
 {
     [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
-    public class MaterialContentViewRenderer : UIView, IVisualElementRenderer, IEffectControlProvider
+    public class MaterialContentViewRenderer : ViewRenderer
     {
         private bool _disposed;
-        private VisualElementTracker _visualElementTracker;
-        private VisualElementPackager _visualElementPackager;
+        private MaterialBackgroundManager _materialBackgroundManager;
 
-        #region IVisualElementRenderer Properties
-
-        private MaterialContentView _element;
-        protected MaterialContentView Element
-        {
-            get => _element;
-            set
-            {
-                if (_element == value) return;
-                var oldElement = _element;
-                _element = value;
-
-                OnElementChanged(new ElementChangedEventArgs<MaterialContentView>(oldElement, _element));
-            }
-        }
-
-        UIView IVisualElementRenderer.NativeView => this;
-        VisualElement IVisualElementRenderer.Element => Element;
-        UIViewController IVisualElementRenderer.ViewController => null;
-
-        public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
-
-        #endregion
-
-        [Export("layerClass")]
-        public static Class LayerClass()
-        {
-            return new Class(typeof(GradientStrokeLayer));
-        }
+        private MaterialContentView ElementController => Element as MaterialContentView;
 
         public override void LayoutSubviews()
         {
             base.LayoutSubviews();
 
-            if (!(_visualElementTracker is MaterialVisualElementTracker tracker)) return;
-            tracker.InvalidateLayer();
+            _materialBackgroundManager?.InvalidateLayer();
         }
-
-        #region IVisualElementRenderer Implementation	
-
-        void IVisualElementRenderer.SetElement(VisualElement element)
-        {
-            Element = element as MaterialContentView;
-
-            if (Element == null || string.IsNullOrEmpty(Element.AutomationId)) return;
-
-            AccessibilityIdentifier = Element.AutomationId;
-        }
-
-        SizeRequest IVisualElementRenderer.GetDesiredSize(double widthConstraint, double heightConstraint)
-        {
-            return this.GetSizeRequest(widthConstraint, heightConstraint, 44, 44);
-        }
-
-        void IVisualElementRenderer.SetElementSize(Size size)
-        {
-            var (width, height) = size;
-            Layout.LayoutChildIntoBoundingRegion(Element, new Rectangle(Element.X, Element.Y, width, height));
-        }
-
-        #endregion
-
-        #region IEffectControlProvider Implementation
-
-        void IEffectControlProvider.RegisterEffect(Effect effect)
-        {
-            if (!(effect is PlatformEffect platformEffect)) return;
-
-            platformEffect.SetContainer(this);
-        }
-
-        #endregion
 
         #region Element Changed
 
-        protected virtual void OnElementChanged(ElementChangedEventArgs<MaterialContentView> e)
+        protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
-            EffectUtilities.RegisterEffectControlProvider(this, e.OldElement, e.NewElement);
-
-            ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(e.OldElement, e.NewElement));
-
-            if (e.OldElement != null)
-            {
-                e.OldElement.PropertyChanged -= OnElementPropertyChanged;
-            }
+            base.OnElementChanged(e);
 
             if (e.NewElement == null) return;
 
-            if (_visualElementTracker == null)
+            if (_materialBackgroundManager == null)
             {
-                _visualElementTracker = new MaterialVisualElementTracker(this);
-                _visualElementPackager = new VisualElementPackager(this);
-                _visualElementPackager.Load();
+                _materialBackgroundManager = new MaterialBackgroundManager(this);
             }
 
             UpdateIsFocusable();
-
-            e.NewElement.PropertyChanged += OnElementPropertyChanged;
         }
 
         #endregion
 
         #region Property Changed
 
-        protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (_disposed) return;
+
+            base.OnElementPropertyChanged(sender, e);
+
             if (e.PropertyName == MaterialContentView.IsFocusableProperty.PropertyName
                 || e.PropertyName == MaterialContentView.IsClickableProperty.PropertyName) UpdateIsFocusable();
         }
 
         private void UpdateIsFocusable()
         {
-            if (Element.IsFocusable && Element.IsClickable)
+            if (ElementController.IsFocusable && ElementController.IsClickable)
             {
                 //MultipleTouchEnabled = true;
                 UserInteractionEnabled = true;
@@ -151,9 +76,9 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesBegan(touches, evt);
 
-            if (Element.IsFocusable)
+            if (ElementController.IsFocusable)
             {
-                Element?.OnPressed();
+                ElementController?.OnPressed();
             }
         }
 
@@ -161,15 +86,15 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesEnded(touches, evt);
 
-            if (Element.IsClickable)
+            if (ElementController.IsClickable)
             {
-                Element?.OnClicked();
+                ElementController?.OnClicked();
             }
 
-            if (Element.IsFocusable)
+            if (ElementController.IsFocusable)
             {
-                Element?.OnReleased();
-                Element?.OnReleasedOrCancelled();
+                ElementController?.OnReleased();
+                ElementController?.OnReleasedOrCancelled();
             }
         }
 
@@ -177,10 +102,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesCancelled(touches, evt);
 
-            if (Element.IsFocusable)
+            if (ElementController.IsFocusable)
             {
-                Element?.OnCancelled();
-                Element?.OnReleasedOrCancelled();
+                ElementController?.OnCancelled();
+                ElementController?.OnReleasedOrCancelled();
             }
         }
 
@@ -196,25 +121,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             if (disposing)
             {
-                EffectUtilities.UnregisterEffectControlProvider(this, Element);
-
-                if (_visualElementTracker != null)
+                if (_materialBackgroundManager != null)
                 {
-                    _visualElementTracker.Dispose();
-                    _visualElementTracker = null;
-                }
-
-                if (_visualElementPackager != null)
-                {
-                    _visualElementPackager.Dispose();
-                    _visualElementPackager = null;
-                }
-
-                if (Element != null)
-                {
-                    Element.PropertyChanged -= OnElementPropertyChanged;
-
-                    ((IVisualElementRenderer)this).SetElement(null);
+                    _materialBackgroundManager.Dispose();
+                    _materialBackgroundManager = null;
                 }
             }
 

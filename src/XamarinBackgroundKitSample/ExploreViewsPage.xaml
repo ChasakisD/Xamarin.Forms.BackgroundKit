@@ -11,7 +11,6 @@
             <ContentView Padding="16,8">
                 <background:MaterialContentView
                     Padding="8"
-                    BackgroundColor="Wheat"
                     Clicked="OnItemClicked"
                     HeightRequest="96"
                     VerticalOptions="Start"
@@ -34,7 +33,7 @@
             </ContentView>
         </DataTemplate>
     </ContentPage.Resources>
-    <ScrollView Padding="0,0,0,20">
+    <ScrollView x:Name="BackgroundView">
         <ScrollView.Resources>
             <Style TargetType="Label">
                 <Setter Property="Margin" Value="8,0" />
@@ -42,7 +41,14 @@
                 <Setter Property="TextColor" Value="#2D2D2D" />
             </Style>
         </ScrollView.Resources>
-        <StackLayout Spacing="8">
+        <background:BackgroundEffect.Background>
+            <background:Background>
+                <background:Background.GradientBrush>
+                    <background:LinearGradientBrush Angle="45" />
+                </background:Background.GradientBrush>
+            </background:Background>
+        </background:BackgroundEffect.Background>
+        <StackLayout Padding="0,0,0,20" Spacing="8">
             <StackLayout>
                 <background:MaterialContentView
                     Padding="8"
@@ -51,7 +57,7 @@
                     VerticalOptions="Start"
                     WidthRequest="120">
                     <background:MaterialContentView.Background>
-                        <background:Background Elevation="4" Color="White" />
+                        <background:Background Color="Transparent" />
                     </background:MaterialContentView.Background>
 
                     <Label
@@ -67,7 +73,7 @@
 
                 <CollectionView
                     x:Name="CustomViewsCollectionView"
-                    HeightRequest="128"
+                    HeightRequest="152"
                     ItemSizingStrategy="MeasureAllItems"
                     ItemTemplate="{StaticResource ControlsDataTemplate}">
                     <CollectionView.ItemsLayout>
