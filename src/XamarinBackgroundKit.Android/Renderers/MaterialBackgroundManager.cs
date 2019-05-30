@@ -1,12 +1,12 @@
-﻿using Android.Content;
+﻿using System;
+using System.ComponentModel;
+using Android.Content;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
 using Android.Support.Design.Button;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using Android.Support.V4.View;
-using System;
-using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -33,8 +33,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 		private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
 
-        private readonly PropertyChangedEventHandler _propertyChangedHandler;
-
         private static readonly int[][] ButtonStates =
         {
             new [] { global::Android.Resource.Attribute.StateEnabled },
@@ -45,15 +43,12 @@ namespace XamarinBackgroundKit.Android.Renderers
 		{
 			_renderer = renderer ?? throw new ArgumentNullException(nameof(renderer), "Renderer cannot be null");
 
-			_propertyChangedHandler = OnRendererElementPropertyChanged;
-
-            _context = _renderer.View.Context;
             _renderer.ElementChanged += OnRendererElementChanged;
-
-            ResolveNativeView();
             
             SetVisualElement(null, _renderer.Element);
 		}
+
+        #region Element Setters
 
         private void ResolveNativeView()
         {
@@ -76,6 +71,20 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void SetVisualElement(VisualElement oldElement, VisualElement newElement)
         {
+            if(oldElement != null)
+            {
+                _context = null;
+                _nativeView = null;
+                oldElement.PropertyChanged -= OnElementPropertyChanged;
+            }
+
+            if(newElement != null)
+            {
+                ResolveNativeView();
+                _context = _nativeView.Context;
+                newElement.PropertyChanged += OnElementPropertyChanged;
+            }
+
             IMaterialVisualElement oldMaterialVisualElement;
             IMaterialVisualElement newMaterialVisualElement;
 
@@ -114,21 +123,16 @@ namespace XamarinBackgroundKit.Android.Renderers
 		{
 			if (oldElement != null)
 			{
-                _context = null;
-                _nativeView = null;
-
-                oldElement.PropertyChanged -= _propertyChangedHandler;
+                oldElement.PropertyChanged -= OnRendererPropertyChanged;
                 oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
                 oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
             }
 
 			_backgroundElement = newElement;
+
             if (newElement == null) return;
 
-            ResolveNativeView();
-            _context = _nativeView.Context;
-
-            newElement.PropertyChanged += _propertyChangedHandler;
+            newElement.PropertyChanged += OnRendererPropertyChanged;
             newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
             newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
             
@@ -163,6 +167,10 @@ namespace XamarinBackgroundKit.Android.Renderers
                 UpdateCornerRadius();
         }
 
+        #endregion
+
+        #region Property Changed
+
         private void InvalidateGradientsRequested(object sender, EventArgs e)
         {
             UpdateGradients();
@@ -178,7 +186,15 @@ namespace XamarinBackgroundKit.Android.Renderers
             SetVisualElement(e.OldElement, e.NewElement);
 		}
 
-		private void OnRendererElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (_renderer == null || _disposed) return;
+
+            if (e.PropertyName == BackgroundElement.BackgroundProperty.PropertyName)
+                SetVisualElement(_visualElement, _renderer.Element);
+        }
+
+        private void OnRendererPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (_renderer == null || _disposed) return;
 
@@ -194,6 +210,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 			else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
 			else if (e.PropertyName == ElevationElement.TranslationZProperty.PropertyName) UpdateTranslationZ();
         }
+
+        #endregion
+
+        #region Background Handling
 
         private void UpdateBackground()
         {
@@ -325,21 +345,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
         }
 
-        private void InvalidateOutline()
-        {
-            var cornerRadii = _backgroundElement.CornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
-
-            _nativeView.OutlineProvider?.Dispose();
-            _nativeView.OutlineProvider = new CornerOutlineProvider(cornerRadii);
-
-            _nativeView.ClipToOutline = true;
-
-            if (_nativeView is MaterialContentViewRenderer contentViewRenderer)
-            {
-                contentViewRenderer.UpdateClipBounds();
-            }
-        }
-
         private void UpdateTranslationZ()
         {
             _nativeView?.SetTranslationZ(_context, _backgroundElement);
@@ -359,6 +364,29 @@ namespace XamarinBackgroundKit.Android.Renderers
 					break;
 			}
 		}
+
+        #endregion
+
+        #region Invalidation
+
+        private void InvalidateOutline()
+        {
+            var cornerRadii = _backgroundElement.CornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+
+            _nativeView.OutlineProvider?.Dispose();
+            _nativeView.OutlineProvider = new CornerOutlineProvider(cornerRadii);
+
+            _nativeView.ClipToOutline = true;
+
+            if (_nativeView is MaterialContentViewRenderer contentViewRenderer)
+            {
+                contentViewRenderer.UpdateClipBounds();
+            }
+        }
+
+        #endregion
+
+        #region LifeCycle
 
         public void Dispose()
         {
@@ -382,5 +410,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             _nativeView = null;
             _renderer = null;
         }
-	}
+
+        #endregion
+    }
 }

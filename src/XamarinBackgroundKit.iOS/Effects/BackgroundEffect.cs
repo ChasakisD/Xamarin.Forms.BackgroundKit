@@ -34,10 +34,9 @@ namespace XamarinBackgroundKit.iOS.Effects
             _background?.SetBinding(BindableObject.BindingContextProperty,
                 new Binding("BindingContext", source: Element));
 
+            //FIX for Ripple. The views must be focusable
             if (Element is Layout || Container is BoxRenderer)
             {
-                if (View?.Layer == null) return;
-
                 if (Container != null)
                 {
                     Container.UserInteractionEnabled = true;
