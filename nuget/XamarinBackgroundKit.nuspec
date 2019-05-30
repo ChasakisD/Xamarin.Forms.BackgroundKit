@@ -15,15 +15,16 @@
     <tags>background, material, cardview, card, corner, cornerradius, radius, border, ripple, gradient, elevation, xamarin, forms, android, xamarin.forms, ios</tags>
     <dependencies>
       <group targetFramework="netstandard2.0">
-        <dependency id="Xamarin.Forms" version="4.0.0.346134-pre9" />
+        <dependency id="Xamarin.Forms" version="4.0.0.425677" />
       </group>
       <group targetFramework="MonoAndroid90">
-        <dependency id="Xamarin.Forms" version="4.0.0.346134-pre9" />
-        <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.346134-pre9" />
+        <dependency id="Xamarin.Forms" version="4.0.0.425677" />
+        <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.425677" />
       </group>
       <group targetFramework="Xamarin.iOS10">
-        <dependency id="Xamarin.Forms" version="4.0.0.346134-pre9" />
-        <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.346134-pre9" />
+        <dependency id="Xamarin.Forms" version="4.0.0.425677" />
+        <dependency id="Xamarin.Forms.Visual.Material" version="4.0.0.425677" />
+        <dependency id="Naxam.KVOController.iOS" version="1.2.0" />
       </group>
     </dependencies>
   </metadata>

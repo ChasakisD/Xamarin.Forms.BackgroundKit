@@ -159,10 +159,10 @@
     <PackageReference Include="Rg.Plugins.Popup">
       <Version>1.1.5.188</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Forms" Version="4.0.0.394984-pre10" />
+    <PackageReference Include="Xamarin.Forms" Version="4.0.0.425677" />
     <PackageReference Include="Xamarin.Essentials" Version="1.1.0" />
     <PackageReference Include="Xamarin.Forms.Visual.Material">
-      <Version>4.0.0.394984-pre10</Version>
+      <Version>4.0.0.425677</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
@@ -178,7 +178,7 @@
       <Name>XamarinBackgroundKit</Name>
     </ProjectReference>
     <ProjectReference Include="..\XamarinBackgroundKitSample\XamarinBackgroundKitSample.csproj">
-      <Project>{AA6AA9CE-77F0-4294-837F-E5A788CC441B}</Project>
+      <Project>{720B8AE8-3D81-4A1F-961A-DF0EDD5CBD0C}</Project>
       <Name>XamarinBackgroundKitSample</Name>
     </ProjectReference>
   </ItemGroup>
