@@ -175,7 +175,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
             else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
                      || e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
             else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
-            else if (e.PropertyName == Background.IsClippedToBoundsProperty.PropertyName) InvalidateClipToBounds();
         }
 
         #endregion
@@ -374,8 +373,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (view?.Layer == null) return;
 
             view.Layer.Mask?.Dispose();
-            if (_backgroundElement.IsClippedToBounds && 
-                view.Layer.Sublayers?.FirstOrDefault(l => l is GradientStrokeLayer) == null)
+
+            if (view.Layer.Sublayers?.FirstOrDefault(l => l is GradientStrokeLayer) == null)
             {
                 var maskPath = BackgroundKit
                         .GetRoundCornersPath(bounds, _backgroundElement.CornerRadius).CGPath;
@@ -386,11 +385,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     Path = transform == null ? maskPath : new CGPath(maskPath, transform.Value)
                 };
                 view.Layer.MasksToBounds = true;
-            }
-            else
-            {
-                view.Layer.Mask = null;
-                view.Layer.MasksToBounds = false;
             }
         }
 

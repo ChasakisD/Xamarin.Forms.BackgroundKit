@@ -60,7 +60,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
         public override void DrawInContext(CGContext ctx)
         {
             base.DrawInContext(ctx);
-            
+
             ctx.AddPath(GetRoundCornersPath(Bounds).CGPath);
             ctx.Clip();
             

@@ -1,7 +1,8 @@
 ﻿using System;
 using Android.Content;
 using Android.Graphics;
-using Xamarin.Forms;
+using Xamarin.Forms.Platform.Android;
+using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Extensions;
 
 namespace XamarinBackgroundKit.Android.Renderers
@@ -9,35 +10,45 @@ namespace XamarinBackgroundKit.Android.Renderers
     public class ClipPathManager : IDisposable
     {
         private bool _disposed;
-        private bool _requiresShapeUpdate;
 
-        private Path _roundClipPath;
+        private Path _clipPath;
 
-        public void UpdateClipBounds()
+        public ClipPathManager()
         {
-            _requiresShapeUpdate = true;
+            _clipPath = new Path();
         }
 
-        public void ClipCanvas(Context context, Canvas canvas, CornerRadius cornerRadius)
+        public bool ClipCanvas(Context context, Canvas canvas, Background background, Func<bool> drawChild)
         {
-            if (cornerRadius.IsEmpty()) return;
+            if (context == null || canvas == null || background == null || drawChild == null) return false;
 
-            if (_roundClipPath == null)
+            var strokeWidth = (int)context.ToPixels(background.BorderWidth);
+            var cornerRadii = background.CornerRadius.ToRadii(context.Resources.DisplayMetrics.Density);
+
+            for (var i = 0; i < cornerRadii.Length; i++)
+                cornerRadii[i] -= cornerRadii[i] <= 0 ? 0 : strokeWidth;
+
+            _clipPath.Reset();
+
+            switch(background.BorderStyle)
             {
-                _roundClipPath = new Path();
+                case BorderStyle.Inner:
+                    _clipPath.AddRoundRect(0, 0, canvas.Width, canvas.Height,
+                        cornerRadii, Path.Direction.Cw);
+                    break;
+                case BorderStyle.Outer:
+                    _clipPath.AddRoundRect(strokeWidth, strokeWidth,
+                        canvas.Width - strokeWidth, canvas.Height - strokeWidth,
+                        cornerRadii, Path.Direction.Cw);
+                    break;
             }
 
-            if (_requiresShapeUpdate)
-            {
-                var cornerRadii = cornerRadius.ToRadii(context.Resources.DisplayMetrics.Density);
+            canvas.Save();
+            canvas.ClipPath(_clipPath);
+            var drawChildResult = drawChild();
+            canvas.Restore();
 
-                _roundClipPath.Reset();
-                _roundClipPath.AddRoundRect(0, 0, canvas.Width, canvas.Height, cornerRadii, Path.Direction.Cw);
-
-                _requiresShapeUpdate = false;
-            }
-
-            canvas.ClipPath(_roundClipPath);
+            return drawChildResult;
         }
 
         public void Dispose()
@@ -53,10 +64,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (disposing)
             {
-                if (_roundClipPath != null)
+                if (_clipPath != null)
                 {
-                    _roundClipPath?.Dispose();
-                    _roundClipPath = null;
+                    _clipPath?.Dispose();
+                    _clipPath = null;
                 }
             }
         }

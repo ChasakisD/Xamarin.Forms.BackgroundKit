@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="XamarinBackgroundKitSample.ExplorerPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
@@ -179,7 +179,13 @@
                         </background:MaterialContentView.Background>
                     </background:MaterialContentView>
                 </StackLayout>
-
+                
+                <StackLayout Orientation="Horizontal" Spacing="8">
+                    <Label Text="IsOuter" />
+                    
+                    <Switch x:Name="IsOuterSwitch" Toggled="OnBorderStyleToggled" />
+                </StackLayout>
+                
                 <Label Text="{Binding Source={x:Reference BorderWidthSlider}, Path=Value, StringFormat='{}Border Width: {0}'}" />
 
                 <Slider x:Name="BorderWidthSlider" Maximum="60" Minimum="0" />

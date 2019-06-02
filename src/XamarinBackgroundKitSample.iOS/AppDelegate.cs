@@ -15,7 +15,7 @@ namespace XamarinBackgroundKitSample.iOS
             Popup.Init();
             BackgroundKit.Init();
 
-            Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental", "FastRenderers_Experimental");
+            Forms.SetFlags("Visual_Experimental", "CollectionView_Experimental");
             Forms.Init();
             FormsMaterial.Init();
 

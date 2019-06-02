@@ -48,25 +48,14 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (changed)
             {
-                UpdateClipBounds();
+                PostInvalidate();
             }
         }
 
-        public void UpdateClipBounds()
-        { 
-            _clipPathManager?.UpdateClipBounds();
-
-            PostInvalidate();
-        }
-        
-        protected override void DispatchDraw(Canvas canvas)
+        protected override bool DrawChild(Canvas canvas, AView child, long drawingTime)
         {
-            if (ElementController.Background.IsClippedToBounds)
-            {
-                _clipPathManager.ClipCanvas(Context, canvas, ElementController.Background.CornerRadius);
-            }
-
-            base.DispatchDraw(canvas);
+            return _clipPathManager.ClipCanvas(Context, canvas, ElementController.Background,
+                () => base.DrawChild(canvas, child, drawingTime));
         }
 
         #endregion
