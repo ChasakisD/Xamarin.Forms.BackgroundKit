@@ -223,12 +223,12 @@ namespace XamarinBackgroundKitSample
                         },
                         new StackLayout
                         {
-                            Margin = new Thickness(16),
                             Orientation = StackOrientation.Horizontal,
                             Children =
                             {
                                 new Button
                                 {
+                                    Margin = new Thickness(16),
                                     TextColor = Color.Purple,
                                     FontSize = 18,
                                     Text = "Action",

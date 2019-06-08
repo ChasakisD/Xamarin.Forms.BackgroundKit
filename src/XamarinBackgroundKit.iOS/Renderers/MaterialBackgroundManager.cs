@@ -168,7 +168,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
                      || e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
                      || e.PropertyName == BorderElement.DashGapProperty.PropertyName
-                     || e.PropertyName == BorderElement.DashWidthProperty.PropertyName) UpdateBorder();
+                     || e.PropertyName == BorderElement.DashWidthProperty.PropertyName
+                     || e.PropertyName == BorderElement.BorderStyleProperty.PropertyName) UpdateBorder();
             else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
             else if (e.PropertyName == Background.ColorProperty.PropertyName
                      || e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName) UpdateColor();
@@ -309,6 +310,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     _renderer.NativeView.SetBorder(_backgroundElement);
                     break;
             }
+
+            InvalidateClipToBounds();
         }
 
         #endregion
@@ -351,13 +354,49 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     _renderer.NativeView.Layer.ShadowPath = null;
                 }
             }
-            
+
+            InvalidateSubViewsMask();
+        }
+
+        private void InvalidateSubViewsMask()
+        {
             if (_renderer.NativeView.Subviews == null) return;
 
             var transform = GetMaskTransform();
+
+            CGRect bounds;
+            CGPath maskPath;
+            switch(_backgroundElement.BorderStyle)
+            {
+                case BorderStyle.Inner:
+                    bounds = _renderer.NativeView.Bounds;
+                    maskPath = BackgroundKit.GetRoundCornersPath(
+                        bounds, _backgroundElement.CornerRadius).CGPath;
+                    break;
+                default:
+                    var borderWidth = (float)_backgroundElement.BorderWidth;
+                    bounds = _renderer.NativeView.Bounds.Inset(borderWidth, borderWidth);
+                    maskPath = BackgroundKit.GetRoundCornersPath(
+                        bounds, _backgroundElement.CornerRadius, borderWidth).CGPath;
+                    break;
+            }
+
             foreach (var subView in _renderer.NativeView.Subviews)
             {
-                InvalidateViewMask(subView, _renderer.NativeView.Bounds, transform);
+                if (subView?.Layer == null) return;
+
+                subView.Layer.Mask?.Dispose();
+
+                if (subView.Layer.Sublayers?.FirstOrDefault(l => l is GradientStrokeLayer) == null)
+                {
+                    subView.Layer.Mask = new CAShapeLayer
+                    {
+                        Frame = _renderer.NativeView.Bounds,
+                        Path = transform == null ? maskPath : new CGPath(maskPath, transform.Value)
+                    };
+
+                    subView.Layer.MasksToBounds = true;
+                }
             }
         }
 
@@ -365,27 +404,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (!(_visualElement is Layout layout)) return null;
 
-            return CGAffineTransform.MakeTranslation(-(nfloat)layout.Padding.Left, -(nfloat)layout.Padding.Top);
-        }
+            var minChildrenStartX = layout.Padding.Left;
+            var minChildrenStartY = layout.Padding.Top;
 
-        private void InvalidateViewMask(UIView view, CGRect bounds, CGAffineTransform? transform = null)
-        {          
-            if (view?.Layer == null) return;
-
-            view.Layer.Mask?.Dispose();
-
-            if (view.Layer.Sublayers?.FirstOrDefault(l => l is GradientStrokeLayer) == null)
+            var visualElementChildren = layout.Children.Where(element => element is VisualElement);
+            if(visualElementChildren.Any())
             {
-                var maskPath = BackgroundKit
-                        .GetRoundCornersPath(bounds, _backgroundElement.CornerRadius).CGPath;
+                minChildrenStartX += visualElementChildren.Min(element => ((VisualElement)element).X);
+                minChildrenStartY += visualElementChildren.Max(element => ((VisualElement)element).Y);
+            }            
 
-                view.Layer.Mask = new CAShapeLayer
-                {
-                    Frame = bounds,
-                    Path = transform == null ? maskPath : new CGPath(maskPath, transform.Value)
-                };
-                view.Layer.MasksToBounds = true;
-            }
+            return CGAffineTransform.MakeTranslation(-(nfloat)minChildrenStartX, -(nfloat)minChildrenStartY);
         }
 
         public void EnsureRippleOnFront()

@@ -2,6 +2,7 @@
 using CoreGraphics;
 using UIKit;
 using Xamarin.Forms;
+using XamarinBackgroundKit.Extensions;
 
 namespace XamarinBackgroundKit.iOS
 {
@@ -9,12 +10,22 @@ namespace XamarinBackgroundKit.iOS
     {
         public static void Init() { }
 
-        internal static UIBezierPath GetRoundCornersPath(CGRect bounds, CornerRadius cornerRadius)
+        internal static UIBezierPath GetRoundCornersPath(CGRect bounds, CornerRadius cornerRadius, float borderWidth = 0f)
         {
-            var topLeft = (float)cornerRadius.TopLeft;
-            var topRight = (float)cornerRadius.TopRight;
-            var bottomLeft = (float)cornerRadius.BottomLeft;
-            var bottomRight = (float)cornerRadius.BottomRight;
+            if(cornerRadius.IsEmpty())
+            {
+                return UIBezierPath.FromRect(bounds);
+            }
+
+            if(cornerRadius.IsAllRadius())
+            {
+                return UIBezierPath.FromRoundedRect(bounds, InsetCorner(cornerRadius.TopLeft, borderWidth));
+            }
+
+            var topLeft = InsetCorner(cornerRadius.TopLeft, borderWidth);
+            var topRight = InsetCorner(cornerRadius.TopRight, borderWidth);
+            var bottomLeft = InsetCorner(cornerRadius.BottomLeft, borderWidth);
+            var bottomRight = InsetCorner(cornerRadius.BottomRight, borderWidth);
 
             var bezierPath = new UIBezierPath();
             bezierPath.AddArc(new CGPoint((float)bounds.X + bounds.Width - topRight, (float)bounds.Y + topRight), topRight, (float)(Math.PI * 1.5), (float)Math.PI * 2, true);
@@ -24,6 +35,12 @@ namespace XamarinBackgroundKit.iOS
             bezierPath.ClosePath();
 
             return bezierPath;
+        }
+
+        private static float InsetCorner(double corner, float borderWidth)
+        {
+            var temp = corner - borderWidth;
+            return temp < 0 ? 0 : (float)temp;
         }
     }
 }
