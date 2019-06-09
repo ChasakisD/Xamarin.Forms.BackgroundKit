@@ -22,7 +22,7 @@
                         JustifyContent="Center"
                         Wrap="Wrap">
                         <BindableLayout.ItemTemplate>
-                            <DataTemplate x:DataType="{x:Type models:ColorSource}">
+                            <DataTemplate x:DataType="models:ColorSource">
                                 <controls:MaterialContentView
                                     Margin="4"
                                     Clicked="OnColorSourceClick"

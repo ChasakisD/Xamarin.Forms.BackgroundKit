@@ -30,7 +30,7 @@ namespace XamarinBackgroundKitSample.Droid
             Popup.Init(this, savedInstanceState);
             XEPlatform.Init(this, savedInstanceState);
 
-            Forms.SetFlags("Shell_Experimental", "Visual_Experimental", "CollectionView_Experimental");
+            Forms.SetFlags("Visual_Experimental", "CollectionView_Experimental");
             Forms.Init(this, savedInstanceState);
             FormsMaterial.Init(this, savedInstanceState);
             

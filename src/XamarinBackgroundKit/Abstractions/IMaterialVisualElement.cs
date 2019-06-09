@@ -12,8 +12,6 @@ namespace XamarinBackgroundKit.Abstractions
         
         Color RippleColor { get; }
 
-        bool IsClippedToBounds { get; }
-
         event EventHandler<EventArgs> InvalidateGradientRequested;
 
         event EventHandler<EventArgs> InvalidateBorderGradientRequested;

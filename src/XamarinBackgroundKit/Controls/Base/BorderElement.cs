@@ -13,6 +13,10 @@ namespace XamarinBackgroundKit.Controls.Base
 			nameof(IBorderElement.BorderWidth), typeof(double), typeof(IBorderElement), 0d,
 			propertyChanged: OnBorderWidthPropertyChanged);
 
+        public static readonly BindableProperty BorderStyleProperty = BindableProperty.Create(
+            nameof(IBorderElement.BorderStyle), typeof(BorderStyle), typeof(IBorderElement), BorderStyle.Inner,
+            propertyChanged: OnBorderStylePropertyChanged);
+
         public static readonly BindableProperty DashGapProperty = BindableProperty.Create(
             nameof(IBorderElement.DashGap), typeof(double), typeof(IBorderElement), 0d,
             propertyChanged: OnDashGapPropertyChanged);
@@ -35,6 +39,11 @@ namespace XamarinBackgroundKit.Controls.Base
 		{
 			((IBorderElement)bindable).OnBorderWidthPropertyChanged((double)oldValue, (double)newValue);
 		}
+
+        private static void OnBorderStylePropertyChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            ((IBorderElement)bindable).OnBorderStylePropertyChanged((BorderStyle)oldValue, (BorderStyle)newValue);
+        }
 
         private static void OnDashGapPropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {

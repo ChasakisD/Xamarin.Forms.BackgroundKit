@@ -159,6 +159,7 @@ namespace XamarinBackgroundKit.Android.Renderers
                 UpdateGradients();
 
             if (oldElement.BorderColor != newElement.BorderColor
+                || oldElement.BorderStyle != newElement.BorderStyle
                 || Math.Abs(oldElement.BorderWidth - newElement.BorderWidth) > eps
                 || oldElement.BorderGradientBrush != newElement.BorderGradientBrush)
                 UpdateBorder();
@@ -201,7 +202,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 			if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
 				|| e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
 				|| e.PropertyName == BorderElement.DashGapProperty.PropertyName
-				|| e.PropertyName == BorderElement.DashWidthProperty.PropertyName) UpdateBorder();
+				|| e.PropertyName == BorderElement.DashWidthProperty.PropertyName
+                || e.PropertyName == BorderElement.BorderStyleProperty.PropertyName) UpdateBorder();
 			else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
 			else if (e.PropertyName == Background.ColorProperty.PropertyName
                     || e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName) UpdateColor();
@@ -377,11 +379,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             _nativeView.OutlineProvider = new CornerOutlineProvider(cornerRadii);
 
             _nativeView.ClipToOutline = true;
-
-            if (_nativeView is MaterialContentViewRenderer contentViewRenderer)
-            {
-                contentViewRenderer.UpdateClipBounds();
-            }
         }
 
         #endregion

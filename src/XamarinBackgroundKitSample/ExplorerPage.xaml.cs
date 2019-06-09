@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Effects;
@@ -55,7 +54,6 @@ namespace XamarinBackgroundKitSample
                 BackgroundEffect.SetBackground(view, Background);
             }
 
-            Background.IsClippedToBounds = true;
             Background.SetBinding(Background.BorderWidthProperty, new Binding("Value", source: BorderWidthSlider));
             Background.SetBinding(Background.DashGapProperty, new Binding("Value", source: DashGapSlider));
             Background.SetBinding(Background.DashWidthProperty, new Binding("Value", source: DashWidthSlider));
@@ -207,6 +205,11 @@ namespace XamarinBackgroundKitSample
             var green = (int) (selectedColor.Value.G * 255);
             var blue = (int) (selectedColor.Value.B * 255);
             entry.Text = $"#{red:X2}{green:X2}{blue:X2}";
+        }
+
+        private void OnBorderStyleToggled(object sender, ToggledEventArgs e)
+        {
+            Background.BorderStyle = e.Value ? BorderStyle.Outer : BorderStyle.Inner;
         }
     }
 }

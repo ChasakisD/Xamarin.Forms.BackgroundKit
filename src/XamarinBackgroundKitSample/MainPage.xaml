@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="XamarinBackgroundKitSample.MainPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
@@ -73,7 +73,6 @@
                         BorderWidth="4"
                         CornerRadius="40,40,0,0"
                         Elevation="4"
-                        IsClippedToBounds="True"
                         IsRippleEnabled="True"
                         RippleColor="#10000000"
                         Color="Green" />

@@ -90,6 +90,17 @@ namespace XamarinBackgroundKit.Controls
             set => SetValue(BorderWidthProperty, value);
         }
 
+        public static readonly BindableProperty BorderStyleProperty = BorderElement.BorderStyleProperty;
+
+        /// <summary>
+        /// Gets or sets the Border Width of the Border
+        /// </summary>
+		public BorderStyle BorderStyle
+        {
+            get => (BorderStyle)GetValue(BorderStyleProperty);
+            set => SetValue(BorderStyleProperty, value);
+        }
+
         public static readonly BindableProperty DashGapProperty = BorderElement.DashGapProperty;
 
         /// <summary>
@@ -160,23 +171,17 @@ namespace XamarinBackgroundKit.Controls
             get => (Color) GetValue(RippleColorProperty);
             set => SetValue(RippleColorProperty, value);
         }
-        
-        public static readonly BindableProperty IsClippedToBoundsProperty = BindableProperty.Create(
-            nameof(IsClippedToBounds), typeof(bool), typeof(Background), true);
-
-        /// <summary>
-        /// Gets or sets if the background is clipped to bounds
-        /// </summary>
-        public bool IsClippedToBounds
-        {
-            get => (bool)GetValue(IsClippedToBoundsProperty);
-            set => SetValue(IsClippedToBoundsProperty, value);
-        }
 
         #endregion
 
         public event EventHandler<EventArgs> InvalidateGradientRequested;
         public event EventHandler<EventArgs> InvalidateBorderGradientRequested;
+
+        public Background()
+        {
+            ((IGradientElement)this).OnGradientBrushPropertyChanged(null, GradientBrush);
+            ((IBorderElement)this).OnBorderGradientBrushPropertyChanged(null, BorderGradientBrush);
+        }
 
         #region IElevation Implementation
 
@@ -221,6 +226,8 @@ namespace XamarinBackgroundKit.Controls
         void IBorderElement.OnBorderColorPropertyChanged(Color oldValue, Color newValue) { }
 
         void IBorderElement.OnBorderWidthPropertyChanged(double oldValue, double newValue) { }
+
+        void IBorderElement.OnBorderStylePropertyChanged(BorderStyle oldValue, BorderStyle newValue) { }
 
         void IBorderElement.OnDashGapPropertyChanged(double oldValue, double newValue) { }
 

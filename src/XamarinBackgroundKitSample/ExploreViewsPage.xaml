@@ -7,7 +7,7 @@
     Title="Explore Views"
     BackgroundColor="White">
     <ContentPage.Resources>
-        <DataTemplate x:Key="ControlsDataTemplate" x:DataType="{x:Type x:String}">
+        <DataTemplate x:Key="ControlsDataTemplate" x:DataType="x:String">
             <ContentView Padding="16,8">
                 <background:MaterialContentView
                     Padding="8"
