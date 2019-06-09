@@ -383,20 +383,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             foreach (var subView in _renderer.NativeView.Subviews)
             {
-                if (subView?.Layer == null) return;
+                if (subView?.Layer?.Sublayers?.FirstOrDefault(
+                    l => l is GradientStrokeLayer) != null) continue;
 
                 subView.Layer.Mask?.Dispose();
-
-                if (subView.Layer.Sublayers?.FirstOrDefault(l => l is GradientStrokeLayer) == null)
+                subView.Layer.Mask = new CAShapeLayer
                 {
-                    subView.Layer.Mask = new CAShapeLayer
-                    {
-                        Frame = _renderer.NativeView.Bounds,
-                        Path = transform == null ? maskPath : new CGPath(maskPath, transform.Value)
-                    };
+                    Frame = _renderer.NativeView.Bounds,
+                    Path = transform == null ? maskPath : new CGPath(maskPath, transform.Value)
+                };
 
-                    subView.Layer.MasksToBounds = true;
-                }
+                subView.Layer.MasksToBounds = true;
             }
         }
 
@@ -407,8 +404,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
             var minChildrenStartX = layout.Padding.Left;
             var minChildrenStartY = layout.Padding.Top;
 
-            var visualElementChildren = layout.Children.Where(element => element is VisualElement);
-            if(visualElementChildren.Any())
+            var visualElementChildren = layout.Children?.Where(element => element is VisualElement);
+            if(visualElementChildren != null && visualElementChildren.Any())
             {
                 minChildrenStartX += visualElementChildren.Min(element => ((VisualElement)element).X);
                 minChildrenStartY += visualElementChildren.Max(element => ((VisualElement)element).Y);
