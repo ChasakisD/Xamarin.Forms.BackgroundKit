@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
     x:Class="XamarinBackgroundKitSample.ExplorerPage"
     xmlns="http://xamarin.com/schemas/2014/forms"
@@ -82,7 +82,7 @@
 
                 <StackLayout x:Name="GradientsLayout">
                     <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type background:GradientStop}">
+                        <DataTemplate x:DataType="background:GradientStop">
                             <StackLayout Orientation="Horizontal" Spacing="8">
                                 <Entry HorizontalOptions="FillAndExpand" Placeholder="Gradient Color Hex" TextChanged="OnGradientChanged" />
 
@@ -202,7 +202,7 @@
 
                 <StackLayout x:Name="BorderGradientsLayout">
                     <BindableLayout.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type background:GradientStop}">
+                        <DataTemplate x:DataType="background:GradientStop">
                             <StackLayout Orientation="Horizontal" Spacing="8">
                                 <Entry HorizontalOptions="FillAndExpand" Placeholder="Border Gradient Color Hex" TextChanged="OnGradientChanged" />
 

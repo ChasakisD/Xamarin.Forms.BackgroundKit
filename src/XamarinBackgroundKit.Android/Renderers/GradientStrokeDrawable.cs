@@ -264,6 +264,15 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             EnsureInitialized(width, height);
 
+            /*
+             * Masking the canvas is antiliased and also is more
+             * performant than clipping the canvas on android.
+             *
+             * The masking is performed on a temp canvas that is later
+             * draw on the original one. We draw the background and the
+             * border paints. Then we mask the canvas by DstIn, order
+             * to clear the outer stroke.
+             */
             _clipPaint.SetXfermode(new PorterDuffXfermode(PorterDuff.Mode.DstIn));
 
             _maskCanvas.DrawColor(AColor.Transparent, PorterDuff.Mode.Multiply);

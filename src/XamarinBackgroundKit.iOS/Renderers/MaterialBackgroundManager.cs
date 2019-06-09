@@ -404,6 +404,13 @@ namespace XamarinBackgroundKit.iOS.Renderers
             var minChildrenStartX = layout.Padding.Left;
             var minChildrenStartY = layout.Padding.Top;
 
+            /*
+             * To find the clipping mask for the subview we must
+             * calculate the minimum start x and y for the child views.
+             *
+             * To find the minimum start in one axis, we must add the padding
+             * of the layout and the margin of the child view.
+             */
             var visualElementChildren = layout.Children?.Where(element => element is VisualElement);
             if(visualElementChildren != null && visualElementChildren.Any())
             {
