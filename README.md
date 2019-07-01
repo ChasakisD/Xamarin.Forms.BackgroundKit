@@ -6,12 +6,12 @@
 [![NuGet Version](https://buildstats.info/nuget/Xamarin.Forms.BackgroundKit)](https://www.nuget.org/packages/Xamarin.Forms.BackgroundKit)
 
 * [Screenshots](#Screenshots)
+* [Setup](#Setup)
+* [Usage](#Usage)
 * [What was hard](#What-was-hard)
 * [Break some limitations](#Break-some-limitations)
 * [What is Supported](#What-is-supported)
 * [Ripple Support](#Ripple-Support)
-* [Setup](#Setup)
-* [Usage](#Usage)
 
 ### ScreenShots
 
@@ -27,6 +27,143 @@
 
 <img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_android.png" width="280" /> |
 <img src="https://github.com/ChasakisD/Xamarin.Forms-BackgroundKit/blob/master/art/corner_clipping_ios.png" height="560" width="280" />
+
+## Setup
+#### Xamarin.Android
+Initialize the renderer below the Xamarin.Forms.Init
+```cs
+XamarinBackgroundKit.Android.BackgroundKit.Init();
+```
+
+#### Xamarin.iOS
+Initialize the renderer below the Xamarin.Forms.Init
+```cs
+XamarinBackgroundKit.Android.BackgroundKit.Init();
+```
+
+### Actual Usage
+Everything you need to do is coming from XAML!
+
+#### Material Card/ContentView
+```xml
+<controls:MaterialContentView HeightRequest="60">
+
+    <controls:MaterialContentView.Background>    
+
+        <!-- Provide the Background Instance -->
+
+        <controls:Background
+            Angle="0"
+            BorderColor="Brown"
+            BorderWidth="4"
+            CornerRadius="30"
+            IsRippleEnabled="True"
+            RippleColor="White">
+
+            <!-- Provide the Background Gradient Brush -->
+
+            <background:Background.GradientBrush>
+
+                <background:LinearGradientBrush Angle="45">
+
+                    <!-- Provide the Background Gradient Stops -->
+
+                    <background:GradientStop Offset="0" Color="DarkBlue" />
+                    <background:GradientStop Offset="1" Color="DarkRed" />
+                </background:LinearGradientBrush>
+
+            </background:Background.GradientBrush>
+
+            <!-- Provide the Border Gradient Brush -->
+
+            <background:Background.BorderGradientBrush>
+
+                <background:LinearGradientBrush Angle="45">
+
+                    <!-- Provide the Border Gradient Stops -->
+
+                    <background:GradientStop Offset="0" Color="Blue" />
+                    <background:GradientStop Offset="1" Color="Red" />
+                </background:LinearGradientBrush>
+
+            </background:Background.BorderGradientBrush>
+
+        </controls:Background>
+
+    </controls:MaterialContentView.Background>
+
+    <Label Text="Material ContentView with Gradient and Offsets" />
+</controls:MaterialContentView>
+```
+
+### New Way by using the Markup extensions
+```xml
+<controls:MaterialContentView 
+    HeightRequest="60" 
+    Background="{controls:BgProvider Color=White, CornerRadius=8, Elevation=8}" />
+```
+
+#### Do you need just a color? 
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider Color=White}" />
+```    
+
+#### Do you need rounded cornders?
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider CornerRadius='LeftTop, RightTop, RightBottom, LeftBottom'}" />
+```   
+
+#### Do you need shadow? 
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider Elevation=8}" />
+```    
+
+#### Do you need gradient?
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider GradientBrush={controls:LinearGradient Start=Red, End=Green, Angle=70}}" />
+``` 
+
+#### Do you need more gradients?
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider GradientBrush={controls:LinearGradient Gradients='Red,Green,Blue', Angle=70}}" />
+```
+
+#### Do you need border?
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider BorderWidth=4, BorderColor=Red}" />
+```
+
+#### Do you need dashed border?
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider BorderWidth=4, BorderColor=Red, DashGap=5, DashWidth=10}" />
+```
+
+#### Do you need gradient border?
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider BorderWidth=4, BorderGradientBrush={controls:LinearGradient Start=Red, End=Green, Angle=70}}" />
+```
+
+#### Do you need outer border?
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider BorderStyle=Outer}" />
+```
+
+#### Don't you like MaterialContentView? Feel free to attach it anywhere by
+```xml
+<StackLayout 
+    controls:BackgroundEffect.Background="{controls:BgProvider BorderStyle=Outer}" />
+```
+
+#### Do you need a very complex background? You can achieve it by using only one view!
 
 ### What was hard
 
@@ -144,19 +281,6 @@ What is supported out of the box:
 | MaterialCard | Yes through RippleDrawable | Yes through RippleDrawable |
 | MaterialContentView | Yes through MDCInkViewController | Yes through MDCInkViewController |
 
-## Setup
-#### Xamarin.Android
-Initialize the renderer below the Xamarin.Forms.Init
-```cs
-XamarinBackgroundKit.Android.BackgroundKit.Init();
-```
-
-#### Xamarin.iOS
-Initialize the renderer below the Xamarin.Forms.Init
-```cs
-XamarinBackgroundKit.Android.BackgroundKit.Init();
-```
-
 ## <a name="usage"></a>Usage
 ### API Documentation
 #### Background
@@ -201,58 +325,3 @@ Same as MaterialContentView
 
 #### Background Effect
 Background Effect has an attached property in order to add background to your views without the need of a custom renderer!
-
-### Actual Usage
-Everything you need to do is coming from XAML!
-
-#### Material Card/ContentView
-```xml
-<controls:MaterialContentView HeightRequest="60">
-
-    <controls:MaterialContentView.Background>    
-
-        <!-- Provide the Background Instance -->
-
-        <controls:Background
-            Angle="0"
-            BorderColor="Brown"
-            BorderWidth="4"
-            CornerRadius="30"
-            IsRippleEnabled="True"
-            RippleColor="White">
-
-            <!-- Provide the Background Gradient Brush -->
-
-            <background:Background.GradientBrush>
-
-                <background:LinearGradientBrush Angle="45">
-
-                    <!-- Provide the Background Gradient Stops -->
-
-                    <background:GradientStop Offset="0" Color="DarkBlue" />
-                    <background:GradientStop Offset="1" Color="DarkRed" />
-                </background:LinearGradientBrush>
-
-            </background:Background.GradientBrush>
-
-            <!-- Provide the Border Gradient Brush -->
-
-            <background:Background.BorderGradientBrush>
-
-                <background:LinearGradientBrush Angle="45">
-
-                    <!-- Provide the Border Gradient Stops -->
-
-                    <background:GradientStop Offset="0" Color="Blue" />
-                    <background:GradientStop Offset="1" Color="Red" />
-                </background:LinearGradientBrush>
-
-            </background:Background.BorderGradientBrush>
-
-        </controls:Background>
-
-    </controls:MaterialContentView.Background>
-
-    <Label Text="Material ContentView with Gradient and Offsets" />
-</controls:MaterialContentView>
-```
