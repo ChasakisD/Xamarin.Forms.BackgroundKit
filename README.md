@@ -121,6 +121,12 @@ Everything you need to do is coming from XAML!
     Background="{controls:BgProvider Elevation=8}" />
 ```    
 
+#### Do you need ripple? 
+```xml
+<controls:MaterialContentView 
+    Background="{controls:BgProvider IsRippleEnabled=True, RippleColor=#80000000}" />
+```   
+
 #### Do you need gradient?
 ```xml
 <controls:MaterialContentView 
