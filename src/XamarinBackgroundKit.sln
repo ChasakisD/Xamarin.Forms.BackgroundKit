@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinBackgroundKitSample.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamarinBackgroundKitSample.iOS", "XamarinBackgroundKitSample.iOS\XamarinBackgroundKitSample.iOS.csproj", "{6F7CDBAB-DB1A-435B-B8E6-BBF84EDA4794}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9BC8704C-9996-4B8C-A2FB-5F5FBE1F7327}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_SolutionItems", "_SolutionItems", "{9BC8704C-9996-4B8C-A2FB-5F5FBE1F7327}"
 	ProjectSection(SolutionItems) = preProject
 		..\README.md = ..\README.md
 		..\nuget\XamarinBackgroundKit.nuspec = ..\nuget\XamarinBackgroundKit.nuspec
