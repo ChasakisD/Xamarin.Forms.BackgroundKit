@@ -11,13 +11,13 @@ namespace XamarinBackgroundKit.Abstractions
 
         double DashGap { get; }
         double DashWidth { get; }
-        LinearGradientBrush BorderGradientBrush { get; }
+        GradientBrush BorderGradientBrush { get; }
         
         void OnBorderColorPropertyChanged(Color oldValue, Color newValue);
 		void OnBorderWidthPropertyChanged(double oldValue, double newValue);
         void OnBorderStylePropertyChanged(BorderStyle oldValue, BorderStyle newValue);
         void OnDashGapPropertyChanged(double oldValue, double newValue);
         void OnDashWidthPropertyChanged(double oldValue, double newValue);
-        void OnBorderGradientBrushPropertyChanged(LinearGradientBrush oldValue, LinearGradientBrush newValue);
+        void OnBorderGradientBrushPropertyChanged(GradientBrush oldValue, GradientBrush newValue);
     }
 }

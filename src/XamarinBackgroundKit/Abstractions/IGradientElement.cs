@@ -4,8 +4,8 @@ namespace XamarinBackgroundKit.Abstractions
 {
     public interface IGradientElement
     {
-        LinearGradientBrush GradientBrush { get; }
+        GradientBrush GradientBrush { get; }
 
-        void OnGradientBrushPropertyChanged(LinearGradientBrush oldValue, LinearGradientBrush newValue);
+        void OnGradientBrushPropertyChanged(GradientBrush oldValue, GradientBrush newValue);
     }
 }

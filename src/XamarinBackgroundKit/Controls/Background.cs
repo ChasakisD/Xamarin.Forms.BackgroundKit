@@ -58,9 +58,9 @@ namespace XamarinBackgroundKit.Controls
         /// <summary>
         /// Gets or sets the Angle of the Gradient of the Background
         /// </summary>
-		public LinearGradientBrush GradientBrush
+		public GradientBrush GradientBrush
         {
-            get => (LinearGradientBrush)GetValue(GradientBrushProperty);
+            get => (GradientBrush)GetValue(GradientBrushProperty);
             set => SetValue(GradientBrushProperty, value);
         }
 
@@ -128,9 +128,9 @@ namespace XamarinBackgroundKit.Controls
         /// <summary>
         /// Gets or sets the Angle of the Gradient of the Border
         /// </summary>
-        public LinearGradientBrush BorderGradientBrush
+        public GradientBrush BorderGradientBrush
         {
-            get => (LinearGradientBrush)GetValue(BorderGradientBrushProperty);
+            get => (GradientBrush)GetValue(BorderGradientBrushProperty);
             set => SetValue(BorderGradientBrushProperty, value);
         }
         
@@ -199,7 +199,7 @@ namespace XamarinBackgroundKit.Controls
 
         #region IGradientElement Implementation
 
-        void IGradientElement.OnGradientBrushPropertyChanged(LinearGradientBrush oldValue, LinearGradientBrush newValue)
+        void IGradientElement.OnGradientBrushPropertyChanged(GradientBrush oldValue, GradientBrush newValue)
         {
             if (oldValue != null)
             {
@@ -233,8 +233,7 @@ namespace XamarinBackgroundKit.Controls
 
         void IBorderElement.OnDashWidthPropertyChanged(double oldValue, double newValue) { }
 
-        void IBorderElement.OnBorderGradientBrushPropertyChanged(LinearGradientBrush oldValue,
-            LinearGradientBrush newValue)
+        void IBorderElement.OnBorderGradientBrushPropertyChanged(GradientBrush oldValue, GradientBrush newValue)
         {
             if (oldValue != null)
             {
