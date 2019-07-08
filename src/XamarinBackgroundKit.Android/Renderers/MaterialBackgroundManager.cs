@@ -17,6 +17,7 @@ using XamarinBackgroundKit.Effects;
 using XamarinBackgroundKit.Extensions;
 using AView = Android.Views.View;
 using Color = Xamarin.Forms.Color;
+using AColor = Android.Graphics.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
@@ -339,8 +340,13 @@ namespace XamarinBackgroundKit.Android.Renderers
                     oldRippleDrawable.SetColor(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()));
                     break;
                 case null when _backgroundElement.IsRippleEnabled:
-                    _nativeView.Foreground = new RippleDrawable(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()),
-                        null, _nativeView.Background);
+                    var maskDrawable = new GradientDrawable();
+                    maskDrawable.SetShape(ShapeType.Rectangle);
+                    maskDrawable.SetColor(new AColor(0, 0, 0, 255));
+                    maskDrawable.SetCornerRadii(_backgroundElement.CornerRadius.ToRadii(
+                        _context.Resources.DisplayMetrics.Density));
+                    var rippleColorStateList = ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid());
+                    _nativeView.Foreground = new RippleDrawable(rippleColorStateList, null, maskDrawable);
                     _nativeView.Clickable = true;
                     _nativeView.Focusable = true;
                     break;
