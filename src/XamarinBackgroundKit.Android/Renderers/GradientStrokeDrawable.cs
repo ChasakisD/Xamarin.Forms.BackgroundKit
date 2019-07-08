@@ -1,22 +1,21 @@
-﻿using Android.Content;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
-using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Extensions;
-using Color = Xamarin.Forms.Color;
 using AColor = Android.Graphics.Color;
+using Color = Xamarin.Forms.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
     public class GradientStrokeDrawable : PaintDrawable
     {
-        private Context _context;
+        private readonly double _density;
 
         private Path _clipPath;
         private Paint _clipPaint;
@@ -27,6 +26,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         private Canvas _maskCanvas;
         private Canvas _tempCanvas;
 
+        private Color _color;
+        private Color _strokeColor;
         private CornerRadius _cornerRadius;
 
         private int[] _colors;
@@ -37,11 +38,11 @@ namespace XamarinBackgroundKit.Android.Renderers
         private float[] _strokePositions;
         private float[] _strokeColorPositions;
 
-        public GradientStrokeDrawable(Context context, IMaterialVisualElement background = null)
+        public GradientStrokeDrawable(double density, IMaterialVisualElement background = null)
         {
             Initialize();
 
-            _context = context;
+            _density = density;
 
             if (background == null) return;
             SetColor(background.Color);
@@ -161,6 +162,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         {
             if (HasGradient())
             {
+                /* Color of paint will be ignored */
+                Paint.Color = AColor.White;
                 Paint.SetShader(new LinearGradient(
                     canvas.Width * _positions[0],
                     canvas.Height * _positions[1],
@@ -173,10 +176,16 @@ namespace XamarinBackgroundKit.Android.Renderers
             else
             {
                 Paint.SetShader(null);
+
+                if (_color != Color.Default)
+                {
+                    Paint.Color = _color.ToAndroid();
+                }
             }
 
             if (HasBorderGradient())
             {
+                _strokePaint.Color = AColor.White;
                 _strokePaint.SetShader(new LinearGradient(
                     canvas.Width * _strokePositions[0],
                     canvas.Height * _strokePositions[1],
@@ -189,12 +198,17 @@ namespace XamarinBackgroundKit.Android.Renderers
             else
             {
                 _strokePaint.SetShader(null);
+
+                if (_strokeColor != Color.Default)
+                {
+                    _strokePaint.Color = _strokeColor.ToAndroid();
+                }
             }
         }
 
         private void InitializeClippingPath(Canvas canvas)
         {
-            var cornerRadii = _cornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+            var cornerRadii = _cornerRadius.ToRadii(_density);
 
             _clipPath.Reset();
             _clipPath.AddRoundRect(0, 0, canvas.Width, canvas.Height,
@@ -207,21 +221,15 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetColor(Color color)
         {
-            if (color == Color.Default) return;
-
-            Paint.Color = color.ToAndroid();
+            _color = color;
 
             InvalidateSelf();
         }
 
         public void SetStroke(double strokeWidth, Color strokeColor)
         {
-            _strokePaint.StrokeWidth = (int)_context.ToPixels(strokeWidth) * 2;
-
-            if (_strokeColors == null)
-            {
-                _strokePaint.Color = strokeColor.ToAndroid();
-            }
+            _strokeColor = strokeColor;
+            _strokePaint.StrokeWidth = (int)(strokeWidth * _density * 2);
 
             InvalidateSelf();
         }
@@ -236,8 +244,8 @@ namespace XamarinBackgroundKit.Android.Renderers
             {
                 _strokePaint.SetPathEffect(new DashPathEffect(new float[]
                 {
-                    (int) _context.ToPixels(dashWidth),
-                    (int) _context.ToPixels(dashGap)
+                    (int) (dashWidth * _density),
+                    (int) (dashGap * _density)
                 }, 0));
             }
 
@@ -306,8 +314,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             var isUniform = _cornerRadius.IsAllRadius() && !_cornerRadius.IsEmpty();
 
-            var uniformCornerRadius = _context.ToPixels(_cornerRadius.TopLeft);
-            var cornerRadii = _cornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+            var uniformCornerRadius = (int)(_cornerRadius.TopLeft * _density);
+            var cornerRadii = _cornerRadius.ToRadii(_density);
 
             if (isUniform) base.SetCornerRadius(uniformCornerRadius);
             else SetCornerRadii(cornerRadii);
@@ -371,8 +379,6 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _maskCanvas = null;
                 }
 
-                _context = null;
-
                 _colors = null;
                 _positions = null;
                 _colorPositions = null;
@@ -386,27 +392,5 @@ namespace XamarinBackgroundKit.Android.Renderers
         }
 
         #endregion
-
-        public class Builder
-        {
-            private readonly Context _context;
-            private IMaterialVisualElement _materialVisualElement;
-
-            public Builder(Context context)
-            {
-                _context = context;
-            }
-
-            public Builder SetMaterialElement(IMaterialVisualElement materialVisualElement)
-            {
-                _materialVisualElement = materialVisualElement;
-                return this;
-            }
-
-            public GradientStrokeDrawable Build()
-            {
-                return new GradientStrokeDrawable(_context, _materialVisualElement);
-            }
-        }
     }
 }

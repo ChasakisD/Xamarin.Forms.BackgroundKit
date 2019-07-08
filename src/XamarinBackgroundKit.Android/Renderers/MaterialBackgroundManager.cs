@@ -3,10 +3,13 @@ using System.ComponentModel;
 using Android.Content;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
+using Android.Runtime;
 using Android.Support.Design.Button;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using Android.Support.V4.View;
+using Android.Util;
+using Android.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
@@ -15,9 +18,10 @@ using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Effects;
 using XamarinBackgroundKit.Extensions;
+using AApp = Android.App.Application;
+using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
 using Color = Xamarin.Forms.Color;
-using AColor = Android.Graphics.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
@@ -33,6 +37,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         private VisualElement _visualElement;
         private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
+
+        private static double _density = -1;
 
         private static readonly int[][] ButtonStates =
         {
@@ -231,9 +237,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
 
             _nativeView.Background?.Dispose();
-            _nativeView.Background = new GradientStrokeDrawable.Builder(_context)
-                .SetMaterialElement(_backgroundElement)
-                .Build();
+            _nativeView.Background = new GradientStrokeDrawable(GetDensity(), _backgroundElement);
 
             UpdateRipple();
             InvalidateOutline();
@@ -412,6 +416,30 @@ namespace XamarinBackgroundKit.Android.Renderers
             _context = null;
             _nativeView = null;
             _renderer = null;
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private static double GetDensity()
+        {
+            if (_density > 0) return _density;
+
+            using (var displayMetrics = new DisplayMetrics())
+            {
+                var windowService = AApp.Context.GetSystemService(Context.WindowService)
+                    ?.JavaCast<IWindowManager>();
+
+                using (var display = windowService?.DefaultDisplay)
+                {
+                    if (display == null) return _density;
+
+                    display.GetRealMetrics(displayMetrics);
+                    _density = displayMetrics.Density;
+                    return _density;
+                }
+            }
         }
 
         #endregion
