@@ -22,7 +22,7 @@ using AColor = Android.Graphics.Color;
 namespace XamarinBackgroundKit.Android.Renderers
 {
     public class MaterialBackgroundManager : IDisposable
-	{
+    {
         private bool _areDefaultsSet;
         private bool _defaultFocusable;
         private bool _defaultClickable;
@@ -30,8 +30,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         private bool _disposed;
         private Context _context;
         private AView _nativeView;
-		private VisualElement _visualElement;
-		private IVisualElementRenderer _renderer;
+        private VisualElement _visualElement;
+        private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
 
         private static readonly int[][] ButtonStates =
@@ -41,13 +41,13 @@ namespace XamarinBackgroundKit.Android.Renderers
         };
 
         public MaterialBackgroundManager(IVisualElementRenderer renderer)
-		{
-			_renderer = renderer ?? throw new ArgumentNullException(nameof(renderer), "Renderer cannot be null");
+        {
+            _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer), "Renderer cannot be null");
 
             _renderer.ElementChanged += OnRendererElementChanged;
-            
+
             SetVisualElement(null, _renderer.Element);
-		}
+        }
 
         #region Element Setters
 
@@ -72,14 +72,14 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void SetVisualElement(VisualElement oldElement, VisualElement newElement)
         {
-            if(oldElement != null)
+            if (oldElement != null)
             {
                 _context = null;
                 _nativeView = null;
                 oldElement.PropertyChanged -= OnElementPropertyChanged;
             }
 
-            if(newElement != null)
+            if (newElement != null)
             {
                 ResolveNativeView();
                 _context = _nativeView.Context;
@@ -120,23 +120,23 @@ namespace XamarinBackgroundKit.Android.Renderers
             SetBackgroundElement(oldMaterialVisualElement, newMaterialVisualElement);
         }
 
-		public void SetBackgroundElement(IMaterialVisualElement oldElement, IMaterialVisualElement newElement)
-		{
-			if (oldElement != null)
-			{
+        public void SetBackgroundElement(IMaterialVisualElement oldElement, IMaterialVisualElement newElement)
+        {
+            if (oldElement != null)
+            {
                 oldElement.PropertyChanged -= OnRendererPropertyChanged;
                 oldElement.InvalidateGradientRequested -= InvalidateGradientsRequested;
                 oldElement.InvalidateBorderGradientRequested -= InvalidateBorderGradientsRequested;
             }
 
-			_backgroundElement = newElement;
+            _backgroundElement = newElement;
 
             if (newElement == null) return;
 
             newElement.PropertyChanged += OnRendererPropertyChanged;
             newElement.InvalidateGradientRequested += InvalidateGradientsRequested;
             newElement.InvalidateBorderGradientRequested += InvalidateBorderGradientsRequested;
-            
+
             if (oldElement == null)
             {
                 UpdateBackground();
@@ -180,13 +180,13 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void InvalidateBorderGradientsRequested(object sender, EventArgs e)
         {
-	        UpdateBorder();
+            UpdateBorder();
         }
 
         private void OnRendererElementChanged(object sender, VisualElementChangedEventArgs e)
-		{
+        {
             SetVisualElement(e.OldElement, e.NewElement);
-		}
+        }
 
         private void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -197,21 +197,21 @@ namespace XamarinBackgroundKit.Android.Renderers
         }
 
         private void OnRendererPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if (_renderer == null || _disposed) return;
+        {
+            if (_renderer == null || _disposed) return;
 
-			if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
-				|| e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
-				|| e.PropertyName == BorderElement.DashGapProperty.PropertyName
-				|| e.PropertyName == BorderElement.DashWidthProperty.PropertyName
+            if (e.PropertyName == BorderElement.BorderColorProperty.PropertyName
+                || e.PropertyName == BorderElement.BorderWidthProperty.PropertyName
+                || e.PropertyName == BorderElement.DashGapProperty.PropertyName
+                || e.PropertyName == BorderElement.DashWidthProperty.PropertyName
                 || e.PropertyName == BorderElement.BorderStyleProperty.PropertyName) UpdateBorder();
-			else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
-			else if (e.PropertyName == Background.ColorProperty.PropertyName
+            else if (e.PropertyName == CornerElement.CornerRadiusProperty.PropertyName) UpdateCornerRadius();
+            else if (e.PropertyName == Background.ColorProperty.PropertyName
                     || e.PropertyName == VisualElement.BackgroundColorProperty.PropertyName) UpdateColor();
-			else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
-				|| e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
-			else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
-			else if (e.PropertyName == ElevationElement.TranslationZProperty.PropertyName) UpdateTranslationZ();
+            else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
+                || e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
+            else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
+            else if (e.PropertyName == ElevationElement.TranslationZProperty.PropertyName) UpdateTranslationZ();
         }
 
         #endregion
@@ -240,88 +240,88 @@ namespace XamarinBackgroundKit.Android.Renderers
         }
 
         private void UpdateColor()
-		{
-			if (_nativeView == null || _backgroundElement == null || _visualElement == null) return;
-		
-			var color = _backgroundElement.Color == Color.Default
-				? _visualElement.BackgroundColor == Color.Default
-					? Color.Default
-					: _visualElement.BackgroundColor
-				: _backgroundElement.Color;
+        {
+            if (_nativeView == null || _backgroundElement == null || _visualElement == null) return;
 
-			if (color == Color.Default) return;
+            var color = _backgroundElement.Color == Color.Default
+                ? _visualElement.BackgroundColor == Color.Default
+                    ? Color.Default
+                    : _visualElement.BackgroundColor
+                : _backgroundElement.Color;
 
-			switch (_nativeView)
-			{
-				case MaterialCardView mCardView:
-					mCardView.CardBackgroundColor = ColorStateList.ValueOf(color.ToAndroid());
-					break;
-				case Chip mChip:
-					mChip.ChipBackgroundColor = ColorStateList.ValueOf(color.ToAndroid());
-					break;
+            if (color == Color.Default) return;
+
+            switch (_nativeView)
+            {
+                case MaterialCardView mCardView:
+                    mCardView.CardBackgroundColor = ColorStateList.ValueOf(color.ToAndroid());
+                    break;
+                case Chip mChip:
+                    mChip.ChipBackgroundColor = ColorStateList.ValueOf(color.ToAndroid());
+                    break;
                 case MaterialButton mButton:
                     var primaryColor = color.ToAndroid();
-                    var alphaPrimaryColor = new global::Android.Graphics.Color(primaryColor.R, primaryColor.G,
-                        primaryColor.B, (byte) (0.12 * 255));
+                    var alphaPrimaryColor = new global::Android.Graphics.Color(
+                        primaryColor.R, primaryColor.G, primaryColor.B, (byte)(0.12 * 255));
                     ViewCompat.SetBackgroundTintList(mButton,
-                        new ColorStateList(ButtonStates, new int[] {primaryColor, alphaPrimaryColor}));
+                        new ColorStateList(ButtonStates, new int[] { primaryColor, alphaPrimaryColor }));
                     break;
-				default:
-					_nativeView.SetColor(color);
+                default:
+                    _nativeView.SetColor(color);
                     break;
-			}
-		}
-
-		private void UpdateGradients()
-		{
-			if (_nativeView == null || _backgroundElement == null) return;
-			if (_nativeView is MaterialCardView || _nativeView is Chip || _nativeView is MaterialButton) return;
-
-			_nativeView.SetGradient(_backgroundElement);
+            }
         }
 
-		private void UpdateBorder()
-		{
-			if (_nativeView == null || _backgroundElement == null) return;
-			
-			switch (_nativeView)
-			{
-				case MaterialCardView mCardView:
-					mCardView.SetBorder(_context, _backgroundElement);
-					break;
-				case Chip mChip:
-					mChip.SetBorder(_context, _backgroundElement);
-					break;
+        private void UpdateGradients()
+        {
+            if (_nativeView == null || _backgroundElement == null) return;
+            if (_nativeView is MaterialCardView || _nativeView is Chip || _nativeView is MaterialButton) return;
+
+            _nativeView.SetGradient(_backgroundElement);
+        }
+
+        private void UpdateBorder()
+        {
+            if (_nativeView == null || _backgroundElement == null) return;
+
+            switch (_nativeView)
+            {
+                case MaterialCardView mCardView:
+                    mCardView.SetBorder(_context, _backgroundElement);
+                    break;
+                case Chip mChip:
+                    mChip.SetBorder(_context, _backgroundElement);
+                    break;
                 case MaterialButton mButton:
                     mButton.SetBorder(_context, _backgroundElement);
                     break;
-				default:
-					_nativeView.SetBorder(_backgroundElement);
+                default:
+                    _nativeView.SetBorder(_backgroundElement);
                     break;
-			}
-		}
+            }
+        }
 
-		private void UpdateCornerRadius()
-		{
-			if (_nativeView == null || _backgroundElement == null) return;
-			
-			switch (_nativeView)
-			{
-				case MaterialCardView mCardView:
-					mCardView.SetCornerRadius(_context, _backgroundElement);
-					break;
-				case Chip mChip:
-					mChip.SetCornerRadius(_context, _backgroundElement);
-					break;
+        private void UpdateCornerRadius()
+        {
+            if (_nativeView == null || _backgroundElement == null) return;
+
+            switch (_nativeView)
+            {
+                case MaterialCardView mCardView:
+                    mCardView.SetCornerRadius(_context, _backgroundElement);
+                    break;
+                case Chip mChip:
+                    mChip.SetCornerRadius(_context, _backgroundElement);
+                    break;
                 case MaterialButton mButton:
                     mButton.SetCornerRadius(_context, _backgroundElement);
                     break;
                 default:
-					_nativeView.SetCornerRadius(_backgroundElement);
+                    _nativeView.SetCornerRadius(_backgroundElement);
                     InvalidateOutline();
                     break;
-			}
-		}
+            }
+        }
 
         private void UpdateRipple()
         {
@@ -358,20 +358,20 @@ namespace XamarinBackgroundKit.Android.Renderers
             _nativeView?.SetTranslationZ(_context, _backgroundElement);
         }
 
-		private void UpdateElevation()
-		{
-			if (_nativeView == null) return;
+        private void UpdateElevation()
+        {
+            if (_nativeView == null) return;
 
-			switch (_nativeView)
-			{
-				case MaterialCardView mCardView:
-					mCardView.SetElevation(_context, _backgroundElement);
-					break;
-				default:
-					_nativeView.SetElevation(_context, _backgroundElement);
-					break;
-			}
-		}
+            switch (_nativeView)
+            {
+                case MaterialCardView mCardView:
+                    mCardView.SetElevation(_context, _backgroundElement);
+                    break;
+                default:
+                    _nativeView.SetElevation(_context, _backgroundElement);
+                    break;
+            }
+        }
 
         #endregion
 
@@ -396,11 +396,11 @@ namespace XamarinBackgroundKit.Android.Renderers
             Dispose(true);
         }
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (_disposed) return;
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
 
-			_disposed = true;
+            _disposed = true;
 
             if (!disposing) return;
 
