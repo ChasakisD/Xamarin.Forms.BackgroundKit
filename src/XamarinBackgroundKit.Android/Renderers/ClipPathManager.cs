@@ -22,6 +22,9 @@ namespace XamarinBackgroundKit.Android.Renderers
         {
             if (context == null || canvas == null || background == null || drawChild == null) return false;
 
+            /* If the corner radius is uniform the clip is done by the ViewOutlineProvider */
+            if (background.CornerRadius.IsEmpty() || background.CornerRadius.IsAllRadius()) return drawChild();
+
             var strokeWidth = (int)context.ToPixels(background.BorderWidth);
             var cornerRadii = background.CornerRadius.ToRadii(context.Resources.DisplayMetrics.Density);
 
