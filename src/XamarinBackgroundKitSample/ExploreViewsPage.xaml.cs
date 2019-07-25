@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Effects;
+using XamarinBackgroundKit.Skia.Controls;
 
 namespace XamarinBackgroundKitSample
 {
@@ -21,7 +22,8 @@ namespace XamarinBackgroundKitSample
             {
                 "MaterialCard",
                 "MaterialContentView",
-                "MaterialCardShowCase1"
+                "MaterialCardShowCase1",
+                "SKBackgroundCanvasView"
             };
 
             var xamarinViews = new ObservableCollection<string>
@@ -152,6 +154,8 @@ namespace XamarinBackgroundKitSample
                         return (View)Activator.CreateInstance(type);
                     case "MaterialCardShowCase1":
                         return GetMaterialShowCase1();
+                    case "SKBackgroundCanvasView":
+                        return new SKBackgroundCanvasView();
                     default:
                         type = Type.GetType($"Xamarin.Forms.{control}, {typeof(Grid).Assembly.GetName().Name}");
                         if (type == null) return null;
