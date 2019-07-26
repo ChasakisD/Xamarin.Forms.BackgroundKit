@@ -184,6 +184,10 @@
       <Project>{720B8AE8-3D81-4A1F-961A-DF0EDD5CBD0C}</Project>
       <Name>XamarinBackgroundKitSample</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XamarinBackgroundKit.Skia.iOS\XamarinBackgroundKit.Skia.iOS.csproj">
+      <Project>{1FF2A3A1-3167-409C-A327-4611A025028D}</Project>
+      <Name>XamarinBackgroundKit.Skia.iOS</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\ic_done.png" />

@@ -37,7 +37,7 @@ namespace XamarinBackgroundKit.Skia.Controls
         
         #region IBackgroundElement Implementation
 
-        void IBackgroundElement.OnBackgroundChanged(Background oldValue, Background newValue)
+        public virtual void OnBackgroundChanged(Background oldValue, Background newValue)
         {          
             if (oldValue != null)
             {

@@ -111,6 +111,10 @@
       <Project>{720B8AE8-3D81-4A1F-961A-DF0EDD5CBD0C}</Project>
       <Name>XamarinBackgroundKitSample</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XamarinBackgroundKit.Skia.Android\XamarinBackgroundKit.Skia.Android.csproj">
+      <Project>{C3D6CB0B-5CAF-4274-BBD7-7368BC7E9026}</Project>
+      <Name>XamarinBackgroundKit.Skia.Android</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable-hdpi\ic_done.png" />

@@ -23,7 +23,8 @@ namespace XamarinBackgroundKitSample
                 "MaterialCard",
                 "MaterialContentView",
                 "MaterialCardShowCase1",
-                "SKBackgroundCanvasView"
+                "SKBackgroundCanvasView",
+                "SKMaterialCardShowCase1"
             };
 
             var xamarinViews = new ObservableCollection<string>
@@ -153,7 +154,9 @@ namespace XamarinBackgroundKitSample
                         if (type == null) return null;
                         return (View)Activator.CreateInstance(type);
                     case "MaterialCardShowCase1":
-                        return GetMaterialShowCase1();
+                        return new MaterialContentView { Content = GetMaterialShowCaseContent() };
+                    case "SKMaterialCardShowCase1":
+                        return new SKBackgroundContentView { Content = GetMaterialShowCaseContent() };
                     case "SKBackgroundCanvasView":
                         return new SKBackgroundCanvasView();
                     default:
@@ -184,65 +187,66 @@ namespace XamarinBackgroundKitSample
             await Navigation.PushAsync(new ExplorerPage(view));
         }
 
-        private View GetMaterialShowCase1() =>
-            new MaterialContentView
+        private View GetMaterialShowCaseContent()
+        {
+            return new StackLayout
             {
-                Content = new StackLayout
+                Spacing = 0,
+                Margin = 8,
+                Children =
                 {
-                    Spacing = 0,
-                    Children =
+                    new Image
                     {
-                        new Image
+                        HeightRequest = 194,
+                        Aspect = Aspect.AspectFill,
+                        VerticalOptions = LayoutOptions.Start,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Source = new UriImageSource
                         {
-                            HeightRequest = 194,
-                            Aspect = Aspect.AspectFill,
-                            VerticalOptions = LayoutOptions.Start,
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            Source = new UriImageSource
+                            Uri = new Uri(
+                                "https://devblogs.microsoft.com/xamarin/wp-content/uploads/sites/44/2018/11/Codemonkeys2.jpg")
+                        }
+                    },
+                    new Label
+                    {
+                        FontSize = 22,
+                        Text = "Material Card",
+                        TextColor = Color.FromHex("4A4A4A"),
+                        Margin = new Thickness(16, 16, 0, 4)
+                    },
+                    new Label
+                    {
+                        FontSize = 16,
+                        Text = "Xamarin Forms Material Showcase",
+                        TextColor = Color.Gray,
+                        Margin = new Thickness(16, 0, 0, 4)
+                    },
+                    new Label
+                    {
+                        FontSize = 14,
+                        Text = "Welcome to Xamarin.Forms Background Kit Material ShowCase",
+                        TextColor = Color.Gray,
+                        Margin = new Thickness(16, 16, 24, 4)
+                    },
+                    new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        Children =
+                        {
+                            new Button
                             {
-                                Uri = new Uri(
-                                    "https://devblogs.microsoft.com/xamarin/wp-content/uploads/sites/44/2018/11/Codemonkeys2.jpg")
-                            }
-                        },
-                        new Label
-                        {
-                            FontSize = 22,
-                            Text = "Material Card",
-                            TextColor = Color.FromHex("4A4A4A"),
-                            Margin = new Thickness(16, 16, 0, 4)
-                        },
-                        new Label
-                        {
-                            FontSize = 16,
-                            Text = "Xamarin Forms Material Showcase",
-                            TextColor = Color.Gray,
-                            Margin = new Thickness(16, 0, 0, 4)
-                        },
-                        new Label
-                        {
-                            FontSize = 14,
-                            Text = "Welcome to Xamarin.Forms Background Kit Material ShowCase",
-                            TextColor = Color.Gray,
-                            Margin = new Thickness(16, 16, 24, 4)
-                        },
-                        new StackLayout
-                        {
-                            Orientation = StackOrientation.Horizontal,
-                            Children =
-                            {
-                                new Button
-                                {
-                                    Margin = new Thickness(16),
-                                    TextColor = Color.Purple,
-                                    FontSize = 18,
-                                    Text = "Action",
-                                    FontAttributes = FontAttributes.Bold,
-                                    BackgroundColor = Color.Transparent
-                                }
+                                Margin = new Thickness(16),
+                                TextColor = Color.Purple,
+                                FontSize = 18,
+                                Text = "Action",
+                                FontAttributes = FontAttributes.Bold,
+                                BackgroundColor = Color.Transparent
                             }
                         }
                     }
                 }
             };
+        }
+            
     }
 }

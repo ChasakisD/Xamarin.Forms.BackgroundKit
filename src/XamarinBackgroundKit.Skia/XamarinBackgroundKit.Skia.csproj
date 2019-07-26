@@ -17,5 +17,7 @@
   <ItemGroup>
     <Folder Include="Controls\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Properties\" />
+    <Folder Include="MarkupExtensions\" />
   </ItemGroup>
 </Project>

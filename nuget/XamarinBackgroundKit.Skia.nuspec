@@ -16,6 +16,15 @@
     <dependencies>
       <group targetFramework="netstandard2.0">
         <dependency id="SkiaSharp.Views.Forms" version="1.68.0" />
+        <dependency id="Xamarin.Forms.BackgroundKit" version="1.3.0" />
+      </group>
+      <group targetFramework="MonoAndroid90">
+        <dependency id="SkiaSharp.Views.Forms" version="1.68.0" />
+        <dependency id="Xamarin.Forms.BackgroundKit" version="1.3.0" />
+      </group>
+      <group targetFramework="Xamarin.iOS10">
+        <dependency id="SkiaSharp.Views.Forms" version="1.68.0" />
+        <dependency id="Xamarin.Forms.BackgroundKit" version="1.3.0" />
       </group>
     </dependencies>
   </metadata>
@@ -26,17 +35,40 @@
 
     <!--netstandard-->
 
-    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.dll"
-        target="lib\netstandard2.0" />
-    <file src="..\src\XamarinBackgroundKit\bin\Release\netstandard2.0\XamarinBackgroundKit.pdb"
-        target="lib\netstandard2.0" />
-
     <file src="..\src\XamarinBackgroundKit.Skia\bin\Release\netstandard2.0\XamarinBackgroundKit.Skia.dll"
         target="lib\netstandard2.0" />
     <file src="..\src\XamarinBackgroundKit.Skia\bin\Release\netstandard2.0\XamarinBackgroundKit.Skia.pdb"
         target="lib\netstandard2.0" />
 
     <!--netstandard-->
+
+     <!--Android-->
+
+    <file src="..\src\XamarinBackgroundKit.Skia\bin\Release\netstandard2.0\XamarinBackgroundKit.Skia.dll"
+        target="lib\MonoAndroid90" />
+    <file src="..\src\XamarinBackgroundKit.Skia\bin\Release\netstandard2.0\XamarinBackgroundKit.Skia.pdb"
+        target="lib\MonoAndroid90" />
+
+    <file src="..\src\XamarinBackgroundKit.Skia.Android\bin\Release\XamarinBackgroundKit.Skia.Android.dll"
+        target="lib\MonoAndroid90" />
+    <file src="..\src\XamarinBackgroundKit.Skia.Android\bin\Release\XamarinBackgroundKit.Skia.Android.pdb"
+        target="lib\MonoAndroid90" />
+
+    <!--Android-->
+
+    <!--iOS-->
+
+    <file src="..\src\XamarinBackgroundKit.Skia\bin\Release\netstandard2.0\XamarinBackgroundKit.Skia.dll"
+        target="lib\Xamarin.iOS10" />
+    <file src="..\src\XamarinBackgroundKit.Skia\bin\Release\netstandard2.0\XamarinBackgroundKit.Skia.pdb"
+        target="lib\Xamarin.iOS10" />
+
+    <file src="..\src\XamarinBackgroundKit.Skia.iOS\bin\Release\XamarinBackgroundKit.Skia.iOS.dll"
+        target="lib\Xamarin.iOS10" />
+    <file src="..\src\XamarinBackgroundKit.Skia.iOS\bin\Release\XamarinBackgroundKit.Skia.iOS.pdb"
+        target="lib\Xamarin.iOS10" />
+
+    <!--iOS-->
 
   </files>
 </package>
