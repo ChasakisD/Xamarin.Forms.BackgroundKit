@@ -46,4 +46,7 @@
       <Generator>MSBuild:Compile</Generator>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="IssuesGalleryViews\" />
+  </ItemGroup>
 </Project>

@@ -69,6 +69,22 @@
             </StackLayout>
 
             <StackLayout Margin="8,16,8,0">
+                <Label Text="Issues Views" />
+
+                <CollectionView
+                    x:Name="IssuesViewsCollectionView"
+                    HeightRequest="152"
+                    ItemSizingStrategy="MeasureAllItems"
+                    ItemTemplate="{StaticResource ControlsDataTemplate}">
+                    <CollectionView.ItemsLayout>
+                        <ListItemsLayout SnapPointsAlignment="Start" SnapPointsType="Mandatory">
+                            <x:Arguments>
+                                <ItemsLayoutOrientation>Horizontal</ItemsLayoutOrientation>
+                            </x:Arguments>
+                        </ListItemsLayout>
+                    </CollectionView.ItemsLayout>
+                </CollectionView>
+                
                 <Label Text="Custom Views" />
 
                 <CollectionView
