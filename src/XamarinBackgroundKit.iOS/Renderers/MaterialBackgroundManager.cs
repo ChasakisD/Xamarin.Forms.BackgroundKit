@@ -324,6 +324,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (layer == null) return;
 
             layer.Frame = _renderer.NativeView.Bounds;
+            layer.SetNeedsDisplay();
 
             InvalidateClipToBounds();
             EnsureRippleOnFront();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Effects;
+using XamarinBackgroundKitSample.IssuesGalleryViews;
 
 namespace XamarinBackgroundKitSample
 {
@@ -16,6 +17,11 @@ namespace XamarinBackgroundKitSample
         public ExploreViewsPage()
         {
             InitializeComponent();
+
+            var issuesViews = new ObservableCollection<string>
+            {
+                "Issue41"
+            };
 
             var customViews = new ObservableCollection<string>
             {
@@ -60,6 +66,7 @@ namespace XamarinBackgroundKitSample
                 "StackLayout"
             };
 
+            IssuesViewsCollectionView.ItemsSource = issuesViews;
             CustomViewsCollectionView.ItemsSource = customViews;
             XamarinControlsCollectionView.ItemsSource = xamarinViews;
             XamarinLayoutsCollectionView.ItemsSource = xamarinLayouts;
@@ -167,8 +174,15 @@ namespace XamarinBackgroundKitSample
         private async void OnItemClicked(object sender, EventArgs e)
         {
             if (!(sender is BindableObject bindable) || bindable.BindingContext == null) return;
-            
-            var view = GetDataTemplate(bindable.BindingContext.ToString());
+
+            var labelText = bindable.BindingContext.ToString();
+            if (labelText.Equals("Issue41"))
+            {
+                await Navigation.PushAsync(new Issue41Page());
+                return;
+            }
+
+            var view = GetDataTemplate(labelText);
             if (view is ContentView contentView && contentView.Content == null)
             {
                 view.HeightRequest = 120;
