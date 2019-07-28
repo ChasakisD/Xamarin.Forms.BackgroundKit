@@ -323,7 +323,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
             var layer = _renderer.NativeView.FindLayerOfType<GradientStrokeLayer>();
             if (layer == null) return;
 
+            //Disable CALayer Animations
+            CATransaction.Begin();
+            CATransaction.DisableActions = true;
             layer.Frame = _renderer.NativeView.Bounds;
+            CATransaction.Commit();
+
             layer.SetNeedsDisplay();
 
             InvalidateClipToBounds();
