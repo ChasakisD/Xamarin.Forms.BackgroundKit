@@ -24,10 +24,11 @@ namespace XamarinBackgroundKit.Android.Renderers
                 return;
             }
 
-            var roundPath = new Path();
-            roundPath.AddRoundRect(0, 0, view.Width, view.Height, _cornerRadii, Path.Direction.Cw);
-
-            outline.SetConvexPath(roundPath);
+            using (var roundPath = new Path())
+            {
+                roundPath.AddRoundRect(0, 0, view.Width, view.Height, _cornerRadii, Path.Direction.Cw);
+                outline.SetConvexPath(roundPath);
+            }
         }
     }
 }

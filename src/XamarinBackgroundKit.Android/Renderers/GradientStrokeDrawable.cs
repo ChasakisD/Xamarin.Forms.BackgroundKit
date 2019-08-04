@@ -17,14 +17,13 @@ namespace XamarinBackgroundKit.Android.Renderers
     {
         private readonly double _density;
 
+        private int _width;
+        private int _height;
+
         private Path _clipPath;
-        private Paint _clipPaint;
-        private Paint _emptyPaint;
+        private Path _maskPath;
+        private Paint _maskPaint;
         private Paint _strokePaint;
-        private Bitmap _maskBitmap;
-        private Bitmap _tempBitmap;
-        private Canvas _maskCanvas;
-        private Canvas _tempCanvas;
 
         private Color _color;
         private Color _strokeColor;
@@ -33,6 +32,9 @@ namespace XamarinBackgroundKit.Android.Renderers
         private int[] _colors;
         private float[] _positions;
         private float[] _colorPositions;
+
+        private float _strokeWidth;
+        private PathEffect _strokePathEffect;
 
         private int[] _strokeColors;
         private float[] _strokePositions;
@@ -43,6 +45,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             Initialize();
 
             _density = density;
+            _clipPath = new Path();
 
             if (background == null) return;
             SetColor(background.Color);
@@ -56,67 +59,38 @@ namespace XamarinBackgroundKit.Android.Renderers
         private void Initialize()
         {
             Shape = new RectShape();
-
-            _clipPath = new Path();
-
-            _clipPaint = new Paint(PaintFlags.AntiAlias);
-            _emptyPaint = new Paint(PaintFlags.AntiAlias);
-            _strokePaint = new Paint(PaintFlags.AntiAlias);
-            _strokePaint.SetStyle(Paint.Style.Stroke);
         }
 
         #region Actual Draw
 
         protected override void OnDraw(Shape shape, Canvas canvas, Paint paint)
         {
-            InitializePaints(canvas);
-            InitializeClippingPath(canvas);
+            _width = Bounds.Width();
+            _height = Bounds.Height();
 
-            /*
-             * On Android Pie when drawing stroke via DrawPath()
-             * after clipping the mask, when CornerRadius was set,
-             * the outer stroke was not clipped.
-             *
-             * By drawing on a bitmap and then draw that bitmap
-             * inside the clipped canvas outer stroke was clipped!
-             */
-            DrawApi28(canvas);
-        }
+            InitializePaints();
+            InitializeClippingPath();
 
-        private void DrawApi28(Canvas canvas)
-        {
-            var width = Bounds.Width();
-            var height = Bounds.Height();
+            canvas.DrawPath(_clipPath, Paint);
 
-            if (width <= 0 || height <= 0) return;
-
-            EnsureInitialized(width, height);
-
-            /*
-             * Masking the canvas is anti-aliased and also is more
-             * efficient than clipping the canvas on android.
-             *
-             * The masking is performed on a temp canvas that is later
-             * draw on the original one. We draw the background and the
-             * border paints. Then we mask the canvas by DstIn, order
-             * to clear the outer stroke.
-             */
-            _clipPaint.SetXfermode(new PorterDuffXfermode(PorterDuff.Mode.DstIn));
-
-            _maskCanvas.DrawColor(AColor.Transparent, PorterDuff.Mode.Multiply);
-            _maskCanvas.DrawPath(_clipPath, _emptyPaint);
-
-            _tempCanvas.DrawColor(AColor.Transparent, PorterDuff.Mode.Multiply);
-            _tempCanvas.DrawPath(_clipPath, Paint);
-            if (HasBorder())
+            if (CanDrawBorder())
             {
-                _tempCanvas.DrawPath(_clipPath, _strokePaint);
+                /*
+                 * In order to make the curves smooth, Canvas.ClipPath() method
+                 * needs to be avoided. So the only way to make
+                 * anti alias clipping is by masking the Canvas.
+                 */
+
+                /*
+                 * Create a new layer for the clip operation.
+                 * After drawing the stroke and clipping the outer stroke,
+                 * restore the canvas, in order to merge the layers
+                 */
+                var saveCount = canvas.SaveLayer(0, 0, _width, _height, null);
+                canvas.DrawPath(_clipPath, _strokePaint);
+                canvas.DrawPath(_maskPath, _maskPaint);
+                canvas.RestoreToCount(saveCount);
             }
-            _tempCanvas.DrawBitmap(_maskBitmap, 0, 0, _clipPaint);
-
-            canvas.DrawBitmap(_tempBitmap, 0, 0, _emptyPaint);
-
-            _clipPaint.SetXfermode(null);
         }
 
         #endregion
@@ -125,7 +99,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private bool HasBorder()
         {
-            return _strokePaint.StrokeWidth > 0;
+            return _strokeWidth > 0;
         }
 
         private bool HasGradient()
@@ -138,37 +112,24 @@ namespace XamarinBackgroundKit.Android.Renderers
             return _strokeColors != null && _strokePositions != null && _strokeColorPositions != null;
         }
 
-        private void EnsureInitialized(int width, int height)
+        private bool CanDrawBorder()
         {
-            if (_maskCanvas != null
-                && _maskCanvas.Width == width
-                && _maskCanvas.Height == height) return;
+            EnsureStrokeAlloc();
 
-            using (var config = Bitmap.Config.Argb8888)
-            {
-                _tempBitmap?.Dispose();
-                _tempBitmap = Bitmap.CreateBitmap(width, height, config);
-                _tempCanvas?.Dispose();
-                _tempCanvas = new Canvas(_tempBitmap);
-
-                _maskBitmap?.Dispose();
-                _maskBitmap = Bitmap.CreateBitmap(width, height, config);
-                _maskCanvas?.Dispose();
-                _maskCanvas = new Canvas(_maskBitmap);
-            }
+            return HasBorder();
         }
 
-        private void InitializePaints(Canvas canvas)
+        private void InitializePaints()
         {
             if (HasGradient())
             {
                 /* Color of paint will be ignored */
                 Paint.Color = AColor.White;
                 Paint.SetShader(new LinearGradient(
-                    canvas.Width * _positions[0],
-                    canvas.Height * _positions[1],
-                    canvas.Width * _positions[2],
-                    canvas.Height * _positions[3],
+                    _width * _positions[0],
+                    _height * _positions[1],
+                    _width * _positions[2],
+                    _height * _positions[3],
                     _colors,
                     _colorPositions,
                     Shader.TileMode.Clamp));
@@ -183,36 +144,78 @@ namespace XamarinBackgroundKit.Android.Renderers
                 }
             }
 
-            if (HasBorderGradient())
+            if (CanDrawBorder())
             {
-                _strokePaint.Color = AColor.White;
-                _strokePaint.SetShader(new LinearGradient(
-                    canvas.Width * _strokePositions[0],
-                    canvas.Height * _strokePositions[1],
-                    canvas.Width * _strokePositions[2],
-                    canvas.Height * _strokePositions[3],
-                    _strokeColors,
-                    _strokeColorPositions,
-                    Shader.TileMode.Clamp));
-            }
-            else
-            {
-                _strokePaint.SetShader(null);
+                _strokePaint.StrokeWidth = _strokeWidth;
+                _strokePaint.SetPathEffect(_strokePathEffect);
 
-                if (_strokeColor != Color.Default)
+                if (HasBorderGradient())
                 {
-                    _strokePaint.Color = _strokeColor.ToAndroid();
+                    _strokePaint.Color = AColor.White;
+                    _strokePaint.SetShader(new LinearGradient(
+                        _width * _strokePositions[0],
+                        _height * _strokePositions[1],
+                        _width * _strokePositions[2],
+                        _height * _strokePositions[3],
+                        _strokeColors,
+                        _strokeColorPositions,
+                        Shader.TileMode.Clamp));
+                }
+                else
+                {
+                    _strokePaint.SetShader(null);
+
+                    if (_strokeColor != Color.Default)
+                    {
+                        _strokePaint.Color = _strokeColor.ToAndroid();
+                    }
                 }
             }
         }
 
-        private void InitializeClippingPath(Canvas canvas)
+        private void InitializeClippingPath()
         {
             var cornerRadii = _cornerRadius.ToRadii(_density);
+                        
+            if (CanDrawBorder())
+            {
+                _clipPath.Reset();
+                _clipPath.AddRoundRect(-1, -1, _width + 1, _height + 1, cornerRadii, Path.Direction.Cw);
+
+                _maskPath.Reset();
+                _maskPath.AddRect(0, 0, _width, _height, Path.Direction.Cw);
+                _maskPath.InvokeOp(_clipPath, Path.Op.Difference);             
+            }
 
             _clipPath.Reset();
-            _clipPath.AddRoundRect(0, 0, canvas.Width, canvas.Height,
-                cornerRadii, Path.Direction.Cw);
+            _clipPath.AddRoundRect(0, 0, _width, _height, cornerRadii, Path.Direction.Cw);
+        }
+
+        private void EnsureStrokeAlloc()
+        {
+            if (!HasBorder())
+            {
+                DisposeBorder(true);
+                return;
+            }
+
+            if (_maskPath == null)
+            {
+                _maskPath = new Path();
+            }
+
+            if (_maskPaint == null)
+            {
+                _maskPaint = new Paint(PaintFlags.AntiAlias);
+                _maskPaint.SetStyle(Paint.Style.FillAndStroke);
+                _maskPaint.SetXfermode(BackgroundKit.PorterDuffClearMode);
+            }
+
+            if (_strokePaint == null)
+            {
+                _strokePaint = new Paint(PaintFlags.AntiAlias);
+                _strokePaint.SetStyle(Paint.Style.Stroke);
+            }
         }
 
         #endregion
@@ -229,24 +232,26 @@ namespace XamarinBackgroundKit.Android.Renderers
         public void SetStroke(double strokeWidth, Color strokeColor)
         {
             _strokeColor = strokeColor;
-            _strokePaint.StrokeWidth = (int)(strokeWidth * _density * 2);
+            _strokeWidth = (float)(strokeWidth * _density * 2);
+
+            EnsureStrokeAlloc();
 
             InvalidateSelf();
         }
 
         public void SetDashedStroke(double dashWidth, double dashGap)
-        {
+        {           
             if (dashWidth <= 0 || dashGap <= 0)
             {
-                _strokePaint.SetPathEffect(null);
+                _strokePathEffect = null;
             }
             else
             {
-                _strokePaint.SetPathEffect(new DashPathEffect(new float[]
+                _strokePathEffect = new DashPathEffect(new float[]
                 {
                     (int) (dashWidth * _density),
                     (int) (dashGap * _density)
-                }, 0));
+                }, 0);
             }
 
             InvalidateSelf();
@@ -327,6 +332,31 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         #region LifeCycle
 
+        protected virtual void DisposeBorder(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_maskPath != null)
+                {
+                    _maskPath.Dispose();
+                    _maskPath = null;
+                }
+
+                if (_maskPaint != null)
+                {
+                    _maskPaint.SetXfermode(null);
+                    _maskPaint.Dispose();
+                    _maskPaint = null;
+                }
+
+                if (_strokePaint != null)
+                {
+                    _strokePaint.Dispose();
+                    _strokePaint = null;
+                }
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -337,46 +367,10 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _clipPath = null;
                 }
 
-                if (_clipPaint != null)
+                if (_strokePathEffect != null)
                 {
-                    _clipPaint.Dispose();
-                    _clipPaint = null;
-                }
-
-                if (_emptyPaint != null)
-                {
-                    _emptyPaint.Dispose();
-                    _emptyPaint = null;
-                }
-
-                if (_strokePaint != null)
-                {
-                    _strokePaint.Dispose();
-                    _strokePaint = null;
-                }
-
-                if (_tempBitmap != null)
-                {
-                    _tempBitmap.Dispose();
-                    _tempBitmap = null;
-                }
-
-                if (_tempCanvas != null)
-                {
-                    _tempCanvas.Dispose();
-                    _tempCanvas = null;
-                }
-
-                if (_maskBitmap != null)
-                {
-                    _maskBitmap.Dispose();
-                    _maskBitmap = null;
-                }
-
-                if (_maskCanvas != null)
-                {
-                    _maskCanvas.Dispose();
-                    _maskCanvas = null;
+                    _strokePathEffect.Dispose();
+                    _strokePathEffect = null;
                 }
 
                 _colors = null;
@@ -387,6 +381,8 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _strokePositions = null;
                 _strokeColorPositions = null;
             }
+
+            DisposeBorder(disposing);
 
             base.Dispose(disposing);
         }

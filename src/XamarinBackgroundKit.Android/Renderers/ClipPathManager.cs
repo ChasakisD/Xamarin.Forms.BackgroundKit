@@ -12,10 +12,15 @@ namespace XamarinBackgroundKit.Android.Renderers
         private bool _disposed;
 
         private Path _clipPath;
+        private Path _maskPath;
+        private Paint _maskPaint;
 
         public ClipPathManager()
         {
             _clipPath = new Path();
+            _maskPath = new Path();
+            _maskPaint = new Paint(PaintFlags.AntiAlias);
+            _maskPaint.SetXfermode(BackgroundKit.PorterDuffClearMode);
         }
 
         public bool ClipCanvas(Context context, Canvas canvas, Background background, Func<bool> drawChild)
@@ -26,31 +31,42 @@ namespace XamarinBackgroundKit.Android.Renderers
             if ((background.CornerRadius.IsEmpty() || background.CornerRadius.IsAllRadius())
                 && background.BorderStyle != BorderStyle.Outer) return drawChild();
 
-            var strokeWidth = (int)context.ToPixels(background.BorderWidth);
-            var cornerRadii = background.CornerRadius.ToRadii(context.Resources.DisplayMetrics.Density);
+            var cornerRadii = background.CornerRadius.ToRadii(context.Resources.DisplayMetrics.Density);            
 
-            for (var i = 0; i < cornerRadii.Length; i++)
-                cornerRadii[i] -= cornerRadii[i] <= 0 ? 0 : strokeWidth;
+            var bounds = new RectF(0, 0, canvas.Width, canvas.Height);
 
-            _clipPath.Reset();
+            bounds.Inset(-1, -1);
 
-            switch(background.BorderStyle)
+            switch (background.BorderStyle)
             {
                 case BorderStyle.Inner:
-                    _clipPath.AddRoundRect(0, 0, canvas.Width, canvas.Height,
-                        cornerRadii, Path.Direction.Cw);
+                    for (var i = 0; i < cornerRadii.Length; i++)
+                        cornerRadii[i] -= cornerRadii[i] <= 0 ? 0 : 1;
+
+                    _clipPath.Reset();
+                    _clipPath.AddRoundRect(bounds, cornerRadii, Path.Direction.Cw);
                     break;
                 case BorderStyle.Outer:
-                    _clipPath.AddRoundRect(strokeWidth, strokeWidth,
-                        canvas.Width - strokeWidth, canvas.Height - strokeWidth,
-                        cornerRadii, Path.Direction.Cw);
+                    var strokeWidth = (int)context.ToPixels(background.BorderWidth);
+
+                    for (var i = 0; i < cornerRadii.Length; i++)
+                        cornerRadii[i] -= cornerRadii[i] <= 0 ? 0 : strokeWidth;
+
+                    bounds.Inset(strokeWidth, strokeWidth);
+
+                    _clipPath.Reset();
+                    _clipPath.AddRoundRect(bounds, cornerRadii, Path.Direction.Cw);
                     break;
             }
 
-            canvas.Save();
-            canvas.ClipPath(_clipPath);
+            _maskPath.Reset();
+            _maskPath.AddRect(0, 0, canvas.Width, canvas.Height, Path.Direction.Cw);
+            _maskPath.InvokeOp(_clipPath, Path.Op.Difference);
+
+            var saveCount = canvas.SaveLayer(0, 0, canvas.Width, canvas.Height, null);
             var drawChildResult = drawChild();
-            canvas.Restore();
+            canvas.DrawPath(_maskPath, _maskPaint);
+            canvas.RestoreToCount(saveCount);
 
             return drawChildResult;
         }
@@ -72,6 +88,18 @@ namespace XamarinBackgroundKit.Android.Renderers
                 {
                     _clipPath?.Dispose();
                     _clipPath = null;
+                }
+
+                if (_maskPath != null)
+                {
+                    _maskPath.Dispose();
+                    _maskPath = null;
+                }
+
+                if (_maskPaint != null)
+                {
+                    _maskPaint.Dispose();
+                    _maskPaint = null;
                 }
             }
         }
