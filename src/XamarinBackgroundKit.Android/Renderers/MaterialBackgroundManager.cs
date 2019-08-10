@@ -3,6 +3,7 @@ using System.ComponentModel;
 using Android.Content;
 using Android.Content.Res;
 using Android.Graphics.Drawables;
+using Android.OS;
 using Android.Runtime;
 using Android.Support.Design.Button;
 using Android.Support.Design.Card;
@@ -265,7 +266,7 @@ namespace XamarinBackgroundKit.Android.Renderers
                     break;
                 case MaterialButton mButton:
                     var primaryColor = color.ToAndroid();
-                    var alphaPrimaryColor = new global::Android.Graphics.Color(
+                    var alphaPrimaryColor = new AColor(
                         primaryColor.R, primaryColor.G, primaryColor.B, (byte)(0.12 * 255));
                     ViewCompat.SetBackgroundTintList(mButton,
                         new ColorStateList(ButtonStates, new int[] { primaryColor, alphaPrimaryColor }));
@@ -329,6 +330,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void UpdateRipple()
         {
+            if (Build.VERSION.SdkInt <= BuildVersionCodes.LollipopMr1) return;
+
             if (_nativeView == null || _backgroundElement == null) return;
             if (_nativeView is MaterialCardView || _nativeView is Chip || _nativeView is MaterialButton) return;
 
