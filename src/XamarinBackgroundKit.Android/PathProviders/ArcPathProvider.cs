@@ -14,7 +14,7 @@ namespace XamarinBackgroundKit.Android.PathProviders
 
             switch(shape.Position)
             {
-                case ArcPosition.Left:
+                case ShapePosition.Left:
                     if (shape.IsCropInside)
                     {
                         path.MoveTo(width, 0);
@@ -32,7 +32,7 @@ namespace XamarinBackgroundKit.Android.PathProviders
                         path.Close();
                     }
                     break;
-                case ArcPosition.Top:
+                case ShapePosition.Top:
                     if (shape.IsCropInside)
                     {
                         path.MoveTo(0, height);
@@ -50,7 +50,7 @@ namespace XamarinBackgroundKit.Android.PathProviders
                         path.Close();
                     }
                     break;
-                case ArcPosition.Right:
+                case ShapePosition.Right:
                     if (shape.IsCropInside)
                     {
                         path.MoveTo(0, 0);
@@ -68,7 +68,7 @@ namespace XamarinBackgroundKit.Android.PathProviders
                         path.Close();
                     }
                     break;
-                case ArcPosition.Bottom:
+                case ShapePosition.Bottom:
                     if (shape.IsCropInside)
                     {
                         path.MoveTo(0, 0);

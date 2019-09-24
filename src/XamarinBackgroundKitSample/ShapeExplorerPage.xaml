@@ -14,6 +14,7 @@
                         <x:String>Arc</x:String>
                         <x:String>Rect</x:String>
                         <x:String>RoundRect</x:String>
+                        <x:String>Diagonal</x:String>
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
@@ -55,7 +56,7 @@
             </StackLayout>
 
             <StackLayout x:Name="ArcConfigContainer" Spacing="8">
-                <Picker x:Name="ArcPositionPicker" Visual="Default" SelectedIndexChanged="OnArcPositionChanged">
+                <Picker x:Name="ArcPositionPicker" Visual="Default" SelectedIndexChanged="OnPositionChanged">
                     <Picker.ItemsSource>
                         <x:Array Type="{x:Type x:String}">
                             <x:String>Top</x:String>
@@ -79,6 +80,36 @@
                     Maximum="200"
                     Minimum="0"
                     ValueChanged="OnArcHeightChanged" />
+            </StackLayout>
+
+            <StackLayout x:Name="DiagonalConfigContainer" Spacing="8">
+                <Picker x:Name="PositionPicker" Visual="Default" SelectedIndexChanged="OnPositionChanged">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Top</x:String>
+                            <x:String>Bottom</x:String>
+                            <x:String>Left</x:String>
+                            <x:String>Right</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <Picker x:Name="Direction" Visual="Default" SelectedIndexChanged="OnDirectionChanged">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Left</x:String>
+                            <x:String>Right</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <Label Text="{Binding Source={x:Reference DiagonalAngleSlider}, Path=Value, StringFormat='{}Angle: {0}'}" />
+
+                <Slider
+                    x:Name="DiagonalAngleSlider"
+                    Maximum="360"
+                    Minimum="0"
+                    ValueChanged="OnDiagonalAngleChanged" />
             </StackLayout>
 
             <background:MaterialShapeView x:Name="ShapeView" HeightRequest="200" HorizontalOptions="FillAndExpand">

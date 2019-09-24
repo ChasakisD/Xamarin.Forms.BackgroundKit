@@ -1,6 +1,6 @@
 ﻿namespace XamarinBackgroundKit.Shapes
 {
-    public enum ArcPosition
+    public enum ShapePosition
     {
         Left,
         Top,

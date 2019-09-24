@@ -17,7 +17,7 @@ namespace XamarinBackgroundKit.iOS.PathProviders
 
                 switch (shape.Position)
                 {
-                    case ArcPosition.Left:
+                    case ShapePosition.Left:
                         if (shape.IsCropInside)
                         {
                             path.MoveTo(new CGPoint(bounds.Width, 0));
@@ -35,7 +35,7 @@ namespace XamarinBackgroundKit.iOS.PathProviders
                             path.ClosePath();
                         }
                         break;
-                    case ArcPosition.Top:
+                    case ShapePosition.Top:
                         if (shape.IsCropInside)
                         {
                             path.MoveTo(new CGPoint(0, bounds.Height));
@@ -53,7 +53,7 @@ namespace XamarinBackgroundKit.iOS.PathProviders
                             path.ClosePath();
                         }
                         break;
-                    case ArcPosition.Right:
+                    case ShapePosition.Right:
                         if (shape.IsCropInside)
                         {
                             path.MoveTo(new CGPoint(0, 0));
@@ -71,7 +71,7 @@ namespace XamarinBackgroundKit.iOS.PathProviders
                             path.ClosePath();
                         }
                         break;
-                    case ArcPosition.Bottom:
+                    case ShapePosition.Bottom:
                         if (shape.IsCropInside)
                         {
                             path.MoveTo(new CGPoint(0, 0));

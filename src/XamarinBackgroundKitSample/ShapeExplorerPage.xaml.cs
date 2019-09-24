@@ -15,27 +15,34 @@ namespace XamarinBackgroundKitSample
 
         private void UpdateShape()
         {
+            ArcConfigContainer.IsVisible = false;
+            DiagonalConfigContainer.IsVisible = false;
+            CornerRadiusConfigContainer.IsVisible = false;
+
             switch(ShapePicker.SelectedItem?.ToString())
             {
                 case "Arc":
                     ShapeView.Shape = new Arc();
                     ArcConfigContainer.IsVisible = true;
-                    CornerRadiusConfigContainer.IsVisible = false;
                     break;
                 case "Rect":
                     ShapeView.Shape = new Rect();
-                    ArcConfigContainer.IsVisible = false;
-                    CornerRadiusConfigContainer.IsVisible = false;
                     break;
                 case "RoundRect":
                     ShapeView.Shape = new RoundRect();
-                    ArcConfigContainer.IsVisible = false;
                     CornerRadiusConfigContainer.IsVisible = true;
+                    break;
+                case "Diagonal":
+                    ShapeView.Shape = new Diagonal
+                    {
+                        Angle = 20,
+                        Direction = ShapeDirection.Left,
+                        Position = ShapePosition.Bottom
+                    };
+                    DiagonalConfigContainer.IsVisible = true;
                     break;
                 default:
                     ShapeView.Shape = null;
-                    ArcConfigContainer.IsVisible = false;
-                    CornerRadiusConfigContainer.IsVisible = false;
                     break;
             }
         }
@@ -45,11 +52,35 @@ namespace XamarinBackgroundKitSample
             UpdateShape();
         }
 
-        private void OnArcPositionChanged(object sender, EventArgs e)
+        private void OnPositionChanged(object sender, EventArgs e)
         {
-            if (!(ShapeView.Shape is Arc arc)) return;
+            if (!(sender is Picker picker)) return;
+            if (!Enum.TryParse<ShapePosition>(picker.SelectedItem?.ToString(), out var position)) return;
 
-            arc.Position = (ArcPosition)Enum.Parse(typeof(ArcPosition), ArcPositionPicker.SelectedItem?.ToString());
+            switch (ShapeView.Shape)
+            {
+                case Arc arc:
+                    arc.Position = position;
+                    break;
+                case Diagonal diagonal:
+                    diagonal.Position = position;
+                    break;
+
+            }
+        }
+
+        private void OnDirectionChanged(object sender, EventArgs e)
+        {
+            if (!(sender is Picker picker)) return;
+            if (!Enum.TryParse<ShapeDirection>(picker.SelectedItem?.ToString(), out var direction)) return;
+
+            switch (ShapeView.Shape)
+            {
+                case Diagonal diagonal:
+                    diagonal.Direction = direction;
+                    break;
+
+            }
         }
 
         private void OnIsCropInsideToggled(object sender, ToggledEventArgs e)
@@ -64,6 +95,13 @@ namespace XamarinBackgroundKitSample
             if (!(ShapeView.Shape is Arc arc)) return;
 
             arc.ArcHeight = ArcHeightSlider.Value;
+        }
+
+        private void OnDiagonalAngleChanged(object sender, EventArgs e)
+        {
+            if (!(ShapeView.Shape is Diagonal diagonal)) return;
+
+            diagonal.Angle = DiagonalAngleSlider.Value;
         }
 
         private void OnCornerRadiusChanged(object sender, ValueChangedEventArgs e)

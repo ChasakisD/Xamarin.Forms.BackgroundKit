@@ -4,6 +4,7 @@ using Android.Util;
 using Android.Views;
 using Java.Interop;
 using Xamarin.Forms.Platform.Android;
+using XamarinBackgroundKit.Android.PathProviders;
 using AApp = Android.App.Application;
 using AView = Android.Views.View;
 
@@ -44,6 +45,9 @@ namespace XamarinBackgroundKit.Android
         public static readonly PorterDuffXfermode PorterDuffDstOutMode =
             new PorterDuffXfermode(PorterDuff.Mode.DstOut);
 
-        public static void Init() { }
+        public static void Init()
+        {
+            PathProvidersContainer.Init();
+        }
     }
 }

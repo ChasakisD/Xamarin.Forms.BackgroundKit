@@ -5,12 +5,12 @@ namespace XamarinBackgroundKit.Shapes
     public class Arc : BaseShape
     {
         public static readonly BindableProperty PositionProperty = BindableProperty.Create(
-            nameof(Position), typeof(ArcPosition), typeof(Arc), ArcPosition.Top,
+            nameof(Position), typeof(ShapePosition), typeof(Arc), ShapePosition.Top,
             propertyChanged: (b, o, n) => ((Arc)b)?.InvalidateShape());
 
-        public ArcPosition Position
+        public ShapePosition Position
         {
-            get => (ArcPosition)GetValue(PositionProperty);
+            get => (ShapePosition)GetValue(PositionProperty);
             set => SetValue(PositionProperty, value);
         }
 

@@ -38,22 +38,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 _shape = newShape;
 
                 _pathProvider?.Dispose();
-
-                switch (_shape)
-                {
-                    case Arc _:
-                        _pathProvider = new ArcPathProvider();
-                        break;
-                    case Rect _:
-                        _pathProvider = new RectPathProvider();
-                        break;
-                    case RoundRect _:
-                        _pathProvider = new RoundRectPathProvider();
-                        break;
-                    default:
-                        _pathProvider = null;
-                        break;
-                }
+                _pathProvider = PathProvidersContainer.Resolve(_shape.GetType());
 
                 if (_pathProvider != null)
                 {
