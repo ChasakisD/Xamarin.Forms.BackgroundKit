@@ -131,7 +131,12 @@ namespace XamarinBackgroundKit.Android.Renderers
                 UpdateBackground();
                 UpdateElevation();
                 UpdateTranslationZ();
-                SetShape(null, false);
+
+                if (!(_visualElement is MaterialShapeView))
+                {
+                    SetShape(null, false);
+                }
+
                 return;
             }
 

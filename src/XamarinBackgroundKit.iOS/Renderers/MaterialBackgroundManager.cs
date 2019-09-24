@@ -112,7 +112,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 UpdateCornerRadius();
                 UpdateRipple();
                 InvalidateClipToBounds();
-                SetShape(null, false);
+
+                if (!(_visualElement is MaterialShapeView))
+                {
+                    SetShape(null, false);
+                }
+
                 return;
             }
             
