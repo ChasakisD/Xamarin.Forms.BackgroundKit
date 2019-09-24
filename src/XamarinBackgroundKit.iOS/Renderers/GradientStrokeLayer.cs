@@ -9,14 +9,19 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Extensions;
+using XamarinBackgroundKit.iOS.PathProviders;
 
 namespace XamarinBackgroundKit.iOS.Renderers
 {
     public class GradientStrokeLayer : CALayer
     {
+        private bool _dirty;
+        private bool _pathDirty;
+
         private double _dashGap;
         private double _dashWidth;
-        private CornerRadius _cornerRadius;
+
+        private CGRect _bounds;
 
         private UIColor _color;
         private CGColor[] _colors;
@@ -31,11 +36,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         private ShadowLayer _shadowLayer;
 
+        private IPathProvider _pathProvider;
+
         public GradientStrokeLayer() => Initialize();
 
         private void Initialize()
         {
+            _dirty = true;
+            _pathDirty = true;
+            _bounds = new CGRect();
             _shadowLayer = new ShadowLayer();
+            _pathProvider = new RectPathProvider();
 
             InsertSublayer(_shadowLayer, 0);
 
@@ -50,9 +61,15 @@ namespace XamarinBackgroundKit.iOS.Renderers
         public override void LayoutSublayers()
         {
             base.LayoutSublayers();
-            
-            _shadowLayer.Frame = Bounds;
-            _shadowLayer.ShadowPath = GetRoundCornersPath(Bounds).CGPath; 
+
+            if (Bounds.Equals(_bounds)) return;
+
+            _dirty = true;
+            _pathDirty = true;
+            _pathProvider?.Invalidate();
+
+            _bounds = new CGRect(Bounds.Location, Bounds.Size);
+            _shadowLayer.Frame = _bounds;            
         }
 
         #region Actual Draw
@@ -61,11 +78,15 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.DrawInContext(ctx);
 
-            ctx.AddPath(GetRoundCornersPath(Bounds).CGPath);
+            _shadowLayer.ShadowPath = GetClipPath();
+
+            ctx.AddPath(GetClipPath());
             ctx.Clip();
             
             DrawGradient(ctx);
             DrawBorder(ctx);
+
+            _dirty = false;
         }
 
         private void DrawGradient(CGContext ctx)
@@ -82,7 +103,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             else if(_color != null)
             {
                 ctx.SetFillColor(_color.CGColor);
-                ctx.AddPath(GetRoundCornersPath(Bounds).CGPath);
+                ctx.AddPath(GetClipPath());
                 ctx.DrawPath(CGPathDrawingMode.Fill);
             }
         }
@@ -98,7 +119,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             // Stroke is inner, the outer will be clipped. So double the value to get the real one!
             ctx.SetLineWidth(2 * _strokeWidth);
-            ctx.AddPath(GetRoundCornersPath(Bounds).CGPath);
+            ctx.AddPath(GetClipPath());
 
             if (HasBorderGradient())
             {
@@ -143,17 +164,39 @@ namespace XamarinBackgroundKit.iOS.Renderers
             return _strokeColors != null && _strokePositions != null && _strokeColorPositions != null;
         }
 
-        public UIBezierPath GetRoundCornersPath() => GetRoundCornersPath(Bounds);
+        public CGPath GetClipPath()
+        {
+            if (_pathProvider == null) return new CGPath();
 
-        public UIBezierPath GetRoundCornersPath(CGRect bounds) =>
-            BackgroundKit.GetRoundCornersPath(bounds, _cornerRadius);
+            if (_pathDirty || _pathProvider.IsPathDirty)
+            {
+                _pathDirty = false;
+                _pathProvider.CreatePath(Bounds);
+            }
+
+            return new CGPath(_pathProvider.Path);
+        }
 
         #endregion
         
         #region Public Setters
-        
+
+        public void InvalidatePath()
+        {
+            _pathDirty = true;
+        }
+
+        public void SetPathProvider(IPathProvider pathProvider)
+        {
+            _pathDirty = true;
+            _pathProvider = pathProvider;
+
+            SetNeedsDisplay();
+        }
+
         public void SetColor(Color color)
         {
+            _dirty = true;
             _color = color.ToUIColor();
             
             SetNeedsDisplay();
@@ -163,18 +206,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             _shadowLayer.Elevation = (float) elevation;
         }
-
-        public void SetCornerRadius(CornerRadius cornerRadius)
-        {
-            _cornerRadius = cornerRadius;
-            
-            _shadowLayer.ShadowPath = GetRoundCornersPath(Bounds).CGPath; 
-            
-            SetNeedsDisplay();
-        }
         
         public void SetDashedBorder(double dashWidth, double dashGap)
         {
+            _dirty = true;
             _dashGap = dashGap;
             _dashWidth = dashWidth;
             
@@ -183,6 +218,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
         
         public void SetGradient(IList<GradientStop> gradients, float angle)
         {
+            _dirty = true;
             if (gradients == null || gradients.Count < 2)
             {
                 _colors = null;
@@ -208,6 +244,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         public void SetBorder(double strokeWidth, Color strokeColor, IList<GradientStop> gradients, float angle)
         {
+            _dirty = true;
             _strokeWidth = (float) strokeWidth;
             _strokeColor = strokeColor.ToUIColor();
             
@@ -242,6 +279,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (disposing)
             {
+                if (_pathProvider != null)
+                {
+                    _pathProvider.Dispose();
+                    _pathProvider = null;
+                }
+
                 _shadowLayer.RemoveFromSuperLayer();
                 _shadowLayer.Dispose();
                 _shadowLayer = null;

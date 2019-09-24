@@ -83,11 +83,6 @@ namespace XamarinBackgroundKit.Android.Extensions
 
         #region Corner Radius
 
-        public static void SetCornerRadius(this AView view, ICornerElement cornerElement)
-        {
-            view.SetCornerRadius(cornerElement.CornerRadius);
-        }
-
         public static void SetCornerRadius(this MaterialCardView view, Context context, ICornerElement cornerElement)
         {
             view.Radius = context.ToPixels(cornerElement.CornerRadius.TopLeft);
@@ -101,13 +96,6 @@ namespace XamarinBackgroundKit.Android.Extensions
         public static void SetCornerRadius(this Chip view, Context context, ICornerElement cornerElement)
         {
             view.ChipCornerRadius = context.ToPixels(cornerElement.CornerRadius.TopLeft);
-        }
-
-        public static void SetCornerRadius(this AView view, CornerRadius cornerRadius)
-        {
-            view.GetGradientDrawable()?.SetCornerRadius(cornerRadius);
-            view.GetRippleMaskDrawable()?.SetCornerRadii(
-                cornerRadius.ToRadii(view.Context.Resources.DisplayMetrics.Density));
         }
 
         #endregion

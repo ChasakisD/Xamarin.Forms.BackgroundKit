@@ -104,16 +104,6 @@ namespace XamarinBackgroundKit.iOS.Extensions
             view.CornerRadius = (nfloat)cornerElement.CornerRadius.TopLeft;
         }
 
-        public static void SetCornerRadius(this UIView view, ICornerElement cornerElement)
-        {
-            view.SetCornerRadius(cornerElement.CornerRadius);
-        }
-
-        public static void SetCornerRadius(this UIView view, CornerRadius cornerRadius)
-        {
-            view.FindLayerOfType<GradientStrokeLayer>()?.SetCornerRadius(cornerRadius);
-        }
-
         #endregion
 
         #region Gradients

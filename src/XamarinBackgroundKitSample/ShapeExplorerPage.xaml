@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage
+    x:Class="XamarinBackgroundKitSample.ShapeExplorerPage"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:background="http://xamarin.com/schemas/2014/forms/background">
+    <ScrollView BackgroundColor="#F4F4F4" Visual="Material">
+        <StackLayout Spacing="32" Padding="16">
+            <Label FontSize="24" Text="Select Shape" VerticalTextAlignment="Center" />
+
+            <Picker x:Name="ShapePicker" Visual="Default" SelectedIndexChanged="OnShapeChanged">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Arc</x:String>
+                        <x:String>Rect</x:String>
+                        <x:String>RoundRect</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <StackLayout x:Name="CornerRadiusConfigContainer" Spacing="8">
+                <Label FontSize="24" Text="Corner Radius" VerticalTextAlignment="Center" />
+
+                <Label Text="{Binding Source={x:Reference TopLeftCornerSlider}, Path=Value, StringFormat='{}Top Left Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="TopLeftCornerSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
+
+                <Label Text="{Binding Source={x:Reference TopRightCornerSlider}, Path=Value, StringFormat='{}Top Right Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="TopRightCornerSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
+
+                <Label Text="{Binding Source={x:Reference BottomLeftCornerSlider}, Path=Value, StringFormat='{}Bottom Left Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="BottomLeftCornerSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
+
+                <Label Text="{Binding Source={x:Reference BottomRightCornerSlider}, Path=Value, StringFormat='{}Bottom Right Corner Radius: {0}'}" />
+
+                <Slider
+                    x:Name="BottomRightCornerSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnCornerRadiusChanged" />
+            </StackLayout>
+
+            <StackLayout x:Name="ArcConfigContainer" Spacing="8">
+                <Picker x:Name="ArcPositionPicker" Visual="Default" SelectedIndexChanged="OnArcPositionChanged">
+                    <Picker.ItemsSource>
+                        <x:Array Type="{x:Type x:String}">
+                            <x:String>Top</x:String>
+                            <x:String>Bottom</x:String>
+                            <x:String>Left</x:String>
+                            <x:String>Right</x:String>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+                                
+                <StackLayout Orientation="Horizontal" Spacing="8">
+                    <Label Text="IsCropInside" />
+                    
+                    <Switch x:Name="IsCropInsideSwitch" Toggled="OnIsCropInsideToggled" />
+                </StackLayout>
+
+                <Label Text="{Binding Source={x:Reference ArcHeightSlider}, Path=Value, StringFormat='{}Arc Height: {0}'}" />
+
+                <Slider
+                    x:Name="ArcHeightSlider"
+                    Maximum="200"
+                    Minimum="0"
+                    ValueChanged="OnArcHeightChanged" />
+            </StackLayout>
+
+            <background:MaterialShapeView x:Name="ShapeView" HeightRequest="200" HorizontalOptions="FillAndExpand">
+                <background:MaterialShapeView.Background>
+                    <background:Background Color="DarkCyan" Elevation="4" BorderColor="Yellow" BorderWidth="32" BorderStyle="Outer" />
+                </background:MaterialShapeView.Background>
+
+                <Image Source="https://i.pinimg.com/originals/0c/6f/17/0c6f17ab1428e025228e4c15fb9c0c5f.jpg" Aspect="AspectFill" BackgroundColor="Green" />
+            </background:MaterialShapeView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

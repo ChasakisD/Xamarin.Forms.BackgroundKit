@@ -1,5 +1,5 @@
-﻿using Foundation;
-using System.ComponentModel;
+﻿using System.ComponentModel;
+using Foundation;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
@@ -9,11 +9,10 @@ using XamarinBackgroundKit.iOS.Renderers;
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
 namespace XamarinBackgroundKit.iOS.Renderers
 {
-    [Xamarin.Forms.Internals.Preserve(AllMembers = true)]
     public class MaterialContentViewRenderer : ViewRenderer
     {
         private bool _disposed;
-        private MaterialBackgroundManager _materialBackgroundManager;
+        protected MaterialBackgroundManager BackgroundManager;
 
         private MaterialContentView ElementController => Element as MaterialContentView;
 
@@ -21,7 +20,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.LayoutSubviews();
 
-            _materialBackgroundManager?.InvalidateLayer();
+            BackgroundManager?.InvalidateLayer();
         }
 
         #region Element Changed
@@ -32,9 +31,9 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             if (e.NewElement == null) return;
 
-            if (_materialBackgroundManager == null)
+            if (BackgroundManager == null)
             {
-                _materialBackgroundManager = new MaterialBackgroundManager(this);
+                BackgroundManager = new MaterialBackgroundManager(this);
             }
 
             UpdateIsFocusable();
@@ -121,10 +120,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             if (disposing)
             {
-                if (_materialBackgroundManager != null)
+                if (BackgroundManager != null)
                 {
-                    _materialBackgroundManager.Dispose();
-                    _materialBackgroundManager = null;
+                    BackgroundManager.Dispose();
+                    BackgroundManager = null;
                 }
             }
 

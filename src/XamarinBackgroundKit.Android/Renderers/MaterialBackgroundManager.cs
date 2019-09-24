@@ -2,24 +2,23 @@
 using System.ComponentModel;
 using Android.Content;
 using Android.Content.Res;
+using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Button;
 using Android.Support.Design.Card;
 using Android.Support.Design.Chip;
 using Android.Support.V4.View;
-using Android.Util;
-using Android.Views;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Android.Extensions;
+using XamarinBackgroundKit.Android.PathProviders;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Effects;
 using XamarinBackgroundKit.Extensions;
-using AApp = Android.App.Application;
+using XamarinBackgroundKit.Shapes;
 using AColor = Android.Graphics.Color;
 using AView = Android.Views.View;
 using Color = Xamarin.Forms.Color;
@@ -36,10 +35,10 @@ namespace XamarinBackgroundKit.Android.Renderers
         private Context _context;
         private AView _nativeView;
         private VisualElement _visualElement;
+        private MaterialShapeManager _shapeManager;
+        private IBackgroundShape _defaultShape;
         private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
-
-        private static double _density = -1;
 
         private static readonly int[][] ButtonStates =
         {
@@ -50,32 +49,15 @@ namespace XamarinBackgroundKit.Android.Renderers
         public MaterialBackgroundManager(IVisualElementRenderer renderer)
         {
             _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer), "Renderer cannot be null");
-
             _renderer.ElementChanged += OnRendererElementChanged;
+
+            _defaultShape = new RoundRect();
+            _shapeManager = new MaterialShapeManager();
 
             SetVisualElement(null, _renderer.Element);
         }
 
         #region Element Setters
-
-        private void ResolveNativeView()
-        {
-            switch (_renderer)
-            {
-                case IBorderVisualElementRenderer borderRenderer:
-                    _nativeView = borderRenderer.View;
-                    break;
-                case IButtonLayoutRenderer buttonRenderer:
-                    _nativeView = buttonRenderer.View;
-                    break;
-                case EntryRenderer entryRenderer:
-                    _nativeView = entryRenderer.Control;
-                    break;
-                default:
-                    _nativeView = _renderer.View;
-                    break;
-            }
-        }
 
         private void SetVisualElement(VisualElement oldElement, VisualElement newElement)
         {
@@ -88,7 +70,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (newElement != null)
             {
-                ResolveNativeView();
+                _nativeView = _renderer.ResolveViewFromRenderer();
                 _context = _nativeView.Context;
                 newElement.PropertyChanged += OnElementPropertyChanged;
             }
@@ -149,6 +131,7 @@ namespace XamarinBackgroundKit.Android.Renderers
                 UpdateBackground();
                 UpdateElevation();
                 UpdateTranslationZ();
+                SetShape(null, false);
                 return;
             }
 
@@ -238,10 +221,10 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
 
             _nativeView.Background?.Dispose();
-            _nativeView.Background = new GradientStrokeDrawable(GetDensity(), _backgroundElement);
+            _nativeView.Background = new GradientStrokeDrawable(new RoundRectPathProvider(), _backgroundElement);
 
             UpdateRipple();
-            InvalidateOutline();
+            UpdateCornerRadius();
         }
 
         private void UpdateColor()
@@ -322,8 +305,14 @@ namespace XamarinBackgroundKit.Android.Renderers
                     mButton.SetCornerRadius(_context, _backgroundElement);
                     break;
                 default:
-                    _nativeView.SetCornerRadius(_backgroundElement);
-                    InvalidateOutline();
+                    if (_defaultShape is RoundRect rRect)
+                    {
+                        rRect.CornerRadius = _backgroundElement.CornerRadius;
+                    }
+                    _nativeView.GetRippleMaskDrawable()?.SetCornerRadii(
+                        _backgroundElement.CornerRadius.ToRadii(
+                            _context.Resources.DisplayMetrics.Density));
+                    Invalidate();
                     break;
             }
         }
@@ -384,14 +373,19 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         #region Invalidation
 
-        private void InvalidateOutline()
+        public void Draw(AView view, Canvas canvas, Action dispatchDraw)
         {
-            var cornerRadii = _backgroundElement.CornerRadius.ToRadii(_context.Resources.DisplayMetrics.Density);
+            _shapeManager?.Draw(view, canvas, dispatchDraw);
+        }
 
-            _nativeView.OutlineProvider?.Dispose();
-            _nativeView.OutlineProvider = new CornerOutlineProvider(cornerRadii);
+        public void SetShape(IBackgroundShape shape, bool overwrite = true)
+        {
+            _shapeManager?.SetShape(_nativeView, overwrite ? shape : _defaultShape);
+        }
 
-            _nativeView.ClipToOutline = true;
+        public void Invalidate()
+        {
+            _shapeManager?.Invalidate();
         }
 
         #endregion
@@ -411,6 +405,13 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (!disposing) return;
 
+            _defaultShape = null;
+            if (_shapeManager != null)
+            {
+                _shapeManager.Dispose();
+                _shapeManager = null;
+            }
+
             SetVisualElement(_visualElement, null);
 
             if (_renderer == null) return;
@@ -419,30 +420,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             _context = null;
             _nativeView = null;
             _renderer = null;
-        }
-
-        #endregion
-
-        #region Helpers
-
-        private static double GetDensity()
-        {
-            if (_density > 0) return _density;
-
-            using (var displayMetrics = new DisplayMetrics())
-            {
-                var windowService = AApp.Context.GetSystemService(Context.WindowService)
-                    ?.JavaCast<IWindowManager>();
-
-                using (var display = windowService?.DefaultDisplay)
-                {
-                    if (display == null) return _density;
-
-                    display.GetRealMetrics(displayMetrics);
-                    _density = displayMetrics.Density;
-                    return _density;
-                }
-            }
         }
 
         #endregion

@@ -1,14 +1,11 @@
-﻿using Android.Content;
-using Android.Support.V4.Content;
+﻿using System;
+using System.ComponentModel;
+using Android.Content;
 using Android.Support.V4.View;
 using Android.Support.V7.Widget;
-using Android.Util;
 using Android.Views;
-using System;
-using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Internals;
-using Xamarin.Forms.Material.Android;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
@@ -18,7 +15,6 @@ using Size = Xamarin.Forms.Size;
 [assembly: ExportRenderer(typeof(MaterialCard), typeof(MaterialCardRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
-    [Preserve(AllMembers = true)]
     public class MaterialCardRenderer : 
         CardView, 
         IViewRenderer, 
@@ -60,7 +56,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         #endregion
 
-        public MaterialCardRenderer(Context context) : base(MaterialContextThemeWrapper.Create(context)) { }
+        public MaterialCardRenderer(Context context) : base(context) { }
 
         #region IViewRenderer Implementation
 

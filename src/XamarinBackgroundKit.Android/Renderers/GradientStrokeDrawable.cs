@@ -3,9 +3,9 @@ using System.Linq;
 using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
-using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
+using XamarinBackgroundKit.Android.PathProviders;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Extensions;
 using AColor = Android.Graphics.Color;
@@ -13,9 +13,14 @@ using Color = Xamarin.Forms.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
-    public class GradientStrokeDrawable : PaintDrawable
+    public class GradientStrokeDrawable : ShapeDrawable
     {
         private readonly double _density;
+
+        private bool _dirty;
+        private bool _pathDirty;
+
+        private bool _disposed;
 
         private int _width;
         private int _height;
@@ -27,7 +32,6 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private Color _color;
         private Color _strokeColor;
-        private CornerRadius _cornerRadius;
 
         private int[] _colors;
         private float[] _positions;
@@ -40,38 +44,59 @@ namespace XamarinBackgroundKit.Android.Renderers
         private float[] _strokePositions;
         private float[] _strokeColorPositions;
 
-        public GradientStrokeDrawable(double density, IMaterialVisualElement background = null)
-        {
-            Initialize();
+        private IPathProvider _pathProvider;
 
-            _density = density;
+        public GradientStrokeDrawable(IPathProvider pathProvider, IMaterialVisualElement background = null) : base(new RectShape())
+        {
+            _dirty = true;
+            _pathDirty = true;
             _clipPath = new Path();
+            _density = BackgroundKit.Density;
+            _pathProvider = pathProvider;
 
             if (background == null) return;
             SetColor(background.Color);
-            SetCornerRadius(background.CornerRadius);
             SetStroke(background.BorderWidth, background.BorderColor);
             SetDashedStroke(background.DashWidth, background.DashGap);
             SetGradient(background.GradientBrush?.Gradients, background.GradientBrush?.Angle ?? 0);
             SetBorderGradient(background.BorderGradientBrush?.Gradients, background.BorderGradientBrush?.Angle ?? 0);
         }
 
-        private void Initialize()
-        {
-            Shape = new RectShape();
+        protected override void OnBoundsChange(Rect bounds)
+        {          
+            var width = bounds.Width();
+            var height = bounds.Height();
+
+            if (_width == width && _height == height) return;
+
+            _dirty = true;
+            _pathDirty = true;
+            _pathProvider?.Invalidate();
+
+            _width = width;
+            _height = height;
+
+            base.OnBoundsChange(bounds);
         }
 
         #region Actual Draw
 
         protected override void OnDraw(Shape shape, Canvas canvas, Paint paint)
         {
-            _width = Bounds.Width();
-            _height = Bounds.Height();
+            if (_disposed) return;
 
-            InitializePaints();
-            InitializeClippingPath();
+            if (_dirty)
+            {
+                _dirty = false;
+                InitializePaints();
+            }
 
-            canvas.DrawPath(_clipPath, Paint);
+            /* Update the path only if it needs update */
+            if (_pathDirty || (_pathProvider != null && _pathProvider.IsPathDirty))
+            {
+                _pathDirty = false;
+                InitializeClippingPath();
+            }
 
             if (CanDrawBorder())
             {
@@ -87,9 +112,14 @@ namespace XamarinBackgroundKit.Android.Renderers
                  * restore the canvas, in order to merge the layers
                  */
                 var saveCount = canvas.SaveLayer(0, 0, _width, _height, null);
+                canvas.DrawPath(_clipPath, Paint);
                 canvas.DrawPath(_clipPath, _strokePaint);
                 canvas.DrawPath(_maskPath, _maskPaint);
                 canvas.RestoreToCount(saveCount);
+            }
+            else
+            {
+                canvas.DrawPath(_clipPath, Paint);
             }
         }
 
@@ -175,20 +205,20 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void InitializeClippingPath()
         {
-            var cornerRadii = _cornerRadius.ToRadii(_density);
-                        
+            if (_pathProvider == null) return;
+
+            var clipPath = _pathProvider.CreatePath(_width, _height);
+            if (clipPath == null) return;
+
+            _clipPath.Reset();
+            _clipPath.Set(clipPath);
+
             if (CanDrawBorder())
             {
-                _clipPath.Reset();
-                _clipPath.AddRoundRect(-1, -1, _width + 1, _height + 1, cornerRadii, Path.Direction.Cw);
-
                 _maskPath.Reset();
                 _maskPath.AddRect(0, 0, _width, _height, Path.Direction.Cw);
                 _maskPath.InvokeOp(_clipPath, Path.Op.Difference);             
             }
-
-            _clipPath.Reset();
-            _clipPath.AddRoundRect(0, 0, _width, _height, cornerRadii, Path.Direction.Cw);
         }
 
         private void EnsureStrokeAlloc()
@@ -222,8 +252,22 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         #region Public Setters
 
+        public void InvalidatePath()
+        {
+            _pathDirty = true;
+        }
+
+        public void SetPathProvider(IPathProvider pathProvider)
+        {
+            _pathDirty = true;
+            _pathProvider = pathProvider;
+
+            InvalidateSelf();
+        }
+
         public void SetColor(Color color)
         {
+            _dirty = true;
             _color = color;
 
             InvalidateSelf();
@@ -231,6 +275,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetStroke(double strokeWidth, Color strokeColor)
         {
+            _dirty = true;
             _strokeColor = strokeColor;
             _strokeWidth = (float)(strokeWidth * _density * 2);
 
@@ -240,7 +285,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         }
 
         public void SetDashedStroke(double dashWidth, double dashGap)
-        {           
+        {
+            _dirty = true;
             if (dashWidth <= 0 || dashGap <= 0)
             {
                 _strokePathEffect = null;
@@ -259,6 +305,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetBorderGradient(IList<GradientStop> gradients, float angle)
         {
+            _dirty = true;
             if (gradients == null || gradients.Count < 2)
             {
                 _strokeColors = null;
@@ -288,6 +335,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void SetGradient(IList<GradientStop> gradients, float angle)
         {
+            _dirty = true;
             if (gradients == null || gradients.Count < 2)
             {
                 _colors = null;
@@ -309,21 +357,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             _positions = positions;
             _colors = gradients.Select(x => (int)x.Color.ToAndroid()).ToArray();
             _colorPositions = gradients.Select(x => x.Offset).ToArray();
-
-            InvalidateSelf();
-        }
-
-        public void SetCornerRadius(CornerRadius cornerRadius)
-        {
-            _cornerRadius = cornerRadius;
-
-            var isUniform = _cornerRadius.IsAllRadius() && !_cornerRadius.IsEmpty();
-
-            var uniformCornerRadius = (int)(_cornerRadius.TopLeft * _density);
-            var cornerRadii = _cornerRadius.ToRadii(_density);
-
-            if (isUniform) base.SetCornerRadius(uniformCornerRadius);
-            else SetCornerRadii(cornerRadii);
 
             InvalidateSelf();
         }
@@ -359,6 +392,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         protected override void Dispose(bool disposing)
         {
+            if (_disposed) return;
+
+            _disposed = true;
+
             if (disposing)
             {
                 if (_clipPath != null)
@@ -372,6 +409,8 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _strokePathEffect.Dispose();
                     _strokePathEffect = null;
                 }
+
+                _pathProvider = null;
 
                 _colors = null;
                 _positions = null;
