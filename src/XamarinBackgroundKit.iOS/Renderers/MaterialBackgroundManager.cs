@@ -111,7 +111,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 UpdateElevation();
                 UpdateCornerRadius();
                 UpdateRipple();
-                InvalidateClipToBounds();
+                InvalidateShape();
 
                 if (!(_visualElement is MaterialShapeView))
                 {
@@ -140,7 +140,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (oldMaterialElement.CornerRadius != newMaterialElement.CornerRadius)
                 UpdateCornerRadius();
 
-            InvalidateClipToBounds();
+            InvalidateShape();
         }
 
         #endregion
@@ -195,6 +195,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (_renderer.NativeView is Card || _renderer.NativeView is ChipView || _renderer.NativeView is MButton) return;
 
+            _shapeManager?.SetIsRippleEnabled(_backgroundElement.IsRippleEnabled);
+
             if (_backgroundElement.IsRippleEnabled)
             {
                 if (_inkTouchController == null)
@@ -203,7 +205,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     _inkTouchController.AddInkView();
                 }
 
-                InvalidateClipToBounds();
+                InvalidateShape();
 
                 if (_inkTouchController?.DefaultInkView == null) return;
                 _inkTouchController.DefaultInkView.UsesLegacyInkRipple = false;
@@ -301,7 +303,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     {
                         rRect.CornerRadius = _backgroundElement.CornerRadius;
                     }
-                    InvalidateClipToBounds();
+                    InvalidateShape();
                     break;
             }
         }
@@ -323,7 +325,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     break;
             }
 
-            InvalidateClipToBounds();
+            InvalidateShape();
         }
 
         #endregion
@@ -348,16 +350,13 @@ namespace XamarinBackgroundKit.iOS.Renderers
             
             layer.SetNeedsDisplay();
 
-            InvalidateClipToBounds();
+            InvalidateShape();
             EnsureRippleOnFront();
         }
 
-        public void InvalidateClipToBounds()
+        public void InvalidateShape()
         {
-            if (_renderer.NativeView == null || _backgroundElement == null) return;
-
-            _shapeManager.Invalidate();
-            _shapeManager.InvalidateInkLayer(_backgroundElement.IsRippleEnabled);
+            _shapeManager?.Invalidate();
         }      
 
         public void EnsureRippleOnFront()

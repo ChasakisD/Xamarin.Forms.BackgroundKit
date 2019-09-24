@@ -114,7 +114,7 @@
 
             <background:MaterialShapeView x:Name="ShapeView" HeightRequest="200" HorizontalOptions="FillAndExpand">
                 <background:MaterialShapeView.Background>
-                    <background:Background Color="DarkCyan" Elevation="4" BorderColor="Yellow" BorderWidth="32" BorderStyle="Outer" />
+                    <background:Background IsRippleEnabled="True" RippleColor="Red" Color="DarkCyan" Elevation="4" BorderColor="Yellow" BorderWidth="32" BorderStyle="Outer" />
                 </background:MaterialShapeView.Background>
 
                 <Image Source="https://i.pinimg.com/originals/0c/6f/17/0c6f17ab1428e025228e4c15fb9c0c5f.jpg" Aspect="AspectFill" BackgroundColor="Green" />

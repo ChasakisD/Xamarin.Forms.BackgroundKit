@@ -4,6 +4,7 @@ using Android.Content;
 using Android.Content.Res;
 using Android.Graphics;
 using Android.Graphics.Drawables;
+using Android.Graphics.Drawables.Shapes;
 using Android.OS;
 using Android.Support.Design.Button;
 using Android.Support.Design.Card;
@@ -314,9 +315,6 @@ namespace XamarinBackgroundKit.Android.Renderers
                     {
                         rRect.CornerRadius = _backgroundElement.CornerRadius;
                     }
-                    _nativeView.GetRippleMaskDrawable()?.SetCornerRadii(
-                        _backgroundElement.CornerRadius.ToRadii(
-                            _context.Resources.DisplayMetrics.Density));
                     Invalidate();
                     break;
             }
@@ -341,15 +339,13 @@ namespace XamarinBackgroundKit.Android.Renderers
                     oldRippleDrawable.SetColor(ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid()));
                     break;
                 case null when _backgroundElement.IsRippleEnabled:
-                    var maskDrawable = new GradientDrawable();
-                    maskDrawable.SetShape(ShapeType.Rectangle);
-                    maskDrawable.SetColor(new AColor(0, 0, 0, 255));
-                    maskDrawable.SetCornerRadii(_backgroundElement.CornerRadius.ToRadii(
-                        _context.Resources.DisplayMetrics.Density));
+                    var maskDrawable = new ShapeDrawable();
+                    maskDrawable.Paint.Color = new AColor(0, 0, 0, 255);
                     var rippleColorStateList = ColorStateList.ValueOf(_backgroundElement.RippleColor.ToAndroid());
                     _nativeView.Foreground = new RippleDrawable(rippleColorStateList, null, maskDrawable);
                     _nativeView.Clickable = true;
                     _nativeView.Focusable = true;
+                    Invalidate();
                     break;
             }
         }

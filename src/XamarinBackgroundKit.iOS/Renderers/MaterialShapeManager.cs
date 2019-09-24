@@ -13,11 +13,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
     public class MaterialShapeManager : IDisposable
     {
         private bool _disposed;
+        private bool _isRippleEnabled;
         private IBackgroundShape _shape;
         private IPathProvider _pathProvider;
         private IVisualElementRenderer _renderer;
 
         #region Element Setters
+
+        public void SetIsRippleEnabled(bool isRippleEnabled)
+        {
+            _isRippleEnabled = isRippleEnabled;
+        }
 
         public void SetShape(IVisualElementRenderer renderer, IBackgroundShape newShape)
         {
@@ -88,11 +94,13 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
                 subView.Layer.MasksToBounds = true;
             }
+
+            InvalidateInkLayer();
         }
 
-        public void InvalidateInkLayer(bool isRippleEnabled)
+        private void InvalidateInkLayer()
         {
-            if (_renderer?.NativeView?.Layer == null) return;
+            if (_renderer?.NativeView?.Layer == null || _pathProvider == null) return;
 
             /*
              * MDCInkView
@@ -101,7 +109,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
              * So we calculate the rounded corners path and we set it to the ShadowPath
              * but with ShadowOpacity to 0 in order to not overlap the MDCShadowLayer
              */
-            if (isRippleEnabled)
+            if (_isRippleEnabled)
             {
                 _renderer.NativeView.Layer.ShadowOpacity = 0;
                 _renderer.NativeView.Layer.ShadowPath = _pathProvider.Path;

@@ -1,5 +1,6 @@
 ﻿using System;
 using Android.Graphics;
+using Android.Graphics.Drawables.Shapes;
 using Android.OS;
 using Android.Support.V4.View;
 using XamarinBackgroundKit.Android.Extensions;
@@ -18,7 +19,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         private Paint _maskPaint;
         private AView _nativeView;
         private IBackgroundShape _shape;
-        private IPathProvider _pathProvider;
+        public IPathProvider PathProvider { get; private set; }
 
         public MaterialShapeManager()
         {
@@ -48,13 +49,13 @@ namespace XamarinBackgroundKit.Android.Renderers
 
                 _shape = newShape;
 
-                _pathProvider?.Dispose();
-                _pathProvider = PathProvidersContainer.Resolve(_shape.GetType());
+                PathProvider?.Dispose();
+                PathProvider = PathProvidersContainer.Resolve(_shape.GetType());
 
-                if (_pathProvider != null)
+                if (PathProvider != null)
                 {
-                    _pathProvider.SetShape(newShape);
-                    _nativeView?.GetGradientDrawable()?.SetPathProvider(_pathProvider);
+                    PathProvider.SetShape(newShape);
+                    _nativeView?.GetGradientDrawable()?.SetPathProvider(PathProvider);
                 }
             }
 
@@ -71,22 +72,29 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         public void Invalidate()
         {
-            _pathProvider?.Invalidate();
+            PathProvider?.Invalidate();
 
             if (_nativeView != null)
             {
                 _nativeView.OutlineProvider?.Dispose();
-                _nativeView.OutlineProvider = new PathOutlineProvider(_pathProvider);
+                _nativeView.OutlineProvider = new PathOutlineProvider(PathProvider);
                 _nativeView.ClipToOutline = true;
                 _nativeView.PostInvalidate();
                 _nativeView.GetGradientDrawable()?.InvalidatePath();
                 _nativeView.GetGradientDrawable()?.InvalidateSelf();
+
+                var maskDrawable = _nativeView?.GetRippleMaskDrawable();
+                if (maskDrawable != null && PathProvider != null)
+                {
+                    maskDrawable.Shape = new PathShape(PathProvider.Path, _nativeView.Width, _nativeView.Height);
+                    maskDrawable.InvalidateSelf();
+                }
             }
         }
 
         public void Draw(AView view, Canvas canvas, Action dispatchDraw)
         {
-            if (_pathProvider == null) return;
+            if (PathProvider == null) return;
 
             InitializeClipPath(canvas.Width, canvas.Height);
 
@@ -97,7 +105,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop && ViewCompat.GetElevation(view) > 0)
             {
-                view.OutlineProvider = _clipPath.IsConvex ? new PathOutlineProvider(_pathProvider) : null;
+                view.OutlineProvider = _clipPath.IsConvex ? new PathOutlineProvider(PathProvider) : null;
             }
         }
 
@@ -109,7 +117,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             canvasBounds.Inset(-1, -1);
 
             /* Always prefer border path. If there is no need, the provider will return the default one */
-            var clipPath = _pathProvider.CreateBorderedPath(width, height);
+            var clipPath = PathProvider.CreateBorderedPath(width, height);
 
             _clipPath.Reset();
             _clipPath.Set(clipPath);

@@ -197,11 +197,11 @@ namespace XamarinBackgroundKit.Android.Extensions
             return null;
         }
 
-        public static GradientDrawable GetRippleMaskDrawable(this AView view)
+        public static ShapeDrawable GetRippleMaskDrawable(this AView view)
 		{
 			if (!(view.Foreground is RippleDrawable rippleDrawable)) return null;
 
-            return rippleDrawable.GetDrawable(0) as GradientDrawable;
+            return rippleDrawable.GetDrawable(0) as ShapeDrawable;
 		}
     }
 }
