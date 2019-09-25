@@ -57,6 +57,7 @@
     <Compile Include="Renderers\MaterialShapeViewRenderer.cs" />
     <Compile Include="PathProviders\PathProvidersContainer.cs" />
     <Compile Include="PathProviders\DiagonalPathProvider.cs" />
+    <Compile Include="PathProviders\CornerClipPathProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">

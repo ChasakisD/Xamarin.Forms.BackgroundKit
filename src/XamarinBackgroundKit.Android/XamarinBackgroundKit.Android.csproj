@@ -67,6 +67,7 @@
     <Compile Include="Extensions\VisualElementRendererExtensions.cs" />
     <Compile Include="PathProviders\PathProvidersContainer.cs" />
     <Compile Include="PathProviders\DiagonalPathProvider.cs" />
+    <Compile Include="PathProviders\CornerClipPathProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamarinBackgroundKit\XamarinBackgroundKit.csproj">

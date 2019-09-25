@@ -15,6 +15,7 @@
                         <x:String>Rect</x:String>
                         <x:String>RoundRect</x:String>
                         <x:String>Diagonal</x:String>
+                        <x:String>CornerClip</x:String>
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
@@ -110,6 +111,42 @@
                     Maximum="360"
                     Minimum="0"
                     ValueChanged="OnDiagonalAngleChanged" />
+            </StackLayout>
+
+            <StackLayout x:Name="CornerClipConfigContainer" Spacing="8">
+                <Label FontSize="24" Text="Corner Radius" VerticalTextAlignment="Center" />
+
+                <Label Text="{Binding Source={x:Reference TopLeftClipSizeSlider}, Path=Value, StringFormat='{}Top Left Clip Size: {0}'}" />
+
+                <Slider
+                    x:Name="TopLeftClipSizeSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnClipSizeChanged" />
+
+                <Label Text="{Binding Source={x:Reference TopRightClipSizeSlider}, Path=Value, StringFormat='{}Top Right Clip Size: {0}'}" />
+
+                <Slider
+                    x:Name="TopRightClipSizeSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnClipSizeChanged" />
+
+                <Label Text="{Binding Source={x:Reference BottomLeftClipSizeSlider}, Path=Value, StringFormat='{}Bottom Left Clip Size: {0}'}" />
+
+                <Slider
+                    x:Name="BottomLeftClipSizeSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnClipSizeChanged" />
+
+                <Label Text="{Binding Source={x:Reference BottomRightClipSizeSlider}, Path=Value, StringFormat='{}Bottom Right Clip Size: {0}'}" />
+
+                <Slider
+                    x:Name="BottomRightClipSizeSlider"
+                    Maximum="60"
+                    Minimum="0"
+                    ValueChanged="OnClipSizeChanged" />
             </StackLayout>
 
             <background:MaterialShapeView x:Name="ShapeView" HeightRequest="200" HorizontalOptions="FillAndExpand">

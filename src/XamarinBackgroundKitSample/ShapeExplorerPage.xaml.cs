@@ -18,8 +18,9 @@ namespace XamarinBackgroundKitSample
             ArcConfigContainer.IsVisible = false;
             DiagonalConfigContainer.IsVisible = false;
             CornerRadiusConfigContainer.IsVisible = false;
+            CornerClipConfigContainer.IsVisible = false;
 
-            switch(ShapePicker.SelectedItem?.ToString())
+            switch (ShapePicker.SelectedItem?.ToString())
             {
                 case "Arc":
                     ShapeView.Shape = new Arc();
@@ -40,6 +41,10 @@ namespace XamarinBackgroundKitSample
                         Position = ShapePosition.Bottom
                     };
                     DiagonalConfigContainer.IsVisible = true;
+                    break;
+                case "CornerClip":
+                    ShapeView.Shape = new CornerClip();
+                    CornerClipConfigContainer.IsVisible = true;
                     break;
                 default:
                     ShapeView.Shape = null;
@@ -110,6 +115,14 @@ namespace XamarinBackgroundKitSample
 
             roundRect.CornerRadius = new CornerRadius(TopLeftCornerSlider.Value, TopRightCornerSlider.Value,
                 BottomLeftCornerSlider.Value, BottomRightCornerSlider.Value);
+        }
+
+        private void OnClipSizeChanged(object sender, ValueChangedEventArgs e)
+        {
+            if (!(ShapeView.Shape is CornerClip cornerClip)) return;
+
+            cornerClip.ClipSize = new CornerRadius(TopLeftClipSizeSlider.Value, TopRightClipSizeSlider.Value,
+                BottomLeftClipSizeSlider.Value, BottomRightClipSizeSlider.Value);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace XamarinBackgroundKit.Android.PathProviders
             Register<Rect>(() => new RectPathProvider());
             Register<Diagonal>(() => new DiagonalPathProvider());
             Register<RoundRect>(() => new RoundRectPathProvider());
+            Register<CornerClip>(() => new CornerClipPathProvider());
         }
 
         public static IPathProvider Resolve<TShape>() where TShape : IBackgroundShape
