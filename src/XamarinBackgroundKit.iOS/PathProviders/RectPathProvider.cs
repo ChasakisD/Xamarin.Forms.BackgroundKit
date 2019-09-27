@@ -10,12 +10,18 @@ namespace XamarinBackgroundKit.iOS.PathProviders
 
         public override void CreatePath(Rect shape, CGRect bounds)
         {
-            Path = UIBezierPath.FromRect(bounds).CGPath;
+            using (var bezierPath = UIBezierPath.FromRect(bounds))
+            {
+                Path = bezierPath.CGPath;
+            }            
         }
 
         public override void CreateBorderedPath(Rect shape, CGRect bounds, double strokeWidth)
         {
-            BorderPath = UIBezierPath.FromRect(bounds.Inset((float)strokeWidth, (float)strokeWidth)).CGPath;
+            using (var bezierPath = UIBezierPath.FromRect(bounds.Inset((float)strokeWidth, (float)strokeWidth)))
+            {
+                BorderPath = bezierPath.CGPath;
+            }
         }
     }
 }

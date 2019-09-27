@@ -120,7 +120,7 @@
 
                 <Slider
                     x:Name="TopLeftClipSizeSlider"
-                    Maximum="60"
+                    Maximum="200"
                     Minimum="0"
                     ValueChanged="OnClipSizeChanged" />
 
@@ -128,7 +128,7 @@
 
                 <Slider
                     x:Name="TopRightClipSizeSlider"
-                    Maximum="60"
+                    Maximum="200"
                     Minimum="0"
                     ValueChanged="OnClipSizeChanged" />
 
@@ -136,7 +136,7 @@
 
                 <Slider
                     x:Name="BottomLeftClipSizeSlider"
-                    Maximum="60"
+                    Maximum="200"
                     Minimum="0"
                     ValueChanged="OnClipSizeChanged" />
 
@@ -144,7 +144,7 @@
 
                 <Slider
                     x:Name="BottomRightClipSizeSlider"
-                    Maximum="60"
+                    Maximum="200"
                     Minimum="0"
                     ValueChanged="OnClipSizeChanged" />
             </StackLayout>
