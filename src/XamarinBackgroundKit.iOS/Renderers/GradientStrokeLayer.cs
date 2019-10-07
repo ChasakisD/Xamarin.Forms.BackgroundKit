@@ -161,7 +161,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
         
         public void SetElevation(double elevation)
         {
-            _shadowLayer.Elevation = (float) elevation;
+            _shadowLayer.Elevation = (float) elevation;            
+        }
+
+        public void SetShadowColor(CGColor color)
+        {
+            _shadowLayer.ShadowColor = color;
         }
 
         public void SetCornerRadius(CornerRadius cornerRadius)

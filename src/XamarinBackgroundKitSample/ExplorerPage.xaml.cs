@@ -77,7 +77,12 @@ namespace XamarinBackgroundKitSample
 
         private void OnBackgroundColorChanged(object sender, TextChangedEventArgs e)
         {
-            Background.Color = GetColorFromString(e.NewTextValue);
+            Background.Color = GetColorFromString(e.NewTextValue);          
+        }
+
+        private void OnShadowColorChanged(object sender, TextChangedEventArgs e)
+        {            
+            Background.ShadowColor = GetColorFromString(e.NewTextValue);
         }
 
         private void OnBorderColorChanged(object sender, TextChangedEventArgs e)

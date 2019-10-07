@@ -148,11 +148,15 @@ namespace XamarinBackgroundKit.Android.Renderers
             {
                 UpdateBackground();
                 UpdateElevation();
+                UpdateShadowColor();
                 UpdateTranslationZ();
                 return;
             }
 
             var eps = Math.Pow(10, -10);
+
+            if (oldElement.ShadowColor != newElement.ShadowColor)
+                UpdateShadowColor();
 
             if (oldElement.Color != newElement.Color)
                 UpdateColor();
@@ -218,6 +222,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
                 || e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
             else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
+            else if (e.PropertyName == ElevationElement.ShadowColorProperty.PropertyName) UpdateShadowColor();
             else if (e.PropertyName == ElevationElement.TranslationZProperty.PropertyName) UpdateTranslationZ();
         }
 
@@ -372,10 +377,27 @@ namespace XamarinBackgroundKit.Android.Renderers
             switch (_nativeView)
             {
                 case MaterialCardView mCardView:
-                    mCardView.SetElevation(_context, _backgroundElement);
+                    mCardView.SetElevation(_context, _backgroundElement);                   
                     break;
                 default:
-                    _nativeView.SetElevation(_context, _backgroundElement);
+                    _nativeView.SetElevation(_context, _backgroundElement);                    
+                    break;
+            }
+        }
+
+        private void UpdateShadowColor()
+        {
+            if (_nativeView == null || Build.VERSION.SdkInt < BuildVersionCodes.P) return;
+
+            switch (_nativeView)
+            {
+                case MaterialCardView mCardView:                   
+                    mCardView.SetOutlineSpotShadowColor(_backgroundElement.ShadowColor.ToAndroid());
+                    mCardView.SetOutlineAmbientShadowColor(_backgroundElement.ShadowColor.ToAndroid());
+                    break;
+                default:                    
+                    _nativeView.SetOutlineSpotShadowColor(_backgroundElement.ShadowColor.ToAndroid());
+                    _nativeView.SetOutlineAmbientShadowColor(_backgroundElement.ShadowColor.ToAndroid());
                     break;
             }
         }

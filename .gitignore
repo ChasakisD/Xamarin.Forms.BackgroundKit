@@ -260,3 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 *.exe
+src/XamarinBackgroundKit.Android/Resources/Resource.designer.cs
+
+src/XamarinBackgroundKitSample.Android/Resources/Resource.designer.cs

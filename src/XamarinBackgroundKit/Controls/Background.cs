@@ -23,6 +23,17 @@ namespace XamarinBackgroundKit.Controls
             set => SetValue(ElevationProperty, value);
         }
 
+        public static readonly BindableProperty ShadowColorProperty = ElevationElement.ShadowColorProperty;
+
+        /// <summary>
+        /// Gets or sets the Color of the Shadow
+        /// </summary>
+		public Color ShadowColor
+        {
+            get => (Color)GetValue(ShadowColorProperty);
+            set => SetValue(ShadowColorProperty, value);
+        }
+
         public static readonly BindableProperty TranslationZProperty = ElevationElement.TranslationZProperty;
 
         /// <summary>
@@ -188,6 +199,8 @@ namespace XamarinBackgroundKit.Controls
         void IElevationElement.OnElevationPropertyChanged(double oldValue, double newValue) { }
 
         void IElevationElement.OnTranslationZPropertyChanged(double oldValue, double newValue) { }
+
+        void IElevationElement.OnShadowColorPropertyChanged(Color oldValue, Color newValue) { }
 
         #endregion
 

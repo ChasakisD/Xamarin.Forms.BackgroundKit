@@ -12,6 +12,8 @@ namespace XamarinBackgroundKit.Abstractions
         
         Color RippleColor { get; }
 
+        Color ShadowColor { get; }
+
         event EventHandler<EventArgs> InvalidateGradientRequested;
 
         event EventHandler<EventArgs> InvalidateBorderGradientRequested;
