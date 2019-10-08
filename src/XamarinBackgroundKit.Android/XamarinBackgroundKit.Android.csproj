@@ -50,14 +50,24 @@
     <Compile Include="Effects\NoButtonTextCapsEffect.cs" />
     <Compile Include="Extensions\GradientDrawableExtensions.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />
-    <Compile Include="Renderers\ClipPathManager.cs" />
-    <Compile Include="Renderers\CornerOutlineProvider.cs" />
     <Compile Include="Renderers\GradientStrokeDrawable.cs" />
     <Compile Include="Renderers\MaterialCardRenderer.cs" />
     <Compile Include="Renderers\MaterialContentViewRenderer.cs" />
     <Compile Include="Renderers\MaterialBackgroundManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\Resource.designer.cs" />
+    <Compile Include="Renderers\MaterialShapeManager.cs" />
+    <Compile Include="Renderers\MaterialShapeViewRenderer.cs" />
+    <Compile Include="PathProviders\BasePathProvider.cs" />
+    <Compile Include="PathProviders\IPathProvider.cs" />
+    <Compile Include="PathProviders\RoundRectPathProvider.cs" />
+    <Compile Include="PathProviders\ArcPathProvider.cs" />
+    <Compile Include="PathProviders\RectPathProvider.cs" />
+    <Compile Include="OutlineProviders\PathOutlineProvider.cs" />
+    <Compile Include="Extensions\VisualElementRendererExtensions.cs" />
+    <Compile Include="PathProviders\PathProvidersContainer.cs" />
+    <Compile Include="PathProviders\DiagonalPathProvider.cs" />
+    <Compile Include="PathProviders\CornerClipPathProvider.cs" />
+    <Compile Include="PathProviders\TrianglePathProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamarinBackgroundKit\XamarinBackgroundKit.csproj">
@@ -67,13 +77,15 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.1.0.581479</Version>
+      <Version>4.1.0.673156</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.Visual.Material">
-      <Version>4.1.0.581479</Version>
+      <Version>4.1.0.673156</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="OutlineProviders\" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

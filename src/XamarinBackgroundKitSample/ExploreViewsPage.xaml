@@ -41,13 +41,6 @@
                 <Setter Property="TextColor" Value="#2D2D2D" />
             </Style>
         </ScrollView.Resources>
-        <background:BackgroundEffect.Background>
-            <background:Background>
-                <background:Background.GradientBrush>
-                    <background:LinearGradientBrush Angle="45" />
-                </background:Background.GradientBrush>
-            </background:Background>
-        </background:BackgroundEffect.Background>
         <StackLayout Padding="0,0,0,20" Spacing="8">
             <StackLayout>
                 <background:MaterialContentView

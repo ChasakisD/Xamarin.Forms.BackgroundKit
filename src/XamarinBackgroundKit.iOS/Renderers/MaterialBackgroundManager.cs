@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using CoreAnimation;
-using CoreGraphics;
 using MaterialComponents;
 using UIKit;
 using Xamarin.Forms;
@@ -12,6 +10,7 @@ using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Controls.Base;
 using XamarinBackgroundKit.Effects;
 using XamarinBackgroundKit.iOS.Extensions;
+using XamarinBackgroundKit.Shapes;
 using MButton = MaterialComponents.Button;
 
 namespace XamarinBackgroundKit.iOS.Renderers
@@ -20,6 +19,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
     {
         private bool _disposed;
         private VisualElement _visualElement;
+        private MaterialShapeManager _shapeManager;
+        private IBackgroundShape _defaultShape;
         private IVisualElementRenderer _renderer;
         private IMaterialVisualElement _backgroundElement;
 
@@ -28,8 +29,10 @@ namespace XamarinBackgroundKit.iOS.Renderers
         public MaterialBackgroundManager(IVisualElementRenderer renderer)
         {
             _renderer = renderer ?? throw new ArgumentNullException(nameof(renderer), "Renderer cannot be null");
-            
             _renderer.ElementChanged += OnRendererElementChanged;
+
+            _defaultShape = new RoundRect();
+            _shapeManager = new MaterialShapeManager();
 
             SetVisualElement(null, _renderer.Element);
         }
@@ -109,7 +112,13 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 UpdateShadowColor();
                 UpdateCornerRadius();
                 UpdateRipple();
-                InvalidateClipToBounds();
+                InvalidateShape();
+
+                if (!(_visualElement is MaterialShapeView))
+                {
+                    SetShape(null, false);
+                }
+
                 return;
             }
             
@@ -135,7 +144,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             if (oldMaterialElement.CornerRadius != newMaterialElement.CornerRadius)
                 UpdateCornerRadius();
 
-            InvalidateClipToBounds();
+            InvalidateShape();
         }
 
         #endregion
@@ -191,6 +200,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             if (_renderer.NativeView is Card || _renderer.NativeView is ChipView || _renderer.NativeView is MButton) return;
 
+            _shapeManager?.SetIsRippleEnabled(_backgroundElement.IsRippleEnabled);
+
             if (_backgroundElement.IsRippleEnabled)
             {
                 if (_inkTouchController == null)
@@ -199,7 +210,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     _inkTouchController.AddInkView();
                 }
 
-                InvalidateClipToBounds();
+                InvalidateShape();
 
                 if (_inkTouchController?.DefaultInkView == null) return;
                 _inkTouchController.DefaultInkView.UsesLegacyInkRipple = false;
@@ -308,8 +319,11 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     mCard.SetCornerRadius(_backgroundElement);
                     break;
                 default:
-                    _renderer.NativeView.SetCornerRadius(_backgroundElement);
-                    InvalidateClipToBounds();
+                    if (_defaultShape is RoundRect rRect)
+                    {
+                        rRect.CornerRadius = _backgroundElement.CornerRadius;
+                    }
+                    InvalidateShape();
                     break;
             }
         }
@@ -331,12 +345,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
                     break;
             }
 
-            InvalidateClipToBounds();
+            InvalidateShape();
         }
 
         #endregion
 
         #region Invalidation
+
+        public void SetShape(IBackgroundShape shape, bool overwrite = true)
+        {
+            _shapeManager?.SetShape(_renderer, overwrite ? shape : _defaultShape);
+        }
 
         public void InvalidateLayer()
         {
@@ -348,104 +367,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
             CATransaction.DisableActions = true;
             layer.Frame = _renderer.NativeView.Bounds;
             CATransaction.Commit();
-
+            
             layer.SetNeedsDisplay();
 
-            InvalidateClipToBounds();
+            InvalidateShape();
             EnsureRippleOnFront();
         }
 
-        public void InvalidateClipToBounds()
+        public void InvalidateShape()
         {
-            if (_renderer.NativeView == null) return;
-            if (_renderer.NativeView.Layer != null)
-            {
-                /*
-                 * MDCInkView
-                 * From https://github.com/material-components/material-components-ios-codelabs/blob/master/MDC-111/Swift/Starter/Pods/MaterialComponents/components/Ink/src/MDCInkView.m
-                 * MDCInkView uses SuperView's ShadowPath in order to mask the ripple
-                 * So we calculate the rounded corners path and we set it to the ShadowPath
-                 * but with ShadowOpacity to 0 in order to not overlap the MDCShadowLayer
-                 */
-
-                _renderer.NativeView.Layer.ShadowPath?.Dispose();
-                if (_backgroundElement.IsRippleEnabled)
-                {
-                    _renderer.NativeView.Layer.ShadowOpacity = 0;
-                    _renderer.NativeView.Layer.ShadowPath = BackgroundKit
-                        .GetRoundCornersPath(_renderer.NativeView.Layer.Bounds, _backgroundElement.CornerRadius).CGPath;
-                }
-                else
-                {
-                    _renderer.NativeView.Layer.ShadowPath = null;
-                }
-            }
-
-            InvalidateSubViewsMask();
-        }
-
-        private void InvalidateSubViewsMask()
-        {
-            if (_renderer.NativeView.Subviews == null) return;
-
-            var transform = GetMaskTransform();
-
-            CGRect bounds;
-            CGPath maskPath;
-            switch(_backgroundElement.BorderStyle)
-            {
-                case BorderStyle.Inner:
-                    bounds = _renderer.NativeView.Bounds;
-                    maskPath = BackgroundKit.GetRoundCornersPath(
-                        bounds, _backgroundElement.CornerRadius).CGPath;
-                    break;
-                default:
-                    var borderWidth = (float)_backgroundElement.BorderWidth;
-                    bounds = _renderer.NativeView.Bounds.Inset(borderWidth, borderWidth);
-                    maskPath = BackgroundKit.GetRoundCornersPath(
-                        bounds, _backgroundElement.CornerRadius, borderWidth).CGPath;
-                    break;
-            }
-
-            foreach (var subView in _renderer.NativeView.Subviews)
-            {
-                if (subView?.Layer?.Sublayers?.FirstOrDefault(
-                    l => l is GradientStrokeLayer) != null) continue;
-
-                subView.Layer.Mask?.Dispose();
-                subView.Layer.Mask = new CAShapeLayer
-                {
-                    Frame = _renderer.NativeView.Bounds,
-                    Path = transform == null ? maskPath : new CGPath(maskPath, transform.Value)
-                };
-
-                subView.Layer.MasksToBounds = true;
-            }
-        }
-
-        private CGAffineTransform? GetMaskTransform()
-        {
-            if (!(_visualElement is Layout layout)) return null;
-
-            var minChildrenStartX = layout.Padding.Left;
-            var minChildrenStartY = layout.Padding.Top;
-
-            /*
-             * To find the clipping mask for the subview we must
-             * calculate the minimum start x and y for the child views.
-             *
-             * To find the minimum start in one axis, we must add the padding
-             * of the layout and the margin of the child view.
-             */
-            var visualElementChildren = layout.Children?.Where(element => element is VisualElement);
-            if(visualElementChildren != null && visualElementChildren.Any())
-            {
-                minChildrenStartX += visualElementChildren.Min(element => ((VisualElement)element).X);
-                minChildrenStartY += visualElementChildren.Max(element => ((VisualElement)element).Y);
-            }            
-
-            return CGAffineTransform.MakeTranslation(-(nfloat)minChildrenStartX, -(nfloat)minChildrenStartY);
-        }
+            _shapeManager?.Invalidate();
+        }      
 
         public void EnsureRippleOnFront()
         {
@@ -474,6 +406,13 @@ namespace XamarinBackgroundKit.iOS.Renderers
             _disposed = true;
 
             SetVisualElement(_visualElement, null);
+
+            _defaultShape = null;
+            if (_shapeManager != null)
+            {
+                _shapeManager.Dispose();
+                _shapeManager = null;
+            }
 
             if (_renderer != null)
             {

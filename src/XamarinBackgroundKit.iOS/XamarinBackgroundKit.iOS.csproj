@@ -48,13 +48,24 @@
     <Compile Include="Renderers\MaterialCardRenderer.cs" />
     <Compile Include="Renderers\MaterialContentViewRenderer.cs" />
     <Compile Include="Renderers\MaterialBackgroundManager.cs" />
+    <Compile Include="PathProviders\IPathProvider.cs" />
+    <Compile Include="PathProviders\BasePathProvider.cs" />
+    <Compile Include="PathProviders\RectPathProvider.cs" />
+    <Compile Include="PathProviders\RoundRectPathProvider.cs" />
+    <Compile Include="PathProviders\ArcPathProvider.cs" />
+    <Compile Include="Renderers\MaterialShapeManager.cs" />
+    <Compile Include="Renderers\MaterialShapeViewRenderer.cs" />
+    <Compile Include="PathProviders\PathProvidersContainer.cs" />
+    <Compile Include="PathProviders\DiagonalPathProvider.cs" />
+    <Compile Include="PathProviders\CornerClipPathProvider.cs" />
+    <Compile Include="PathProviders\TrianglePathProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
-      <Version>4.1.0.581479</Version>
+      <Version>4.1.0.673156</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.Visual.Material">
-      <Version>4.1.0.581479</Version>
+      <Version>4.1.0.673156</Version>
     </PackageReference>
     <PackageReference Include="Naxam.KVOController.iOS">
       <Version>1.2.0</Version>
@@ -65,6 +76,9 @@
       <Project>{54366595-A90D-4AC0-B816-FCE69FA6410F}</Project>
       <Name>XamarinBackgroundKit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PathProviders\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

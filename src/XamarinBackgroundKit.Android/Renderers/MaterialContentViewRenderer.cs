@@ -1,9 +1,8 @@
-﻿using Android.Content;
+﻿using System.ComponentModel;
+using Android.Content;
 using Android.Graphics;
 using Android.Views;
-using System.ComponentModel;
 using Xamarin.Forms;
-using Xamarin.Forms.Internals;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
 using XamarinBackgroundKit.Controls;
@@ -13,14 +12,12 @@ using View = Xamarin.Forms.View;
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
 namespace XamarinBackgroundKit.Android.Renderers
 {
-    [Preserve(AllMembers = true)]
     public class MaterialContentViewRenderer : ViewRenderer, AView.IOnClickListener
 	{
         private bool _disposed;
 		private bool _isClickListenerSet;
 
-        private ClipPathManager _clipPathManager;
-		private MaterialBackgroundManager _materialBackgroundManager;
+		protected MaterialBackgroundManager BackgroundManager;
 
         private MaterialContentView ElementController => Element as MaterialContentView;
 
@@ -31,10 +28,9 @@ namespace XamarinBackgroundKit.Android.Renderers
             base.OnElementChanged(e);
 
             if (e.NewElement == null) return;
-            if (_materialBackgroundManager == null)
+            if (BackgroundManager == null)
             {
-                _clipPathManager = new ClipPathManager();
-                _materialBackgroundManager = new MaterialBackgroundManager(this);
+                BackgroundManager = new MaterialBackgroundManager(this);
             }
 
             UpdateAll();
@@ -48,21 +44,20 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (changed)
             {
-                PostInvalidate();
+                BackgroundManager?.Invalidate();
             }
         }
 
-        protected override bool DrawChild(Canvas canvas, AView child, long drawingTime)
+        protected override void DispatchDraw(Canvas canvas)
         {
-            return _clipPathManager.ClipCanvas(Context, canvas, ElementController.Background,
-                () => base.DrawChild(canvas, child, drawingTime));
+            BackgroundManager?.Draw(this, canvas, () => base.DispatchDraw(canvas));
         }
 
         #endregion
 
-		#region Property Changed
+        #region Property Changed
 
-		protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (_disposed) return;
 
@@ -144,16 +139,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 
 			if (disposing)
 			{
-                if (_clipPathManager != null)
+                if (BackgroundManager != null)
                 {
-                    _clipPathManager.Dispose();
-                    _clipPathManager = null;
-                }
-
-                if (_materialBackgroundManager != null)
-                {
-                    _materialBackgroundManager.Dispose();
-                    _materialBackgroundManager = null;
+                    BackgroundManager.Dispose();
+                    BackgroundManager = null;
                 }
 
                 if (_isClickListenerSet)
