@@ -40,9 +40,19 @@ namespace XamarinBackgroundKit.iOS.Extensions
             view.SetMaterialElevation(elevationElement.Elevation);
         }
 
+        public static void SetMaterialElevationShadowColor(this UIView view, IElevationElement elevationElement)
+        {
+            view.SetMaterialElevationShadowColor(elevationElement.ShadowColor);
+        }
+
         public static void SetMaterialElevation(this UIView view, double elevation)
         {
             view.FindLayerOfType<GradientStrokeLayer>()?.SetElevation(elevation);
+        }
+
+        public static void SetMaterialElevationShadowColor(this UIView view, Color shadowColor)
+        {
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetShadowColor(shadowColor.ToCGColor());            
         }
 
         #endregion
