@@ -7,19 +7,33 @@ namespace XamarinBackgroundKit.Shapes
 {
     public class BaseShape : BindableObject, IBackgroundShape
     {
-        public VisualElement Parent { get; set; }
+        private WeakReference<VisualElement> _parentWeakRef;
+        private IMaterialVisualElement Background
+        {
+            get
+            {
+                if (_parentWeakRef == null) return null;
+                if (!_parentWeakRef.TryGetTarget(out var parent)) return null;
 
-        public IMaterialVisualElement Background =>
-            Parent is IBackgroundElement backgroundElement ? backgroundElement.Background : null;
+                return parent is IBackgroundElement backgroundElement
+                    ? backgroundElement.Background
+                    : null;
+            }
+        }
 
-        public bool NeedsBorderInset =>
-            Background != null && Background.BorderStyle == BorderStyle.Outer && Background.BorderWidth > 0;
+        public double BorderWidth => Background?.BorderWidth ?? 0d;
+        public bool NeedsBorderInset => BorderWidth > 0 && Background.BorderStyle == BorderStyle.Outer;
 
         public event EventHandler<EventArgs> ShapeInvalidateRequested;
 
         public virtual void InvalidateShape()
         {
             ShapeInvalidateRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void SetParent(VisualElement parent)
+        {
+            _parentWeakRef = new WeakReference<VisualElement>(parent);
         }
     }
 }

@@ -9,19 +9,20 @@ namespace XamarinBackgroundKit.Controls
     {
         public static readonly BindableProperty ShapeProperty = BindableProperty.Create(
             nameof(Shape), typeof(IBackgroundShape), typeof(MaterialShapeView), new Rect(),
+            defaultValueCreator: b => new Rect(),
             propertyChanged: (b, o, n) =>
             {
                 if (!(b is MaterialShapeView shapeView)) return;
 
                 if (o is BaseShape oldShape)
                 {
-                    oldShape.Parent = null;
+                    oldShape.SetParent(null);
                     oldShape.RemoveBinding(BindingContextProperty);
                 }
 
                 if (n is BaseShape newShape)
                 {
-                    newShape.Parent = shapeView;
+                    newShape.SetParent(shapeView);
                     newShape.SetBinding(BindingContextProperty, new Binding("BindingContext", source: shapeView));
                 }
             });

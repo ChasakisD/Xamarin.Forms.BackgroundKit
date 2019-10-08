@@ -59,7 +59,7 @@ namespace XamarinBackgroundKit.Android.PathProviders
             /* If there is no need to create border, return the normal path */
             if (!tShape.NeedsBorderInset) return CreatePath(width, height);
 
-            var strokeWidth = (int)(tShape.Background.BorderWidth * BackgroundKit.Density);
+            var strokeWidth = (int)(tShape.BorderWidth * BackgroundKit.Density);
 
             BorderPath.Reset();
 

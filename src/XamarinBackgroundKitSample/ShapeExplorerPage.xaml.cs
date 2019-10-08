@@ -19,6 +19,7 @@ namespace XamarinBackgroundKitSample
             DiagonalConfigContainer.IsVisible = false;
             CornerRadiusConfigContainer.IsVisible = false;
             CornerClipConfigContainer.IsVisible = false;
+            TriangleConfigContainer.IsVisible = false;
 
             switch (ShapePicker.SelectedItem?.ToString())
             {
@@ -41,6 +42,10 @@ namespace XamarinBackgroundKitSample
                         Position = ShapePosition.Bottom
                     };
                     DiagonalConfigContainer.IsVisible = true;
+                    break;
+                case "Triangle":
+                    ShapeView.Shape = new Triangle();
+                    TriangleConfigContainer.IsVisible = true;
                     break;
                 case "CornerClip":
                     ShapeView.Shape = new CornerClip();
@@ -123,6 +128,15 @@ namespace XamarinBackgroundKitSample
 
             cornerClip.ClipSize = new CornerRadius(TopLeftClipSizeSlider.Value, TopRightClipSizeSlider.Value,
                 BottomLeftClipSizeSlider.Value, BottomRightClipSizeSlider.Value);
+        }
+
+        private void OnTrianglePointsChanged(object sender, ValueChangedEventArgs e)
+        {
+            if (!(ShapeView.Shape is Triangle triangle)) return;
+
+            triangle.PointA = new Point(PointAX.Value, PointAY.Value);
+            triangle.PointB = new Point(PointBX.Value, PointBY.Value);
+            triangle.PointC = new Point(PointCX.Value, PointCY.Value);
         }
     }
 }

@@ -16,6 +16,7 @@ namespace XamarinBackgroundKit.iOS.PathProviders
             Register<Arc>(() => new ArcPathProvider());
             Register<Rect>(() => new RectPathProvider());
             Register<Diagonal>(() => new DiagonalPathProvider());
+            Register<Triangle>(() => new TrianglePathProvider());
             Register<RoundRect>(() => new RoundRectPathProvider());
             Register<CornerClip>(() => new CornerClipPathProvider());
         }

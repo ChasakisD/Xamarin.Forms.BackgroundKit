@@ -1,12 +1,8 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage
-    x:Class="XamarinBackgroundKitSample.ShapeExplorerPage"
-    xmlns="http://xamarin.com/schemas/2014/forms"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:background="http://xamarin.com/schemas/2014/forms/background">
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage x:Class="XamarinBackgroundKitSample.ShapeExplorerPage" xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:background="http://xamarin.com/schemas/2014/forms/background">
     <ScrollView BackgroundColor="#F4F4F4" Visual="Material">
-        <StackLayout Spacing="32" Padding="16">
-            <Label FontSize="24" Text="Select Shape" VerticalTextAlignment="Center" />
+        <StackLayout Padding="16" Spacing="32">
+            <Label VerticalTextAlignment="Center" FontSize="24" Text="Select Shape" />
 
             <Picker x:Name="ShapePicker" Visual="Default" SelectedIndexChanged="OnShapeChanged">
                 <Picker.ItemsSource>
@@ -15,45 +11,30 @@
                         <x:String>Rect</x:String>
                         <x:String>RoundRect</x:String>
                         <x:String>Diagonal</x:String>
+                        <x:String>Triangle</x:String>
                         <x:String>CornerClip</x:String>
                     </x:Array>
                 </Picker.ItemsSource>
             </Picker>
 
             <StackLayout x:Name="CornerRadiusConfigContainer" Spacing="8">
-                <Label FontSize="24" Text="Corner Radius" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Corner Radius" />
 
                 <Label Text="{Binding Source={x:Reference TopLeftCornerSlider}, Path=Value, StringFormat='{}Top Left Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="TopLeftCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="TopLeftCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
 
                 <Label Text="{Binding Source={x:Reference TopRightCornerSlider}, Path=Value, StringFormat='{}Top Right Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="TopRightCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="TopRightCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
 
                 <Label Text="{Binding Source={x:Reference BottomLeftCornerSlider}, Path=Value, StringFormat='{}Bottom Left Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="BottomLeftCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="BottomLeftCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
 
                 <Label Text="{Binding Source={x:Reference BottomRightCornerSlider}, Path=Value, StringFormat='{}Bottom Right Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="BottomRightCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="BottomRightCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
             </StackLayout>
 
             <StackLayout x:Name="ArcConfigContainer" Spacing="8">
@@ -67,20 +48,16 @@
                         </x:Array>
                     </Picker.ItemsSource>
                 </Picker>
-                                
+
                 <StackLayout Orientation="Horizontal" Spacing="8">
                     <Label Text="IsCropInside" />
-                    
+
                     <Switch x:Name="IsCropInsideSwitch" Toggled="OnIsCropInsideToggled" />
                 </StackLayout>
 
                 <Label Text="{Binding Source={x:Reference ArcHeightSlider}, Path=Value, StringFormat='{}Arc Height: {0}'}" />
 
-                <Slider
-                    x:Name="ArcHeightSlider"
-                    Maximum="200"
-                    Minimum="0"
-                    ValueChanged="OnArcHeightChanged" />
+                <Slider x:Name="ArcHeightSlider" Maximum="200" Minimum="0" ValueChanged="OnArcHeightChanged" />
             </StackLayout>
 
             <StackLayout x:Name="DiagonalConfigContainer" Spacing="8">
@@ -106,55 +83,73 @@
 
                 <Label Text="{Binding Source={x:Reference DiagonalAngleSlider}, Path=Value, StringFormat='{}Angle: {0}'}" />
 
-                <Slider
-                    x:Name="DiagonalAngleSlider"
-                    Maximum="360"
-                    Minimum="0"
-                    ValueChanged="OnDiagonalAngleChanged" />
+                <Slider x:Name="DiagonalAngleSlider" Maximum="360" Minimum="0" ValueChanged="OnDiagonalAngleChanged" />
             </StackLayout>
 
             <StackLayout x:Name="CornerClipConfigContainer" Spacing="8">
-                <Label FontSize="24" Text="Corner Radius" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Corner Radius" />
 
                 <Label Text="{Binding Source={x:Reference TopLeftClipSizeSlider}, Path=Value, StringFormat='{}Top Left Clip Size: {0}'}" />
 
-                <Slider
-                    x:Name="TopLeftClipSizeSlider"
-                    Maximum="200"
-                    Minimum="0"
-                    ValueChanged="OnClipSizeChanged" />
+                <Slider x:Name="TopLeftClipSizeSlider" Maximum="200" Minimum="0" ValueChanged="OnClipSizeChanged" />
 
                 <Label Text="{Binding Source={x:Reference TopRightClipSizeSlider}, Path=Value, StringFormat='{}Top Right Clip Size: {0}'}" />
 
-                <Slider
-                    x:Name="TopRightClipSizeSlider"
-                    Maximum="200"
-                    Minimum="0"
-                    ValueChanged="OnClipSizeChanged" />
+                <Slider x:Name="TopRightClipSizeSlider" Maximum="200" Minimum="0" ValueChanged="OnClipSizeChanged" />
 
                 <Label Text="{Binding Source={x:Reference BottomLeftClipSizeSlider}, Path=Value, StringFormat='{}Bottom Left Clip Size: {0}'}" />
 
-                <Slider
-                    x:Name="BottomLeftClipSizeSlider"
-                    Maximum="200"
-                    Minimum="0"
-                    ValueChanged="OnClipSizeChanged" />
+                <Slider x:Name="BottomLeftClipSizeSlider" Maximum="200" Minimum="0" ValueChanged="OnClipSizeChanged" />
 
                 <Label Text="{Binding Source={x:Reference BottomRightClipSizeSlider}, Path=Value, StringFormat='{}Bottom Right Clip Size: {0}'}" />
 
-                <Slider
-                    x:Name="BottomRightClipSizeSlider"
-                    Maximum="200"
-                    Minimum="0"
-                    ValueChanged="OnClipSizeChanged" />
+                <Slider x:Name="BottomRightClipSizeSlider" Maximum="200" Minimum="0" ValueChanged="OnClipSizeChanged" />
             </StackLayout>
+
+            <Grid x:Name="TriangleConfigContainer" ColumnSpacing="8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                    
+                <Label FontSize="24" Text="X" Grid.Row="0" Grid.Column="0" />
+                <Label FontSize="24" Text="Y" Grid.Row="0" Grid.Column="1" />
+
+                <Label FontSize="24" Text="Point A" Grid.Row="1" Grid.ColumnSpan="2" />
+                <Slider x:Name="PointAX" Grid.Row="2" Grid.Column="0" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+                <Slider x:Name="PointAY" Grid.Row="2" Grid.Column="1" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+
+                <Label FontSize="24" Text="Point B" Grid.Row="3" Grid.ColumnSpan="2" />
+                <Slider x:Name="PointBX" Grid.Row="4" Grid.Column="0" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+                <Slider x:Name="PointBY" Grid.Row="4" Grid.Column="1" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+
+                <Label FontSize="24" Text="Point C" Grid.Row="5" Grid.ColumnSpan="2" />
+                <Slider x:Name="PointCX" Grid.Row="6" Grid.Column="0" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+                <Slider x:Name="PointCY" Grid.Row="6" Grid.Column="1" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+            </Grid>
 
             <background:MaterialShapeView x:Name="ShapeView" HeightRequest="200" HorizontalOptions="FillAndExpand">
                 <background:MaterialShapeView.Background>
-                    <background:Background IsRippleEnabled="True" RippleColor="Red" Color="DarkCyan" Elevation="4" BorderColor="Yellow" BorderWidth="32" BorderStyle="Outer" />
+                    <background:Background
+                        BorderColor="Yellow"
+                        BorderStyle="Outer"
+                        BorderWidth="32"
+                        Elevation="4"
+                        RippleColor="Red"
+                        IsRippleEnabled="True"
+                        Color="DarkCyan" />
                 </background:MaterialShapeView.Background>
 
-                <Image Source="https://i.pinimg.com/originals/0c/6f/17/0c6f17ab1428e025228e4c15fb9c0c5f.jpg" Aspect="AspectFill" BackgroundColor="Green" />
+                <Image Aspect="AspectFill" BackgroundColor="Green" Source="https://i.pinimg.com/originals/0c/6f/17/0c6f17ab1428e025228e4c15fb9c0c5f.jpg" />
             </background:MaterialShapeView>
         </StackLayout>
     </ScrollView>

@@ -53,7 +53,7 @@ namespace XamarinBackgroundKit.iOS.PathProviders
             /* If there is no need to create border, return the normal path */
             if (!tShape.NeedsBorderInset) return CreatePath(bounds);
 
-            CreateBorderedPath(tShape, bounds, tShape.Background.BorderWidth);
+            CreateBorderedPath(tShape, bounds, tShape.BorderWidth);
 
             IsBorderPathDirty = false;
 

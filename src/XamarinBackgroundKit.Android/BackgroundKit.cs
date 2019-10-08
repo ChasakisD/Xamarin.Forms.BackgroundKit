@@ -3,10 +3,8 @@ using Android.Graphics;
 using Android.Util;
 using Android.Views;
 using Java.Interop;
-using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.PathProviders;
 using AApp = Android.App.Application;
-using AView = Android.Views.View;
 
 namespace XamarinBackgroundKit.Android
 {

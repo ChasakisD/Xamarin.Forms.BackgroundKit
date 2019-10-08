@@ -1,15 +1,15 @@
 ﻿using System;
 using Xamarin.Forms;
-using XamarinBackgroundKit.Abstractions;
 
 namespace XamarinBackgroundKit.Shapes
 {
     public interface IBackgroundShape
     {
+        double BorderWidth { get; }
         bool NeedsBorderInset { get; }
-        VisualElement Parent { get; set; }
-        IMaterialVisualElement Background { get; }
 
         event EventHandler<EventArgs> ShapeInvalidateRequested;
+
+        void SetParent(VisualElement parent);
     }
 }

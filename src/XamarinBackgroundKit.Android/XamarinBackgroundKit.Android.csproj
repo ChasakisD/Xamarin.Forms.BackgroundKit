@@ -68,6 +68,7 @@
     <Compile Include="PathProviders\PathProvidersContainer.cs" />
     <Compile Include="PathProviders\DiagonalPathProvider.cs" />
     <Compile Include="PathProviders\CornerClipPathProvider.cs" />
+    <Compile Include="PathProviders\TrianglePathProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamarinBackgroundKit\XamarinBackgroundKit.csproj">
