@@ -11,7 +11,7 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-.DS_Store
+
 
 # Build results
 [Dd]ebug/
@@ -263,7 +263,4 @@ paket-files/
 __pycache__/
 *.pyc
 *.exe
-
-#Android generated
-*Android/Resources/Resource.designer.cs
 
