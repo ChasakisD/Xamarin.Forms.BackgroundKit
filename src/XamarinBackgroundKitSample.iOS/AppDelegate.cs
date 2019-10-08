@@ -10,18 +10,17 @@ namespace XamarinBackgroundKitSample.iOS
     [Register("AppDelegate")]
     public class AppDelegate : FormsApplicationDelegate
     {
-        public override bool FinishedLaunching(UIApplication app, NSDictionary options)
+        public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             Popup.Init();
             BackgroundKit.Init();
 
             Forms.SetFlags("Visual_Experimental", "CollectionView_Experimental");
             Forms.Init();
-            FormsMaterial.Init();
 
             LoadApplication(new App());
 
-            return base.FinishedLaunching(app, options);
+            return base.FinishedLaunching(uiApplication, launchOptions);
         }
     }
 }

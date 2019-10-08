@@ -32,7 +32,6 @@ namespace XamarinBackgroundKitSample.Droid
 
             Forms.SetFlags("Visual_Experimental", "CollectionView_Experimental");
             Forms.Init(this, savedInstanceState);
-            FormsMaterial.Init(this, savedInstanceState);
             
             LoadApplication(new App());
         }

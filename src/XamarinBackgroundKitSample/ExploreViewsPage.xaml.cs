@@ -21,8 +21,6 @@ namespace XamarinBackgroundKitSample
             var customViews = new ObservableCollection<string>
             {
                 "Shapes",
-                "MaterialArc",
-                "MaterialCard",
                 "MaterialContentView",
                 "MaterialCardShowCase1"
             };
@@ -75,11 +73,8 @@ namespace XamarinBackgroundKitSample
             {
                 switch (control)
                 {
-                    case "MaterialArc":
-                        return new MaterialShapeView {Shape = new Arc {ArcHeight = 40}};
-                    case "MaterialCard":
                     case "MaterialContentView":
-                        var type = Type.GetType($"XamarinBackgroundKit.Controls.{control}, {typeof(MaterialCard).Assembly.GetName().Name}");
+                        var type = Type.GetType($"XamarinBackgroundKit.Controls.{control}, {typeof(MaterialContentView).Assembly.GetName().Name}");
                         if (type == null) return null;
                         return (View)Activator.CreateInstance(type);
                     case "MaterialCardShowCase1":

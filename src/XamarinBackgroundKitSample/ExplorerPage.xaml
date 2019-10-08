@@ -5,7 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:background="http://xamarin.com/schemas/2014/forms/background"
     BackgroundColor="White">
-    <Grid Visual="Material">
+    <Grid>
         <Grid.Resources>
             <Style TargetType="Label">
                 <Setter Property="Margin" Value="0,8,0,0" />

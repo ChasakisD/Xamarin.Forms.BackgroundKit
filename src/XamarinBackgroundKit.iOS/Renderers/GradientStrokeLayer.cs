@@ -34,6 +34,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
         private float[] _strokePositions;
         private nfloat[] _strokeColorPositions;
 
+        private CGColor _defaultShadowColor;
+
         private ShadowLayer _shadowLayer;
 
         private IPathProvider _pathProvider;
@@ -47,6 +49,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
             _bounds = new CGRect();
             _shadowLayer = new ShadowLayer();
             _pathProvider = new RectPathProvider();
+
+            _defaultShadowColor = _shadowLayer.ShadowColor;
 
             InsertSublayer(_shadowLayer, 0);
 
@@ -207,9 +211,11 @@ namespace XamarinBackgroundKit.iOS.Renderers
             _shadowLayer.Elevation = (float) elevation;            
         }
 
-        public void SetShadowColor(CGColor color)
+        public void SetShadowColor(Color color)
         {
-            _shadowLayer.ShadowColor = color;
+            _shadowLayer.ShadowColor = color == Color.Default
+                ? _defaultShadowColor
+                : color.ToCGColor();
         }
         
         public void SetDashedBorder(double dashWidth, double dashGap)

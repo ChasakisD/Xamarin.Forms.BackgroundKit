@@ -31,6 +31,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         private bool _areDefaultsSet;
         private bool _defaultFocusable;
         private bool _defaultClickable;
+        private int? _defaultShadowColor;
 
         private bool _disposed;
         private Context _context;
@@ -377,11 +378,19 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void UpdateShadowColor()
         {
-            if (_nativeView == null || Build.VERSION.SdkInt < BuildVersionCodes.P)
-                return;
+            if (_nativeView == null || Build.VERSION.SdkInt < BuildVersionCodes.P) return;
 
-            _nativeView.SetOutlineSpotShadowColor(_backgroundElement.ShadowColor.ToAndroid());
-            _nativeView.SetOutlineAmbientShadowColor(_backgroundElement.ShadowColor.ToAndroid());
+            if (_defaultShadowColor == null)
+            {
+                _defaultShadowColor = _nativeView.OutlineSpotShadowColor;
+            }
+
+            var shadowColor = _backgroundElement.ShadowColor == Color.Default
+                ? new AColor(_defaultShadowColor.Value)
+                : _backgroundElement.ShadowColor.ToAndroid();
+
+            _nativeView.SetOutlineSpotShadowColor(shadowColor);
+            _nativeView.SetOutlineAmbientShadowColor(shadowColor);
         }
 
         #endregion

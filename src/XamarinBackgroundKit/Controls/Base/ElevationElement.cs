@@ -10,7 +10,7 @@ namespace XamarinBackgroundKit.Controls.Base
 			propertyChanged: OnElevationPropertyChanged);
 
         public static readonly BindableProperty ShadowColorProperty = BindableProperty.Create(
-            nameof(IElevationElement.ShadowColor), typeof(Color), typeof(IElevationElement), Color.Black,
+            nameof(IElevationElement.ShadowColor), typeof(Color), typeof(IElevationElement), Color.Default,
             propertyChanged: OnShadowColorPropertyChanged);
 
         public static readonly BindableProperty TranslationZProperty = BindableProperty.Create(

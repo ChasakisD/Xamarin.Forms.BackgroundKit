@@ -52,7 +52,7 @@ namespace XamarinBackgroundKit.iOS.Extensions
 
         public static void SetMaterialElevationShadowColor(this UIView view, Color shadowColor)
         {
-            view.FindLayerOfType<GradientStrokeLayer>()?.SetShadowColor(shadowColor.ToCGColor());            
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetShadowColor(shadowColor);            
         }
 
         #endregion
