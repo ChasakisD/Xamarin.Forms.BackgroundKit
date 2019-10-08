@@ -264,3 +264,6 @@ __pycache__/
 *.pyc
 *.exe
 
+#Android generated
+*Android/Resources/Resource.designer.cs
+
