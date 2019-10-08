@@ -377,29 +377,21 @@ namespace XamarinBackgroundKit.Android.Renderers
             switch (_nativeView)
             {
                 case MaterialCardView mCardView:
-                    mCardView.SetElevation(_context, _backgroundElement);                   
+                    mCardView.SetElevation(_context, _backgroundElement);
                     break;
                 default:
-                    _nativeView.SetElevation(_context, _backgroundElement);                    
+                    _nativeView.SetElevation(_context, _backgroundElement);
                     break;
             }
         }
 
         private void UpdateShadowColor()
         {
-            if (_nativeView == null || Build.VERSION.SdkInt < BuildVersionCodes.P) return;
+            if (_nativeView == null || Build.VERSION.SdkInt < BuildVersionCodes.P)
+                return;
 
-            switch (_nativeView)
-            {
-                case MaterialCardView mCardView:                   
-                    mCardView.SetOutlineSpotShadowColor(_backgroundElement.ShadowColor.ToAndroid());
-                    mCardView.SetOutlineAmbientShadowColor(_backgroundElement.ShadowColor.ToAndroid());
-                    break;
-                default:                    
-                    _nativeView.SetOutlineSpotShadowColor(_backgroundElement.ShadowColor.ToAndroid());
-                    _nativeView.SetOutlineAmbientShadowColor(_backgroundElement.ShadowColor.ToAndroid());
-                    break;
-            }
+            _nativeView.SetOutlineSpotShadowColor(_backgroundElement.ShadowColor.ToAndroid());
+            _nativeView.SetOutlineAmbientShadowColor(_backgroundElement.ShadowColor.ToAndroid());
         }
 
         #endregion

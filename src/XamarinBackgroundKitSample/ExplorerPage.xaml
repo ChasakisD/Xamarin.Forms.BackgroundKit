@@ -87,8 +87,7 @@
                         <background:MaterialContentView.Background>
                             <background:Background
                                 CornerRadius="5"
-                                Elevation="4"   
-                                Sha                            
+                                Elevation="4"                                                         
                                 IsRippleEnabled="True"
                                 RippleColor="White"
                                 Color="{Binding Background.ShadowColor}" />
