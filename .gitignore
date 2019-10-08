@@ -264,6 +264,8 @@ __pycache__/
 *.pyc
 *.exe
 
-#Android generated
-*Android/Resources/Resource.designer.cs
-
+# Xamarin.Android Resource.Designer.cs files
+**/*.Android/**/[Rr]esource.[Dd]esigner.cs
+**/*.Droid/**/[Rr]esource.[Dd]esigner.cs
+**/Android/**/[Rr]esource.[Dd]esigner.cs
+**/Droid/**/[Rr]esource.[Dd]esigner.cs
