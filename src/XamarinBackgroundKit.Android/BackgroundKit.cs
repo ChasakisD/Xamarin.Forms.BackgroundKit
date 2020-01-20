@@ -3,6 +3,7 @@ using Android.Graphics;
 using Android.Util;
 using Android.Views;
 using Java.Interop;
+using XamarinBackgroundKit.Android.GradientProviders;
 using XamarinBackgroundKit.Android.PathProviders;
 using AApp = Android.App.Application;
 
@@ -46,6 +47,7 @@ namespace XamarinBackgroundKit.Android
         public static void Init()
         {
             PathProvidersContainer.Init();
+            GradientProvidersContainer.Init();
         }
     }
 }

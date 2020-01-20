@@ -58,6 +58,10 @@
     <Compile Include="PathProviders\DiagonalPathProvider.cs" />
     <Compile Include="PathProviders\CornerClipPathProvider.cs" />
     <Compile Include="PathProviders\TrianglePathProvider.cs" />
+    <Compile Include="GradientProviders\IGradientProvider.cs" />
+    <Compile Include="GradientProviders\BaseGradientProvider.cs" />
+    <Compile Include="GradientProviders\LinearGradientProvider.cs" />
+    <Compile Include="GradientProviders\GradientProvidersContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Naxam.KVOController.iOS">
@@ -78,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PathProviders\" />
+    <Folder Include="GradientProviders\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>
