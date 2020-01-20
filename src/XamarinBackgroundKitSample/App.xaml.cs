@@ -8,6 +8,12 @@ namespace XamarinBackgroundKitSample
         {
             InitializeComponent();
 
+            Device.SetFlags(new[] {
+                "SwipeView_Experimental",
+                "CarouselView_Experimental",
+                "IndicatorView_Experimental"
+            });
+
             MainPage = new NavigationPage(new ExploreViewsPage())
             {
                 BarBackgroundColor = Color.White,

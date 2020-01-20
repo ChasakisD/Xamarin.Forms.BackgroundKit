@@ -28,10 +28,9 @@ namespace XamarinBackgroundKitSample.Droid
             BackgroundKit.Init();
 
             Popup.Init(this, savedInstanceState);
-            XEPlatform.Init(this, savedInstanceState);
-
-            Forms.SetFlags("Visual_Experimental", "CollectionView_Experimental");
             Forms.Init(this, savedInstanceState);
+            XEPlatform.Init(this, savedInstanceState);
+            FormsMaterial.Init(this, savedInstanceState);
             
             LoadApplication(new App());
         }

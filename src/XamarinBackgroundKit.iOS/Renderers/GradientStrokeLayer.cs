@@ -1,14 +1,12 @@
+using System;
 using CoreAnimation;
 using CoreGraphics;
 using MaterialComponents;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UIKit;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using XamarinBackgroundKit.Controls;
-using XamarinBackgroundKit.Extensions;
+using XamarinBackgroundKit.iOS.GradientProviders;
 using XamarinBackgroundKit.iOS.PathProviders;
 
 namespace XamarinBackgroundKit.iOS.Renderers
@@ -24,21 +22,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
         private CGRect _bounds;
 
         private UIColor _color;
-        private CGColor[] _colors;
-        private float[] _positions;
-        private nfloat[] _colorPositions;
 
         private float _strokeWidth;
         private UIColor _strokeColor;
-        private CGColor[] _strokeColors;
-        private float[] _strokePositions;
-        private nfloat[] _strokeColorPositions;
 
         private CGColor _defaultShadowColor;
 
         private ShadowLayer _shadowLayer;
 
         private IPathProvider _pathProvider;
+        private IGradientProvider _gradientProvider;
+        private IGradientProvider _strokeGradientProvider;
 
         public GradientStrokeLayer() => Initialize();
 
@@ -95,16 +89,11 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         private void DrawGradient(CGContext ctx)
         {
-            if (HasGradient())
+            if (_gradientProvider != null && _gradientProvider.HasGradient)
             {
-                var startPoint = new CGPoint(_positions[0] * Bounds.Width, _positions[1] * Bounds.Height);
-                var endPoint = new CGPoint(_positions[2] * Bounds.Width, _positions[3] * Bounds.Height);
-
-                var gradient = new CGGradient(CGColorSpace.CreateDeviceRGB(), _colors, _colorPositions);
-            
-                ctx.DrawLinearGradient(gradient, startPoint, endPoint, CGGradientDrawingOptions.None);
+                _gradientProvider.DrawGradient(ctx, Bounds);
             }
-            else if(_color != null)
+            else if (_color != null)
             {
                 ctx.SetFillColor(_color.CGColor);
                 ctx.AddPath(GetClipPath());
@@ -125,17 +114,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
             ctx.SetLineWidth(2 * _strokeWidth);
             ctx.AddPath(GetClipPath());
 
-            if (HasBorderGradient())
+            if (_strokeGradientProvider != null && _strokeGradientProvider.HasGradient)
             {
                 ctx.ReplacePathWithStrokedPath();
                 ctx.Clip();
-                
-                var startPoint = new CGPoint(_strokePositions[0] * Bounds.Width, _strokePositions[1] * Bounds.Height);
-                var endPoint = new CGPoint(_strokePositions[2] * Bounds.Width, _strokePositions[3] * Bounds.Height);
 
-                var gradient = new CGGradient(CGColorSpace.CreateDeviceRGB(), _strokeColors, _strokeColorPositions);
-                
-                ctx.DrawLinearGradient(gradient, startPoint, endPoint, CGGradientDrawingOptions.None);
+                _strokeGradientProvider.DrawGradient(ctx, Bounds);
             }
             else if(_strokeColor != null)
             {
@@ -156,16 +140,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
         private bool HasBorder()
         {
             return _strokeWidth > 0;
-        }
-        
-        private bool HasGradient()
-        {
-            return _colors != null && _positions != null && _colorPositions != null;
-        }
-        
-        private bool HasBorderGradient()
-        {
-            return _strokeColors != null && _strokePositions != null && _strokeColorPositions != null;
         }
 
         public CGPath GetClipPath()
@@ -227,58 +201,29 @@ namespace XamarinBackgroundKit.iOS.Renderers
             SetNeedsDisplay();
         }
         
-        public void SetGradient(IList<GradientStop> gradients, float angle)
+        public void SetGradient(GradientBrush gradientBrush)
         {
             _dirty = true;
-            if (gradients == null || gradients.Count < 2)
-            {
-                _colors = null;
-                _positions = null;
-                _colorPositions = null;
-            }
-            else
-            {
-                _positions = angle.ToStartEndPoint();
 
-                for (var i = 0; i < _positions.Length; i++)
-                {
-                    if (!(_positions[i] > 1)) continue;
-                    _positions[i] = 1;
-                }
-
-                _colors = gradients.Select(x => x.Color.ToCGColor()).ToArray();
-                _colorPositions = gradients.Select(x => (nfloat) x.Offset).ToArray();
-            }
+            _gradientProvider?.Dispose();
+            _gradientProvider = GradientProvidersContainer.Resolve(
+                gradientBrush.GetType());
+            _gradientProvider?.SetGradient(gradientBrush);
             
             SetNeedsDisplay();
         }
 
-        public void SetBorder(double strokeWidth, Color strokeColor, IList<GradientStop> gradients, float angle)
+        public void SetBorder(double strokeWidth, Color strokeColor, GradientBrush gradientBrush)
         {
             _dirty = true;
             _strokeWidth = (float) strokeWidth;
             _strokeColor = strokeColor.ToUIColor();
-            
-            if (gradients == null || gradients.Count < 2)
-            {
-                _strokeColors = null;
-                _strokePositions = null;
-                _strokeColorPositions = null;
-            }
-            else
-            {
-                _strokePositions = angle.ToStartEndPoint();
 
-                for (var i = 0; i < _strokePositions.Length; i++)
-                {
-                    if (!(_strokePositions[i] > 1)) continue;
-                    _strokePositions[i] = 1;
-                }
+            _strokeGradientProvider?.Dispose();
+            _strokeGradientProvider = GradientProvidersContainer.Resolve(
+                gradientBrush.GetType());
+            _strokeGradientProvider?.SetGradient(gradientBrush);
 
-                _strokeColors = gradients.Select(x => x.Color.ToCGColor()).ToArray();
-                _strokeColorPositions = gradients.Select(x => (nfloat) x.Offset).ToArray();
-            }
-            
             SetNeedsDisplay();
         }
 
@@ -300,13 +245,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 _shadowLayer.Dispose();
                 _shadowLayer = null;
 
-                _colors = null;
-                _positions = null;
-                _colorPositions = null;
+                if (_gradientProvider != null)
+                {
+                    _gradientProvider.Dispose();
+                    _gradientProvider = null;
+                }
 
-                _strokeColors = null;
-                _strokePositions = null;
-                _strokeColorPositions = null;
+                if (_strokeGradientProvider != null)
+                {
+                    _strokeGradientProvider.Dispose();
+                    _strokeGradientProvider = null;
+                }
             }
 
             base.Dispose(disposing);

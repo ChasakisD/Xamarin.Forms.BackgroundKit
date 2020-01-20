@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Graphics.Drawables;
 using Android.Graphics.Drawables.Shapes;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Abstractions;
+using XamarinBackgroundKit.Android.GradientProviders;
 using XamarinBackgroundKit.Android.PathProviders;
 using XamarinBackgroundKit.Controls;
-using XamarinBackgroundKit.Extensions;
-using AColor = Android.Graphics.Color;
 using Color = Xamarin.Forms.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
@@ -33,18 +30,12 @@ namespace XamarinBackgroundKit.Android.Renderers
         private Color _color;
         private Color _strokeColor;
 
-        private int[] _colors;
-        private float[] _positions;
-        private float[] _colorPositions;
-
         private float _strokeWidth;
         private PathEffect _strokePathEffect;
 
-        private int[] _strokeColors;
-        private float[] _strokePositions;
-        private float[] _strokeColorPositions;
-
         private IPathProvider _pathProvider;
+        private IGradientProvider _gradientProvider;
+        private IGradientProvider _strokeGradientProvider;
 
         public GradientStrokeDrawable(IPathProvider pathProvider, IMaterialVisualElement background = null) : base(new RectShape())
         {
@@ -58,8 +49,8 @@ namespace XamarinBackgroundKit.Android.Renderers
             SetColor(background.Color);
             SetStroke(background.BorderWidth, background.BorderColor);
             SetDashedStroke(background.DashWidth, background.DashGap);
-            SetGradient(background.GradientBrush?.Gradients, background.GradientBrush?.Angle ?? 0);
-            SetBorderGradient(background.BorderGradientBrush?.Gradients, background.BorderGradientBrush?.Angle ?? 0);
+            SetGradient(background.GradientBrush);
+            SetBorderGradient(background.BorderGradientBrush);
         }
 
         protected override void OnBoundsChange(Rect bounds)
@@ -132,16 +123,6 @@ namespace XamarinBackgroundKit.Android.Renderers
             return _strokeWidth > 0;
         }
 
-        private bool HasGradient()
-        {
-            return _colors != null && _positions != null && _colorPositions != null;
-        }
-
-        private bool HasBorderGradient()
-        {
-            return _strokeColors != null && _strokePositions != null && _strokeColorPositions != null;
-        }
-
         private bool CanDrawBorder()
         {
             EnsureStrokeAlloc();
@@ -151,27 +132,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         private void InitializePaints()
         {
-            if (HasGradient())
+            _gradientProvider?.DrawOrClearGradient(Paint, _width, _height);
+            if (_color != Color.Default)
             {
-                /* Color of paint will be ignored */
-                Paint.Color = AColor.White;
-                Paint.SetShader(new LinearGradient(
-                    _width * _positions[0],
-                    _height * _positions[1],
-                    _width * _positions[2],
-                    _height * _positions[3],
-                    _colors,
-                    _colorPositions,
-                    Shader.TileMode.Clamp));
-            }
-            else
-            {
-                Paint.SetShader(null);
-
-                if (_color != Color.Default)
-                {
-                    Paint.Color = _color.ToAndroid();
-                }
+                Paint.Color = _color.ToAndroid();
             }
 
             if (CanDrawBorder())
@@ -179,26 +143,10 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _strokePaint.StrokeWidth = _strokeWidth;
                 _strokePaint.SetPathEffect(_strokePathEffect);
 
-                if (HasBorderGradient())
+                _strokeGradientProvider?.DrawOrClearGradient(Paint, _width, _height);
+                if (_strokeColor != Color.Default)
                 {
-                    _strokePaint.Color = AColor.White;
-                    _strokePaint.SetShader(new LinearGradient(
-                        _width * _strokePositions[0],
-                        _height * _strokePositions[1],
-                        _width * _strokePositions[2],
-                        _height * _strokePositions[3],
-                        _strokeColors,
-                        _strokeColorPositions,
-                        Shader.TileMode.Clamp));
-                }
-                else
-                {
-                    _strokePaint.SetShader(null);
-
-                    if (_strokeColor != Color.Default)
-                    {
-                        _strokePaint.Color = _strokeColor.ToAndroid();
-                    }
+                    _strokePaint.Color = _strokeColor.ToAndroid();
                 }
             }
         }
@@ -303,60 +251,30 @@ namespace XamarinBackgroundKit.Android.Renderers
             InvalidateSelf();
         }
 
-        public void SetBorderGradient(IList<GradientStop> gradients, float angle)
+        public void SetBorderGradient(GradientBrush gradientBrush)
         {
             _dirty = true;
-            if (gradients == null || gradients.Count < 2)
-            {
-                _strokeColors = null;
-                _strokePositions = null;
-                _strokeColorPositions = null;
 
-                InvalidateSelf();
-                return;
-            }
-
-            var positions = angle.ToStartEndPoint();
-
-            for (var i = 0; i < positions.Length; i++)
-            {
-                if (!(positions[i] > 1)) continue;
-                positions[i] = 1;
-            }
-
-            _strokePositions = positions;
-            _strokeColors = gradients.Select(x => (int)x.Color.ToAndroid()).ToArray();
-            _strokeColorPositions = gradients.Select(x => x.Offset).ToArray();
-
-            _strokePaint.Color = Color.White.ToAndroid();
+            _strokeGradientProvider?.Dispose();
+            _strokeGradientProvider = GradientProvidersContainer.Resolve(
+                gradientBrush.GetType());
+            _strokeGradientProvider?.SetGradient(gradientBrush);
 
             InvalidateSelf();
+
+            if (_strokeGradientProvider == null || !_strokeGradientProvider.HasGradient) return;
+
+            _strokePaint.Color = Color.White.ToAndroid();
         }
 
-        public void SetGradient(IList<GradientStop> gradients, float angle)
+        public void SetGradient(GradientBrush gradientBrush)
         {
             _dirty = true;
-            if (gradients == null || gradients.Count < 2)
-            {
-                _colors = null;
-                _positions = null;
-                _colorPositions = null;
 
-                InvalidateSelf();
-                return;
-            }
-
-            var positions = angle.ToStartEndPoint();
-
-            for (var i = 0; i < positions.Length; i++)
-            {
-                if (!(positions[i] > 1)) continue;
-                positions[i] = 1;
-            }
-
-            _positions = positions;
-            _colors = gradients.Select(x => (int)x.Color.ToAndroid()).ToArray();
-            _colorPositions = gradients.Select(x => x.Offset).ToArray();
+            _gradientProvider?.Dispose();
+            _gradientProvider = GradientProvidersContainer.Resolve(
+                gradientBrush.GetType());
+            _gradientProvider?.SetGradient(gradientBrush);
 
             InvalidateSelf();
         }
@@ -410,15 +328,19 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _strokePathEffect = null;
                 }
 
+                if (_gradientProvider != null)
+                {
+                    _gradientProvider.Dispose();
+                    _gradientProvider = null;
+                }
+
+                if (_strokeGradientProvider != null)
+                {
+                    _strokeGradientProvider.Dispose();
+                    _strokeGradientProvider = null;
+                }
+
                 _pathProvider = null;
-
-                _colors = null;
-                _positions = null;
-                _colorPositions = null;
-
-                _strokeColors = null;
-                _strokePositions = null;
-                _strokeColorPositions = null;
             }
 
             DisposeBorder(disposing);

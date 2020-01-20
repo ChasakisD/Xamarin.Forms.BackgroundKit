@@ -13,10 +13,9 @@ namespace XamarinBackgroundKitSample.iOS
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
             Popup.Init();
-            BackgroundKit.Init();
-
-            Forms.SetFlags("Visual_Experimental", "CollectionView_Experimental");
             Forms.Init();
+            FormsMaterial.Init();
+            BackgroundKit.Init();
 
             LoadApplication(new App());
 

@@ -61,7 +61,7 @@ namespace XamarinBackgroundKit.Android.Extensions
         {
             view.SetBorder(borderElement.BorderColor, borderElement.BorderWidth);
             view.SetDashedBorder(borderElement.DashWidth, borderElement.DashGap);
-            view.SetBorderGradients(borderElement.BorderGradientBrush?.Gradients, borderElement.BorderGradientBrush?.Angle ?? 0);
+            view.SetBorderGradients(borderElement.BorderGradientBrush);
         }
 
         private static void SetBorder(this AView view, Color color, double width)
@@ -69,9 +69,9 @@ namespace XamarinBackgroundKit.Android.Extensions
             view.GetGradientDrawable()?.SetStroke(width, color);
         }
 
-        private static void SetBorderGradients(this AView view, IList<GradientStop> gradients, float angle)
+        private static void SetBorderGradients(this AView view, GradientBrush gradientBrush)
         {
-            view.GetGradientDrawable()?.SetBorderGradient(gradients, angle);
+            view.GetGradientDrawable()?.SetBorderGradient(gradientBrush);
         }
 
         private static void SetDashedBorder(this AView view, double dashWidth, double dashGap)
@@ -104,12 +104,12 @@ namespace XamarinBackgroundKit.Android.Extensions
 
         public static void SetGradient(this AView view, IGradientElement gradientElement)
         {
-            view.SetGradient(gradientElement.GradientBrush?.Gradients, gradientElement.GradientBrush?.Angle ?? 0);
+            view.SetGradient(gradientElement.GradientBrush);
         }
 
-        private static void SetGradient(this AView view, IList<GradientStop> gradients, float angle)
+        private static void SetGradient(this AView view, GradientBrush gradientBrush)
         {
-            view.GetGradientDrawable()?.SetGradient(gradients, angle);
+            view.GetGradientDrawable()?.SetGradient(gradientBrush);
         }
 
         #endregion

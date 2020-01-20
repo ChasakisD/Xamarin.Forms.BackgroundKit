@@ -67,6 +67,10 @@
     <Compile Include="PathProviders\DiagonalPathProvider.cs" />
     <Compile Include="PathProviders\CornerClipPathProvider.cs" />
     <Compile Include="PathProviders\TrianglePathProvider.cs" />
+    <Compile Include="GradientProviders\IGradientProvider.cs" />
+    <Compile Include="GradientProviders\BaseGradientProvider.cs" />
+    <Compile Include="GradientProviders\LinearGradientProvider.cs" />
+    <Compile Include="GradientProviders\GradientProvidersContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms">
@@ -78,6 +82,9 @@
       <Project>{54366595-a90d-4ac0-b816-fce69fa6410f}</Project>
       <Name>XamarinBackgroundKit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GradientProviders\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

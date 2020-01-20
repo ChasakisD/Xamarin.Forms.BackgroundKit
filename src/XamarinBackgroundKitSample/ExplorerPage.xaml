@@ -4,7 +4,8 @@
     xmlns="http://xamarin.com/schemas/2014/forms"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:background="http://xamarin.com/schemas/2014/forms/background"
-    BackgroundColor="White">
+    BackgroundColor="White"
+    Visual="Material">
     <Grid>
         <Grid.Resources>
             <Style TargetType="Label">
@@ -32,20 +33,16 @@
         <StackLayout
             x:Name="Container"
             Padding="0,8,0,24"
+            background:BackgroundEffect.Background="{background:BgProvider Elevation=4, Color=White}"
             Spacing="8"
-            Visual="Default"
-            background:BackgroundEffect.Background="{background:BgProvider Elevation=4, Color=White}" />
+            Visual="Default" />
 
         <ScrollView Grid.Row="1" Margin="16,-8,16,0" Padding="0,8,0,16">
             <StackLayout>
-                <Label FontSize="24" Text="Size" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Size" />
 
                 <StackLayout Orientation="Horizontal" Spacing="16">
-                    <Entry
-                        HorizontalOptions="FillAndExpand"
-                        Keyboard="Numeric"
-                        Placeholder="WidthRequest"
-                        TextChanged="OnWidthChanged" />
+                    <Entry HorizontalOptions="FillAndExpand" Keyboard="Numeric" Placeholder="WidthRequest" TextChanged="OnWidthChanged" />
 
                     <Entry
                         HorizontalOptions="FillAndExpand"
@@ -57,7 +54,7 @@
 
                 <!--#region Background Color-->
 
-                <Label FontSize="24" Text="Background Color" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Background Color" />
 
                 <StackLayout Orientation="Horizontal" Spacing="8">
                     <Entry HorizontalOptions="FillAndExpand" Placeholder="Background Color Hex" TextChanged="OnBackgroundColorChanged" />
@@ -66,9 +63,9 @@
                         <background:MaterialContentView.Background>
                             <background:Background
                                 CornerRadius="5"
-                                Elevation="4"                                
-                                IsRippleEnabled="True"
+                                Elevation="4"
                                 RippleColor="White"
+                                IsRippleEnabled="True"
                                 Color="{Binding Background.Color}" />
                         </background:MaterialContentView.Background>
                     </background:MaterialContentView>
@@ -76,9 +73,9 @@
 
                 <!--#endregion-->
 
-                 <!--#region Shadow Color-->
+                <!--#region Shadow Color-->
 
-                <Label FontSize="24" Text="Shadow Color" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Shadow Color" />
 
                 <StackLayout Orientation="Horizontal" Spacing="8">
                     <Entry HorizontalOptions="FillAndExpand" Placeholder="Background Color Hex" TextChanged="OnShadowColorChanged" />
@@ -87,9 +84,9 @@
                         <background:MaterialContentView.Background>
                             <background:Background
                                 CornerRadius="5"
-                                Elevation="4"                                                         
-                                IsRippleEnabled="True"
+                                Elevation="4"
                                 RippleColor="White"
+                                IsRippleEnabled="True"
                                 Color="{Binding Background.ShadowColor}" />
                         </background:MaterialContentView.Background>
                     </background:MaterialContentView>
@@ -99,7 +96,7 @@
 
                 <!--#region Gradients-->
 
-                <Label FontSize="24" Text="Gradients" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Gradients" />
 
                 <StackLayout x:Name="GradientsLayout">
                     <BindableLayout.ItemTemplate>
@@ -112,8 +109,8 @@
                                         <background:Background
                                             CornerRadius="5"
                                             Elevation="4"
-                                            IsRippleEnabled="True"
                                             RippleColor="White"
+                                            IsRippleEnabled="True"
                                             Color="{Binding Color}" />
                                     </background:MaterialContentView.Background>
                                 </background:MaterialContentView>
@@ -123,9 +120,9 @@
                 </StackLayout>
 
                 <StackLayout Margin="0,8,0,0" Orientation="Horizontal" Spacing="16">
-                    <Button Clicked="OnNewGradientAdded" Text="Add" />
+                    <Button Text="Add" Clicked="OnNewGradientAdded" />
 
-                    <Button Clicked="OnNewGradientRemoved" Text="Remove" />
+                    <Button Text="Remove" Clicked="OnNewGradientRemoved" />
                 </StackLayout>
 
                 <Label Text="{Binding Source={x:Reference GradientAngleSlider}, Path=Value, StringFormat='{}Gradient Angle: {0}'}" />
@@ -136,7 +133,7 @@
 
                 <!--#region Elevation-->
 
-                <Label FontSize="24" Text="Elevation" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Elevation" />
 
                 <Label Text="{Binding Source={x:Reference ElevationSlider}, Path=Value, StringFormat='{}Elevation: {0}'}" />
 
@@ -146,45 +143,29 @@
 
                 <!--#region Corner Radius-->
 
-                <Label FontSize="24" Text="Corner Radius" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Corner Radius" />
 
                 <Label Text="{Binding Source={x:Reference TopLeftCornerSlider}, Path=Value, StringFormat='{}Top Left Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="TopLeftCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="TopLeftCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
 
                 <Label Text="{Binding Source={x:Reference TopRightCornerSlider}, Path=Value, StringFormat='{}Top Right Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="TopRightCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="TopRightCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
 
                 <Label Text="{Binding Source={x:Reference BottomLeftCornerSlider}, Path=Value, StringFormat='{}Bottom Left Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="BottomLeftCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="BottomLeftCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
 
                 <Label Text="{Binding Source={x:Reference BottomRightCornerSlider}, Path=Value, StringFormat='{}Bottom Right Corner Radius: {0}'}" />
 
-                <Slider
-                    x:Name="BottomRightCornerSlider"
-                    Maximum="60"
-                    Minimum="0"
-                    ValueChanged="OnCornerRadiusChanged" />
+                <Slider x:Name="BottomRightCornerSlider" Maximum="60" Minimum="0" ValueChanged="OnCornerRadiusChanged" />
 
                 <!--#endregion-->
 
                 <!--#region Border-->
 
-                <Label FontSize="24" Text="Border" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Border" />
 
                 <StackLayout Orientation="Horizontal" Spacing="8">
                     <Entry HorizontalOptions="FillAndExpand" Placeholder="Border Color Hex" TextChanged="OnBorderColorChanged" />
@@ -194,19 +175,19 @@
                             <background:Background
                                 CornerRadius="5"
                                 Elevation="4"
-                                IsRippleEnabled="True"
                                 RippleColor="White"
+                                IsRippleEnabled="True"
                                 Color="{Binding Background.BorderColor}" />
                         </background:MaterialContentView.Background>
                     </background:MaterialContentView>
                 </StackLayout>
-                
+
                 <StackLayout Orientation="Horizontal" Spacing="8">
                     <Label Text="IsOuter" />
-                    
+
                     <Switch x:Name="IsOuterSwitch" Toggled="OnBorderStyleToggled" />
                 </StackLayout>
-                
+
                 <Label Text="{Binding Source={x:Reference BorderWidthSlider}, Path=Value, StringFormat='{}Border Width: {0}'}" />
 
                 <Slider x:Name="BorderWidthSlider" Maximum="60" Minimum="0" />
@@ -219,7 +200,7 @@
 
                 <Slider x:Name="DashGapSlider" Maximum="20" Minimum="0" />
 
-                <Label FontSize="24" Text="Border Gradients" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Border Gradients" />
 
                 <StackLayout x:Name="BorderGradientsLayout">
                     <BindableLayout.ItemTemplate>
@@ -232,8 +213,8 @@
                                         <background:Background
                                             CornerRadius="5"
                                             Elevation="4"
-                                            IsRippleEnabled="True"
                                             RippleColor="White"
+                                            IsRippleEnabled="True"
                                             Color="{Binding Color}" />
                                     </background:MaterialContentView.Background>
                                 </background:MaterialContentView>
@@ -243,9 +224,9 @@
                 </StackLayout>
 
                 <StackLayout Margin="0,8,0,0" Orientation="Horizontal" Spacing="16">
-                    <Button Clicked="OnNewBorderGradientAdded" Text="Add" />
+                    <Button Text="Add" Clicked="OnNewBorderGradientAdded" />
 
-                    <Button Clicked="OnNewBorderGradientRemoved" Text="Remove" />
+                    <Button Text="Remove" Clicked="OnNewBorderGradientRemoved" />
                 </StackLayout>
 
                 <Label Text="{Binding Source={x:Reference BorderGradientAngleSlider}, Path=Value, StringFormat='{}Border Gradient Angle: {0}'}" />
@@ -256,7 +237,7 @@
 
                 <!--#region Ripple-->
 
-                <Label FontSize="24" Text="Ripple" VerticalTextAlignment="Center" />
+                <Label VerticalTextAlignment="Center" FontSize="24" Text="Ripple" />
 
                 <StackLayout Orientation="Horizontal" Spacing="8">
                     <Entry HorizontalOptions="FillAndExpand" Placeholder="Ripple Color Hex" TextChanged="OnRippleColorChanged" />
@@ -266,13 +247,13 @@
                             <background:Background
                                 CornerRadius="5"
                                 Elevation="4"
-                                IsRippleEnabled="True"
                                 RippleColor="White"
+                                IsRippleEnabled="True"
                                 Color="{Binding Background.RippleColor}" />
                         </background:MaterialContentView.Background>
                     </background:MaterialContentView>
 
-                    <Switch x:Name="RippleColorSwitch" OnColor="Green" VerticalOptions="Center" />
+                    <Switch x:Name="RippleColorSwitch" VerticalOptions="Center" OnColor="Green" />
                 </StackLayout>
 
                 <!--#endregion-->
