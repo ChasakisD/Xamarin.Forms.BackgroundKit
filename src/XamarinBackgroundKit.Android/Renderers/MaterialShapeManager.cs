@@ -19,6 +19,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         private Paint _maskPaint;
         private AView _nativeView;
         private IBackgroundShape _shape;
+
         public IPathProvider PathProvider { get; private set; }
 
         public MaterialShapeManager()
@@ -118,6 +119,7 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             /* Always prefer border path. If there is no need, the provider will return the default one */
             var clipPath = PathProvider.CreateBorderedPath(width, height);
+            if (clipPath == null) return;
 
             _clipPath.Reset();
             _clipPath.Set(clipPath);

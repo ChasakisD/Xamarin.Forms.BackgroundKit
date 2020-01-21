@@ -36,6 +36,8 @@ namespace XamarinBackgroundKit.Android.PathProviders
 
         public Path CreatePath(int width, int height)
         {
+            if (_disposed) return null;
+
             /* If the path is not dirty return it */
             if (!IsPathDirty || !(_shape is TShape tShape)) return Path;
 
@@ -50,6 +52,8 @@ namespace XamarinBackgroundKit.Android.PathProviders
 
         public Path CreateBorderedPath(int width, int height)
         {
+            if (_disposed) return null;
+
             /* If the path provider, does not support border, use the default */
             if (!IsBorderSupported) return CreatePath(width, height);
 
@@ -72,6 +76,8 @@ namespace XamarinBackgroundKit.Android.PathProviders
 
         public virtual void SetShape(IBackgroundShape shape)
         {
+            if (_disposed) return;
+
             _shape = shape;
 
             Invalidate();

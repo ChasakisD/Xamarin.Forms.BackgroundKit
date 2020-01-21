@@ -35,7 +35,7 @@ namespace XamarinBackgroundKit.Android.OutlineProviders
             }
 
             var clipPath = pathProvider.CreatePath(view.Width, view.Height);
-            if (!clipPath.IsConvex) return;
+            if (clipPath == null || !clipPath.IsConvex) return;
 
             outline.SetConvexPath(clipPath);
         }

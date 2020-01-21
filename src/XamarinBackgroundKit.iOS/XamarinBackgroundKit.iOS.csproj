@@ -62,6 +62,7 @@
     <Compile Include="GradientProviders\BaseGradientProvider.cs" />
     <Compile Include="GradientProviders\LinearGradientProvider.cs" />
     <Compile Include="GradientProviders\GradientProvidersContainer.cs" />
+    <Compile Include="PathProviders\CirclePathProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Naxam.KVOController.iOS">
