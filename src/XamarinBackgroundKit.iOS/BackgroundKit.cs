@@ -1,4 +1,5 @@
-﻿using XamarinBackgroundKit.iOS.PathProviders;
+﻿using XamarinBackgroundKit.iOS.GradientProviders;
+using XamarinBackgroundKit.iOS.PathProviders;
 
 namespace XamarinBackgroundKit.iOS
 {
@@ -7,6 +8,7 @@ namespace XamarinBackgroundKit.iOS
         public static void Init()
         {
             PathProvidersContainer.Init();
+            GradientProvidersContainer.Init();
         }
     }
 }

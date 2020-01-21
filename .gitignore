@@ -7,8 +7,11 @@
 *.userosscache
 *.sln.docstates
 
+
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+
 
 # Build results
 [Dd]ebug/
@@ -262,3 +265,9 @@ paket-files/
 __pycache__/
 *.pyc
 *.exe
+
+# Xamarin.Android Resource.Designer.cs files
+**/*.Android/**/[Rr]esource.[Dd]esigner.cs
+**/*.Droid/**/[Rr]esource.[Dd]esigner.cs
+**/Android/**/[Rr]esource.[Dd]esigner.cs
+**/Droid/**/[Rr]esource.[Dd]esigner.cs

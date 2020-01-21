@@ -10,7 +10,7 @@ namespace XamarinBackgroundKit.Abstractions
         
         bool IsRippleEnabled { get; }
         
-        Color RippleColor { get; }
+        Color RippleColor { get; }        
 
         event EventHandler<EventArgs> InvalidateGradientRequested;
 

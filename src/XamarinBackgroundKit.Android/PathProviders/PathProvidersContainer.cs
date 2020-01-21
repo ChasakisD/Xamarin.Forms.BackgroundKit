@@ -4,7 +4,7 @@ using XamarinBackgroundKit.Shapes;
 
 namespace XamarinBackgroundKit.Android.PathProviders
 {
-    public static class  PathProvidersContainer
+    public static class PathProvidersContainer
     {
         private static readonly Lazy<Dictionary<Type, Func<IPathProvider>>> FactoriesLazy =
             new Lazy<Dictionary<Type, Func<IPathProvider>>>(() => new Dictionary<Type, Func<IPathProvider>>());

@@ -59,8 +59,8 @@ namespace XamarinBackgroundKitSample
             Background.SetBinding(Background.DashWidthProperty, new Binding("Value", source: DashWidthSlider));
             Background.SetBinding(Background.ElevationProperty, new Binding("Value", source: ElevationSlider));
             Background.SetBinding(Background.IsRippleEnabledProperty, new Binding("IsToggled", source: RippleColorSwitch));
-            Background.GradientBrush.SetBinding(LinearGradientBrush.AngleProperty, new Binding("Value", source: GradientAngleSlider));
-            Background.BorderGradientBrush.SetBinding(LinearGradientBrush.AngleProperty, new Binding("Value", source: BorderGradientAngleSlider));
+            Background.GradientBrush.SetBinding(GradientBrush.AngleProperty, new Binding("Value", source: GradientAngleSlider));
+            Background.BorderGradientBrush.SetBinding(GradientBrush.AngleProperty, new Binding("Value", source: BorderGradientAngleSlider));
 
             Container.Children.Add(view);
 
@@ -77,7 +77,12 @@ namespace XamarinBackgroundKitSample
 
         private void OnBackgroundColorChanged(object sender, TextChangedEventArgs e)
         {
-            Background.Color = GetColorFromString(e.NewTextValue);
+            Background.Color = GetColorFromString(e.NewTextValue);          
+        }
+
+        private void OnShadowColorChanged(object sender, TextChangedEventArgs e)
+        {            
+            Background.ShadowColor = GetColorFromString(e.NewTextValue);
         }
 
         private void OnBorderColorChanged(object sender, TextChangedEventArgs e)

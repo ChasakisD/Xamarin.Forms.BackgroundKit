@@ -109,6 +109,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
                 UpdateGradients();
                 UpdateBorder();
                 UpdateElevation();
+                UpdateShadowColor();
                 UpdateCornerRadius();
                 UpdateRipple();
                 InvalidateShape();
@@ -125,6 +126,9 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
             if (oldMaterialElement.Color != newMaterialElement.Color)
                 UpdateColor();
+
+            if (oldMaterialElement.ShadowColor != newMaterialElement.ShadowColor)
+                UpdateShadowColor();
 
             if (Math.Abs(oldMaterialElement.Elevation - newMaterialElement.Elevation) > eps)
                 UpdateElevation();
@@ -185,6 +189,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
             else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
                      || e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
             else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
+            else if (e.PropertyName == ElevationElement.ShadowColorProperty.PropertyName) UpdateShadowColor();
         }
 
         #endregion
@@ -278,13 +283,28 @@ namespace XamarinBackgroundKit.iOS.Renderers
             switch (_renderer.NativeView)
             {
                 case Card mCard:
-                    mCard.SetElevation(_backgroundElement);
+                    mCard.SetElevation(_backgroundElement);                 
                     break;
                 case MButton mButton:
-                    mButton.SetElevation((float)_backgroundElement.Elevation, UIControlState.Normal);
+                    mButton.SetElevation((float)_backgroundElement.Elevation, UIControlState.Normal);                    
                     break;
                 default:
-                    _renderer.NativeView.SetMaterialElevation(_backgroundElement);
+                    _renderer.NativeView.SetMaterialElevation(_backgroundElement);                    
+                    break;
+            }
+        }
+
+        public void UpdateShadowColor()
+        {
+            if (_renderer?.NativeView == null) return;
+
+            switch (_renderer.NativeView)
+            {
+                case Card mCard:                    
+                    mCard.SetShadowColor(_backgroundElement.ShadowColor.ToUIColor(), UIControlState.Normal);
+                    break;               
+                default:                    
+                    _renderer.NativeView.SetMaterialElevationShadowColor(_backgroundElement.ShadowColor);
                     break;
             }
         }

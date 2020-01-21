@@ -31,6 +31,7 @@ namespace XamarinBackgroundKit.Android.Renderers
         private bool _areDefaultsSet;
         private bool _defaultFocusable;
         private bool _defaultClickable;
+        private int? _defaultShadowColor;
 
         private bool _disposed;
         private Context _context;
@@ -131,6 +132,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             {
                 UpdateBackground();
                 UpdateElevation();
+                UpdateShadowColor();
                 UpdateTranslationZ();
 
                 if (!(_visualElement is MaterialShapeView))
@@ -142,6 +144,9 @@ namespace XamarinBackgroundKit.Android.Renderers
             }
 
             var eps = Math.Pow(10, -10);
+
+            if (oldElement.ShadowColor != newElement.ShadowColor)
+                UpdateShadowColor();
 
             if (oldElement.Color != newElement.Color)
                 UpdateColor();
@@ -207,6 +212,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             else if (e.PropertyName == Background.IsRippleEnabledProperty.PropertyName
                 || e.PropertyName == Background.RippleColorProperty.PropertyName) UpdateRipple();
             else if (e.PropertyName == ElevationElement.ElevationProperty.PropertyName) UpdateElevation();
+            else if (e.PropertyName == ElevationElement.ShadowColorProperty.PropertyName) UpdateShadowColor();
             else if (e.PropertyName == ElevationElement.TranslationZProperty.PropertyName) UpdateTranslationZ();
         }
 
@@ -368,6 +374,23 @@ namespace XamarinBackgroundKit.Android.Renderers
                     _nativeView.SetElevation(_context, _backgroundElement);
                     break;
             }
+        }
+
+        private void UpdateShadowColor()
+        {
+            if (_nativeView == null || Build.VERSION.SdkInt < BuildVersionCodes.P) return;
+
+            if (_defaultShadowColor == null)
+            {
+                _defaultShadowColor = _nativeView.OutlineSpotShadowColor;
+            }
+
+            var shadowColor = _backgroundElement.ShadowColor == Color.Default
+                ? new AColor(_defaultShadowColor.Value)
+                : _backgroundElement.ShadowColor.ToAndroid();
+
+            _nativeView.SetOutlineSpotShadowColor(shadowColor);
+            _nativeView.SetOutlineAmbientShadowColor(shadowColor);
         }
 
         #endregion

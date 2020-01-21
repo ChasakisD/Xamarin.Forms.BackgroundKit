@@ -58,14 +58,6 @@
                     VerticalTextAlignment="Center" />
             </background:MaterialContentView>
 
-            <background:MaterialCard Margin="8" Clicked="UpdateRippleOnBelowView" HeightRequest="60">
-                <background:MaterialCard.Background>
-                    <background:Background Elevation="16" Color="DarkRed" />
-                </background:MaterialCard.Background>
-
-                <Label Margin="8" Text="Material Card with Ripple!" />
-            </background:MaterialCard>
-
             <background:MaterialContentView x:Name="SimpleView" HeightRequest="120">
                 <background:MaterialContentView.Background>
                     <background:Background

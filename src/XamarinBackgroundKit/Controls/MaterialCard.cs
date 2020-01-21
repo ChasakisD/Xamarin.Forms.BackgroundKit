@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿using System;
 
 namespace XamarinBackgroundKit.Controls
 {
@@ -6,6 +6,6 @@ namespace XamarinBackgroundKit.Controls
     /// <summary>
     /// MaterialCardView on Android, Card on iOS
     /// </summary>
-    [DesignTimeVisible(true)]
+    [Obsolete("Please use MaterialContentView")]
     public class MaterialCard : MaterialContentView { }
 }

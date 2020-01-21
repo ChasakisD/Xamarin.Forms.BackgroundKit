@@ -51,10 +51,8 @@
     <Compile Include="Extensions\GradientDrawableExtensions.cs" />
     <Compile Include="Extensions\ViewExtensions.cs" />
     <Compile Include="Renderers\GradientStrokeDrawable.cs" />
-    <Compile Include="Renderers\MaterialCardRenderer.cs" />
     <Compile Include="Renderers\MaterialContentViewRenderer.cs" />
     <Compile Include="Renderers\MaterialBackgroundManager.cs" />
-    <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Renderers\MaterialShapeManager.cs" />
     <Compile Include="Renderers\MaterialShapeViewRenderer.cs" />
@@ -69,6 +67,15 @@
     <Compile Include="PathProviders\DiagonalPathProvider.cs" />
     <Compile Include="PathProviders\CornerClipPathProvider.cs" />
     <Compile Include="PathProviders\TrianglePathProvider.cs" />
+    <Compile Include="GradientProviders\IGradientProvider.cs" />
+    <Compile Include="GradientProviders\BaseGradientProvider.cs" />
+    <Compile Include="GradientProviders\LinearGradientProvider.cs" />
+    <Compile Include="GradientProviders\GradientProvidersContainer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Xamarin.Forms">
+      <Version>3.6.0.709228</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XamarinBackgroundKit\XamarinBackgroundKit.csproj">
@@ -77,15 +84,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.Forms">
-      <Version>4.1.0.673156</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Forms.Visual.Material">
-      <Version>4.1.0.673156</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="OutlineProviders\" />
+    <Folder Include="GradientProviders\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -40,9 +40,19 @@ namespace XamarinBackgroundKit.iOS.Extensions
             view.SetMaterialElevation(elevationElement.Elevation);
         }
 
+        public static void SetMaterialElevationShadowColor(this UIView view, IElevationElement elevationElement)
+        {
+            view.SetMaterialElevationShadowColor(elevationElement.ShadowColor);
+        }
+
         public static void SetMaterialElevation(this UIView view, double elevation)
         {
             view.FindLayerOfType<GradientStrokeLayer>()?.SetElevation(elevation);
+        }
+
+        public static void SetMaterialElevationShadowColor(this UIView view, Color shadowColor)
+        {
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetShadowColor(shadowColor);            
         }
 
         #endregion
@@ -81,13 +91,13 @@ namespace XamarinBackgroundKit.iOS.Extensions
         public static void SetBorder(this UIView view, IBorderElement borderElement)
         {
             view.SetBorder(borderElement.BorderColor, borderElement.BorderWidth,
-                borderElement.BorderGradientBrush?.Gradients, borderElement.BorderGradientBrush?.Angle ?? 0);
+                borderElement.BorderGradientBrush);
             view.SetDashedBorder(borderElement.DashWidth, borderElement.DashGap);
         }
 
-        private static void SetBorder(this UIView view, Color color, double width, IList<GradientStop> gradients, float angle)
+        private static void SetBorder(this UIView view, Color color, double width, GradientBrush gradientBrush)
         {
-            view.FindLayerOfType<GradientStrokeLayer>()?.SetBorder(width, color, gradients, angle);
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetBorder(width, color, gradientBrush);
         }
 
         private static void SetDashedBorder(this UIView view, double dashWidth, double dashGap)
@@ -110,12 +120,12 @@ namespace XamarinBackgroundKit.iOS.Extensions
 
         public static void SetGradient(this UIView view, IGradientElement gradientElement)
         {
-            view.SetGradient(gradientElement.GradientBrush?.Gradients, gradientElement.GradientBrush?.Angle ?? 0);
+            view.SetGradient(gradientElement.GradientBrush);
         }
 
-        public static void SetGradient(this UIView view, IList<GradientStop> gradients, float angle)
+        public static void SetGradient(this UIView view, GradientBrush gradientBrush)
         {
-            view.FindLayerOfType<GradientStrokeLayer>()?.SetGradient(gradients, angle);
+            view.FindLayerOfType<GradientStrokeLayer>()?.SetGradient(gradientBrush);
         }
 
         #endregion
