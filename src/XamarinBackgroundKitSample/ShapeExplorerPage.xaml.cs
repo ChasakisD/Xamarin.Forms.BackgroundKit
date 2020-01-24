@@ -30,6 +30,9 @@ namespace XamarinBackgroundKitSample
                 case "Rect":
                     ShapeView.Shape = new Rect();
                     break;
+                case "Circle":
+                    ShapeView.Shape = new Circle();
+                    break;
                 case "RoundRect":
                     ShapeView.Shape = new RoundRect();
                     CornerRadiusConfigContainer.IsVisible = true;

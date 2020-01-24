@@ -9,6 +9,7 @@
                     <x:Array Type="{x:Type x:String}">
                         <x:String>Arc</x:String>
                         <x:String>Rect</x:String>
+                        <x:String>Circle</x:String>
                         <x:String>RoundRect</x:String>
                         <x:String>Diagonal</x:String>
                         <x:String>Triangle</x:String>
@@ -120,21 +121,57 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                    
-                <Label FontSize="24" Text="X" Grid.Row="0" Grid.Column="0" />
-                <Label FontSize="24" Text="Y" Grid.Row="0" Grid.Column="1" />
 
-                <Label FontSize="24" Text="Point A" Grid.Row="1" Grid.ColumnSpan="2" />
-                <Slider x:Name="PointAX" Grid.Row="2" Grid.Column="0" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
-                <Slider x:Name="PointAY" Grid.Row="2" Grid.Column="1" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+                <Label Grid.Row="0" Grid.Column="0" FontSize="24" Text="X" />
+                <Label Grid.Row="0" Grid.Column="1" FontSize="24" Text="Y" />
 
-                <Label FontSize="24" Text="Point B" Grid.Row="3" Grid.ColumnSpan="2" />
-                <Slider x:Name="PointBX" Grid.Row="4" Grid.Column="0" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
-                <Slider x:Name="PointBY" Grid.Row="4" Grid.Column="1" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+                <Label Grid.Row="1" Grid.ColumnSpan="2" FontSize="24" Text="Point A" />
+                <Slider
+                    x:Name="PointAX"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Maximum="1"
+                    Minimum="0"
+                    ValueChanged="OnTrianglePointsChanged" />
+                <Slider
+                    x:Name="PointAY"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Maximum="1"
+                    Minimum="0"
+                    ValueChanged="OnTrianglePointsChanged" />
 
-                <Label FontSize="24" Text="Point C" Grid.Row="5" Grid.ColumnSpan="2" />
-                <Slider x:Name="PointCX" Grid.Row="6" Grid.Column="0" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
-                <Slider x:Name="PointCY" Grid.Row="6" Grid.Column="1" Maximum="1" Minimum="0" ValueChanged="OnTrianglePointsChanged" />
+                <Label Grid.Row="3" Grid.ColumnSpan="2" FontSize="24" Text="Point B" />
+                <Slider
+                    x:Name="PointBX"
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    Maximum="1"
+                    Minimum="0"
+                    ValueChanged="OnTrianglePointsChanged" />
+                <Slider
+                    x:Name="PointBY"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Maximum="1"
+                    Minimum="0"
+                    ValueChanged="OnTrianglePointsChanged" />
+
+                <Label Grid.Row="5" Grid.ColumnSpan="2" FontSize="24" Text="Point C" />
+                <Slider
+                    x:Name="PointCX"
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    Maximum="1"
+                    Minimum="0"
+                    ValueChanged="OnTrianglePointsChanged" />
+                <Slider
+                    x:Name="PointCY"
+                    Grid.Row="6"
+                    Grid.Column="1"
+                    Maximum="1"
+                    Minimum="0"
+                    ValueChanged="OnTrianglePointsChanged" />
             </Grid>
 
             <background:MaterialShapeView x:Name="ShapeView" HeightRequest="200" HorizontalOptions="FillAndExpand">
