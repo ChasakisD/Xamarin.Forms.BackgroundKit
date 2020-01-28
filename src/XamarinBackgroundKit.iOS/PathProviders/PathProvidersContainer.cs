@@ -6,6 +6,8 @@ namespace XamarinBackgroundKit.iOS.PathProviders
 {
     public static class PathProvidersContainer
     {
+        private static bool _isInitialized;
+
         private static readonly Lazy<Dictionary<Type, Func<IPathProvider>>> FactoriesLazy =
             new Lazy<Dictionary<Type, Func<IPathProvider>>>(() => new Dictionary<Type, Func<IPathProvider>>());
 
@@ -13,6 +15,8 @@ namespace XamarinBackgroundKit.iOS.PathProviders
 
         public static void Init()
         {
+            _isInitialized = true;
+
             Register<Arc>(() => new ArcPathProvider());
             Register<Rect>(() => new RectPathProvider());
             Register<Circle>(() => new CirclePathProvider());
@@ -29,6 +33,11 @@ namespace XamarinBackgroundKit.iOS.PathProviders
 
         public static IPathProvider Resolve(Type shapeType)
         {
+            if (!_isInitialized)
+            {
+                Init();
+            }
+
             if (!Factories.ContainsKey(shapeType))
                 throw new Exception("Not found registered PathProvider");
 
