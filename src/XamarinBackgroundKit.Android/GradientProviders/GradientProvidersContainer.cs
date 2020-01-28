@@ -6,6 +6,8 @@ namespace XamarinBackgroundKit.Android.GradientProviders
 {
     public static class GradientProvidersContainer
     {
+        private static bool _isInitialized;
+
         private static readonly Lazy<Dictionary<Type, Func<IGradientProvider>>> FactoriesLazy =
             new Lazy<Dictionary<Type, Func<IGradientProvider>>>(() => new Dictionary<Type, Func<IGradientProvider>>());
 
@@ -13,6 +15,8 @@ namespace XamarinBackgroundKit.Android.GradientProviders
 
         public static void Init()
         {
+            _isInitialized = true;
+
             Register<LinearGradientBrush>(() => new LinearGradientProvider());
         }
 
@@ -23,6 +27,11 @@ namespace XamarinBackgroundKit.Android.GradientProviders
 
         public static IGradientProvider Resolve(Type gradientBrushType)
         {
+            if (!_isInitialized)
+            {
+                Init();
+            }
+
             if (!Factories.ContainsKey(gradientBrushType))
                 throw new Exception("Not found registered PathProvider");
 
