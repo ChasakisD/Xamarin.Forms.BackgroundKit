@@ -19,14 +19,10 @@ namespace XamarinBackgroundKit.Android.Effects
         protected override void OnAttached()
         {
             base.OnAttached();
-
-            SetTracker();
+            
             HandleBackgroundManager();
-
-            _background = BackgroundEffect.GetBackground(Element);
-
-            _background?.SetBinding(BindableObject.BindingContextProperty,
-                new Binding("BindingContext", source: Element));
+            
+            UpdateBackgroundIfNotRemoved();
         }
 
         protected override void OnDetached()
@@ -40,15 +36,43 @@ namespace XamarinBackgroundKit.Android.Effects
         {
             base.OnElementPropertyChanged(args);
 
-            if (args.PropertyName != BackgroundEffect.BackgroundProperty.PropertyName) return;
+            if (args.PropertyName == BackgroundEffect.BackgroundProperty.PropertyName)
+            {
+                UpdateBackgroundIfNotRemoved();
+            }
+        }
 
-            var oldBackground = _background;
+        private void UpdateBackgroundIfNotRemoved()
+        {
+            if (BackgroundEffect.GetBackground(Element) == null)
+            {
+                if (_backgroundManager != null)
+                {
+                    _backgroundManager.Dispose();
+                    _backgroundManager = null;
+                }
 
-            _background = BackgroundEffect.GetBackground(Element);
-            _background?.SetBinding(BindableObject.BindingContextProperty,
-                new Binding("BindingContext", source: Element));
+                View.Background = null;
+            }
+            else
+            {
+                var shouldCreateTracker = _backgroundManager == null;
+                if (shouldCreateTracker)
+                {
+                    SetTracker();
+                }
+                
+                var oldBackground = _background;
+                
+                _background = BackgroundEffect.GetBackground(Element);
+                _background?.SetBinding(BindableObject.BindingContextProperty,
+                    new Binding("BindingContext", source: Element));
 
-            UpdateBackground(oldBackground, _background);
+                if (!shouldCreateTracker)
+                {
+                    UpdateBackground(oldBackground, _background);
+                }
+            }
         }
 
         private void SetTracker()
@@ -82,14 +106,22 @@ namespace XamarinBackgroundKit.Android.Effects
             * At this time, the BackgroundManager did the override
             * and we are up and running!
             */
-            if (!(Element is Image) && !(Element is Label)) return;
-
-            Control.ViewAttachedToWindow += OnAttachedToWindow;
+            if (Element is Image || Element is Label)
+            {
+                Control.ViewAttachedToWindow += OnAttachedToWindow;
+            }
         }
 
         private void OnAttachedToWindow(object sender, AView.ViewAttachedToWindowEventArgs e)
         {
-            UpdateBackground(null, _background);
+            if (_background == null)
+            {
+                View.Background = null;
+            }
+            else
+            {
+                UpdateBackground(null, _background);
+            }
         }
 
         private void UpdateBackground(IMaterialVisualElement oldBackground, IMaterialVisualElement newBackground)
@@ -99,11 +131,16 @@ namespace XamarinBackgroundKit.Android.Effects
 
         private void Dispose()
         {
-            _backgroundManager?.Dispose();
+            if (_backgroundManager != null)
+            {
+                _backgroundManager.Dispose();
+                _background = null;
+            }
 
-            if (!(Element is Image) && !(Element is Label)) return;
-
-            Control.ViewAttachedToWindow += OnAttachedToWindow;
+            if (Element is Image || Element is Label)
+            {
+                Control.ViewAttachedToWindow -= OnAttachedToWindow;
+            }
         }
     }
 }
