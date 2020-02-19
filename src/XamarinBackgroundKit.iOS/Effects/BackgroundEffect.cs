@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using FBKVOControllerNS;
 using Foundation;
 using UIKit;
@@ -25,14 +26,10 @@ namespace XamarinBackgroundKit.iOS.Effects
         protected override void OnAttached()
         {
             base.OnAttached();
-
-            SetTracker();
-
+            
             AddViewObservers();
-
-            _background = BackgroundEffect.GetBackground(Element);
-            _background?.SetBinding(BindableObject.BindingContextProperty,
-                new Binding("BindingContext", source: Element));
+            
+            UpdateBackgroundIfNotRemoved();
 
             //FIX for Ripple. The views must be focusable
             if (Element is Layout || Container is BoxRenderer)
@@ -40,6 +37,46 @@ namespace XamarinBackgroundKit.iOS.Effects
                 if (Container != null)
                 {
                     Container.UserInteractionEnabled = true;
+                }
+            }
+        }
+        
+        private void UpdateBackgroundIfNotRemoved()
+        {
+            if (BackgroundEffect.GetBackground(Element) == null)
+            {
+                if (_backgroundManager != null)
+                {
+                    _backgroundManager.Dispose();
+                    _backgroundManager = null;
+                }
+
+                if (View is UITextField textField)
+                {
+                    textField.BorderStyle = UITextBorderStyle.None;
+                }
+
+                View.Layer?.Sublayers
+                    ?.FirstOrDefault(x => x is GradientStrokeLayer)
+                    ?.RemoveFromSuperLayer();
+            }
+            else
+            {
+                var shouldCreateTracker = _backgroundManager == null;
+                if (shouldCreateTracker)
+                {
+                    SetTracker();
+                }
+                
+                var oldBackground = _background;
+                
+                _background = BackgroundEffect.GetBackground(Element);
+                _background?.SetBinding(BindableObject.BindingContextProperty,
+                    new Binding("BindingContext", source: Element));
+
+                if (!shouldCreateTracker)
+                {
+                    _backgroundManager?.SetBackgroundElement(oldBackground, _background);
                 }
             }
         }
@@ -61,15 +98,10 @@ namespace XamarinBackgroundKit.iOS.Effects
         {
             base.OnElementPropertyChanged(args);
 
-            if (args.PropertyName != BackgroundEffect.BackgroundProperty.PropertyName) return;
-
-            var oldBackground = _background;
-
-            _background = BackgroundEffect.GetBackground(Element);
-            _background?.SetBinding(BindableObject.BindingContextProperty,
-                new Binding("BindingContext", source: Element));
-
-            _backgroundManager?.SetBackgroundElement(oldBackground, _background);
+            if (args.PropertyName == BackgroundEffect.BackgroundProperty.PropertyName)
+            {
+                UpdateBackgroundIfNotRemoved();
+            }
         }
 
         private void SetTracker()
