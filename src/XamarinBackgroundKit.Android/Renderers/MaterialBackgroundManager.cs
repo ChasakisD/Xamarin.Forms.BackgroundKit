@@ -77,38 +77,11 @@ namespace XamarinBackgroundKit.Android.Renderers
                 newElement.PropertyChanged += OnElementPropertyChanged;
             }
 
-            IMaterialVisualElement oldMaterialVisualElement;
-            IMaterialVisualElement newMaterialVisualElement;
-
-            switch (oldElement)
-            {
-                case IBackgroundElement oldBackgroundElement:
-                    oldMaterialVisualElement = oldBackgroundElement.Background;
-                    break;
-                case IMaterialVisualElement oldMaterialElement:
-                    oldMaterialVisualElement = oldMaterialElement;
-                    break;
-                default:
-                    oldMaterialVisualElement = oldElement == null ? null : BackgroundEffect.GetBackground(oldElement);
-                    break;
-            }
-
-            switch (newElement)
-            {
-                case IBackgroundElement newBackgroundElement:
-                    newMaterialVisualElement = newBackgroundElement.Background;
-                    break;
-                case IMaterialVisualElement newMaterialElement:
-                    newMaterialVisualElement = newMaterialElement;
-                    break;
-                default:
-                    newMaterialVisualElement = newElement == null ? null : BackgroundEffect.GetBackground(newElement);
-                    break;
-            }
-
             _visualElement = newElement;
 
-            SetBackgroundElement(oldMaterialVisualElement, newMaterialVisualElement);
+            SetBackgroundElement(
+                GetMaterialVisualElement(oldElement), 
+                GetMaterialVisualElement(newElement));
         }
 
         public void SetBackgroundElement(IMaterialVisualElement oldElement, IMaterialVisualElement newElement)
@@ -194,7 +167,9 @@ namespace XamarinBackgroundKit.Android.Renderers
             if (_renderer == null || _disposed) return;
 
             if (e.PropertyName == BackgroundElement.BackgroundProperty.PropertyName)
-                SetVisualElement(_visualElement, _renderer.Element);
+                SetBackgroundElement(
+                    _backgroundElement, 
+                    GetMaterialVisualElement(_visualElement));
         }
 
         private void OnRendererPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -219,6 +194,19 @@ namespace XamarinBackgroundKit.Android.Renderers
         #endregion
 
         #region Background Handling
+
+        private static IMaterialVisualElement GetMaterialVisualElement(VisualElement element)
+        {
+            switch (element)
+            {
+                case IBackgroundElement oldBackgroundElement:
+                    return oldBackgroundElement.Background;
+                case IMaterialVisualElement oldMaterialElement:
+                    return oldMaterialElement;
+                default:
+                    return element == null ? null : BackgroundEffect.GetBackground(element);
+            }
+        }
 
         private void UpdateBackground()
         {
