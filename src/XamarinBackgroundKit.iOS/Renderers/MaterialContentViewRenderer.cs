@@ -7,6 +7,7 @@ using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.iOS.Renderers;
 
 [assembly: ExportRenderer(typeof(MaterialContentView), typeof(MaterialContentViewRenderer))]
+
 namespace XamarinBackgroundKit.iOS.Renderers
 {
     public class MaterialContentViewRenderer : ViewRenderer
@@ -23,8 +24,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
             BackgroundManager?.InvalidateLayer();
         }
 
-        #region Element Changed
-
         protected override void OnElementChanged(ElementChangedEventArgs<View> e)
         {
             base.OnElementChanged(e);
@@ -39,10 +38,6 @@ namespace XamarinBackgroundKit.iOS.Renderers
             UpdateIsFocusable();
         }
 
-        #endregion
-
-        #region Property Changed
-
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (_disposed) return;
@@ -55,7 +50,7 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         private void UpdateIsFocusable()
         {
-            if (ElementController.IsFocusable && ElementController.IsClickable)
+            if ((ElementController?.IsFocusable ?? false) && (ElementController?.IsClickable ?? false))
             {
                 //MultipleTouchEnabled = true;
                 UserInteractionEnabled = true;
@@ -67,15 +62,11 @@ namespace XamarinBackgroundKit.iOS.Renderers
             }
         }
 
-        #endregion
-
-        #region Touch Handling
-
         public override void TouchesBegan(NSSet touches, UIEvent evt)
         {
             base.TouchesBegan(touches, evt);
 
-            if (ElementController.IsFocusable)
+            if (ElementController?.IsFocusable ?? false)
             {
                 ElementController?.OnPressed();
             }
@@ -85,12 +76,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesEnded(touches, evt);
 
-            if (ElementController.IsClickable)
+            if (ElementController?.IsClickable ?? false)
             {
                 ElementController?.OnClicked();
             }
 
-            if (ElementController.IsFocusable)
+            if (ElementController?.IsFocusable ?? false)
             {
                 ElementController?.OnReleased();
                 ElementController?.OnReleasedOrCancelled();
@@ -101,16 +92,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesCancelled(touches, evt);
 
-            if (ElementController.IsFocusable)
+            if (ElementController?.IsFocusable ?? false)
             {
                 ElementController?.OnCancelled();
                 ElementController?.OnReleasedOrCancelled();
             }
         }
-
-        #endregion
-
-        #region LifeCycle
 
         protected override void Dispose(bool disposing)
         {
@@ -122,14 +109,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
             {
                 if (BackgroundManager != null)
                 {
-                    BackgroundManager.Dispose();
+                    BackgroundManager?.Dispose();
                     BackgroundManager = null;
                 }
             }
 
             base.Dispose(disposing);
         }
-
-        #endregion
     }
 }
