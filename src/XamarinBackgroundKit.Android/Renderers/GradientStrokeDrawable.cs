@@ -7,6 +7,7 @@ using XamarinBackgroundKit.Android.GradientProviders;
 using XamarinBackgroundKit.Android.PathProviders;
 using XamarinBackgroundKit.Controls;
 using Color = Xamarin.Forms.Color;
+using AColor = Android.Graphics.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {
@@ -27,8 +28,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         private Paint _maskPaint;
         private Paint _strokePaint;
 
-        private Color _color;
-        private Color _strokeColor;
+        private AColor? _color;
+        private AColor? _strokeColor;
 
         private float _strokeWidth;
         private PathEffect _strokePathEffect;
@@ -82,6 +83,8 @@ namespace XamarinBackgroundKit.Android.Renderers
                 InitializePaints();
             }
 
+            InitializeColors();
+
             /* Update the path only if it needs update */
             if (_pathDirty || (_pathProvider != null && _pathProvider.IsPathDirty))
             {
@@ -133,10 +136,6 @@ namespace XamarinBackgroundKit.Android.Renderers
         private void InitializePaints()
         {
             _gradientProvider?.DrawOrClearGradient(Paint, _width, _height);
-            if (_color != Color.Default)
-            {
-                Paint.Color = _color.ToAndroid();
-            }
 
             if (CanDrawBorder())
             {
@@ -144,10 +143,19 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _strokePaint.SetPathEffect(_strokePathEffect);
 
                 _strokeGradientProvider?.DrawOrClearGradient(Paint, _width, _height);
-                if (_strokeColor != Color.Default)
-                {
-                    _strokePaint.Color = _strokeColor.ToAndroid();
-                }
+            }
+        }
+
+        private void InitializeColors()
+        {
+            if (_color != null)
+            {
+                Paint.Color = _color.Value;
+            }
+
+            if (CanDrawBorder() && _strokeColor != null)
+            {
+                _strokePaint.Color = _strokeColor.Value;
             }
         }
 
@@ -216,7 +224,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         public void SetColor(Color color)
         {
             _dirty = true;
-            _color = color;
+            _color = color == Color.Default
+                ? null : (AColor?)color.ToAndroid();
 
             InvalidateSelf();
         }
@@ -224,7 +233,8 @@ namespace XamarinBackgroundKit.Android.Renderers
         public void SetStroke(double strokeWidth, Color strokeColor)
         {
             _dirty = true;
-            _strokeColor = strokeColor;
+            _strokeColor = strokeColor == Color.Default
+                ? null : (AColor?)strokeColor.ToAndroid();
             _strokeWidth = (float)(strokeWidth * _density * 2);
 
             EnsureStrokeAlloc();
