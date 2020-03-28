@@ -194,8 +194,13 @@ namespace XamarinBackgroundKit.Controls
         {
             base.OnSizeAllocated(width, height);
 
-            InvalidateCircle(width, height);
-            InvalidateCornerRadiusHalfHeight(height);
+            InvalidateShape(width, height);
+        }
+
+        private void InvalidateShape(double width, double height)
+        {
+	        InvalidateCircle(width, height);
+	        InvalidateCornerRadiusHalfHeight(height);
         }
 
         public virtual void InvalidateCircle(double width, double height)
@@ -235,7 +240,7 @@ namespace XamarinBackgroundKit.Controls
 
         public virtual void InvalidateCornerRadiusHalfHeight(double height)
         {
-            if (!IsCornerRadiusHalfHeight || Background == null) return;
+            if (!IsCornerRadiusHalfHeight || height <= 0 || Background == null) return;
 
             var threshold = Math.Pow(10, -15);
             var desiredCornerRadius = height / 2d;
@@ -252,6 +257,11 @@ namespace XamarinBackgroundKit.Controls
 
         void IBackgroundElement.OnBackgroundChanged(Background oldValue, Background newValue)
         {
+	        if (IsCircle || IsCornerRadiusHalfHeight)
+	        {
+		        InvalidateShape(Width, Height);
+	        }
+	        
             newValue.SetBinding(BindingContextProperty, new Binding("BindingContext", source: this));
         }
 
