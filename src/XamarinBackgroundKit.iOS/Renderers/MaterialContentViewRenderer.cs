@@ -55,6 +55,8 @@ namespace XamarinBackgroundKit.iOS.Renderers
 
         private void UpdateIsFocusable()
         {
+            if (ElementController == null) return;
+
             if (ElementController.IsFocusable && ElementController.IsClickable)
             {
                 //MultipleTouchEnabled = true;
@@ -75,9 +77,11 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesBegan(touches, evt);
 
+            if (ElementController == null) return;
+
             if (ElementController.IsFocusable)
             {
-                ElementController?.OnPressed();
+                ElementController.OnPressed();
             }
         }
 
@@ -85,15 +89,17 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesEnded(touches, evt);
 
+            if (ElementController == null) return;
+
             if (ElementController.IsClickable)
             {
-                ElementController?.OnClicked();
+                ElementController.OnClicked();
             }
 
             if (ElementController.IsFocusable)
             {
-                ElementController?.OnReleased();
-                ElementController?.OnReleasedOrCancelled();
+                ElementController.OnReleased();
+                ElementController.OnReleasedOrCancelled();
             }
         }
 
@@ -101,10 +107,12 @@ namespace XamarinBackgroundKit.iOS.Renderers
         {
             base.TouchesCancelled(touches, evt);
 
+            if (ElementController == null) return;
+
             if (ElementController.IsFocusable)
             {
-                ElementController?.OnCancelled();
-                ElementController?.OnReleasedOrCancelled();
+                ElementController.OnCancelled();
+                ElementController.OnReleasedOrCancelled();
             }
         }
 
