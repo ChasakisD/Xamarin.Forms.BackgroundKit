@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace XamarinBackgroundKit.Abstractions
@@ -9,7 +10,7 @@ namespace XamarinBackgroundKit.Abstractions
 
 		bool IsClickable { get; }
 
-		Command ClickedCommand { get; }
+		ICommand ClickedCommand { get; }
 
 		object ClickedCommandParameter { get; }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows.Input;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Controls.Base;
@@ -45,9 +46,9 @@ namespace XamarinBackgroundKit.Controls
         /// <summary>
         /// Gets or sets the Command that will be executed when Click fires
         /// </summary>
-		public Command ClickedCommand
+		public ICommand ClickedCommand
 		{
-			get => (Command)GetValue(ClickedCommandProperty);
+			get => (ICommand)GetValue(ClickedCommandProperty);
 			set => SetValue(ClickedCommandProperty, value);
 		}
 
@@ -82,9 +83,9 @@ namespace XamarinBackgroundKit.Controls
         /// <summary>
         /// Gets or sets the Command that will be executed when the user presses the MaterialContentView
         /// </summary>
-		public Command PressedCommand
+		public ICommand PressedCommand
 		{
-			get => (Command)GetValue(PressedCommandProperty);
+			get => (ICommand)GetValue(PressedCommandProperty);
 			set => SetValue(PressedCommandProperty, value);
 		}
 
@@ -104,9 +105,9 @@ namespace XamarinBackgroundKit.Controls
         /// <summary>
         /// Gets or sets the Command that will be executed when the user releases the MaterialContentView
         /// </summary>
-		public Command ReleasedCommand
+		public ICommand ReleasedCommand
 		{
-			get => (Command)GetValue(ReleasedCommandProperty);
+			get => (ICommand)GetValue(ReleasedCommandProperty);
 			set => SetValue(ReleasedCommandProperty, value);
 		}
 
@@ -126,9 +127,9 @@ namespace XamarinBackgroundKit.Controls
         /// <summary>
         /// Gets or sets the Command that will be executed when the user cancels the MaterialContentView
         /// </summary>
-		public Command CancelledCommand
+		public ICommand CancelledCommand
 		{
-			get => (Command)GetValue(CancelledCommandProperty);
+			get => (ICommand)GetValue(CancelledCommandProperty);
 			set => SetValue(CancelledCommandProperty, value);
 		}
 
@@ -148,9 +149,9 @@ namespace XamarinBackgroundKit.Controls
         /// <summary>
         /// Gets or sets the Command that will be executed when the user releases or cancels the MaterialContentView
         /// </summary>
-		public Command ReleasedOrCancelledCommand
+		public ICommand ReleasedOrCancelledCommand
 		{
-			get => (Command)GetValue(ReleasedOrCancelledCommandProperty);
+			get => (ICommand)GetValue(ReleasedOrCancelledCommandProperty);
 			set => SetValue(ReleasedOrCancelledCommandProperty, value);
 		}
 
