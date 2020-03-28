@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using System.Windows.Input;
+using Xamarin.Forms;
 using XamarinBackgroundKit.Abstractions;
 
 namespace XamarinBackgroundKit.Controls.Base
@@ -10,7 +11,7 @@ namespace XamarinBackgroundKit.Controls.Base
 			propertyChanged: OnIsClickablePropertyChanged);
 
 		public static readonly BindableProperty ClickedCommandProperty = BindableProperty.Create(
-			nameof(IClickableElement.ClickedCommand), typeof(Command), typeof(IClickableElement));
+			nameof(IClickableElement.ClickedCommand), typeof(ICommand), typeof(IClickableElement));
 
 		public static readonly BindableProperty ClickedCommandParameterProperty = BindableProperty.Create(
 			nameof(IClickableElement.ClickedCommandParameter), typeof(object), typeof(IClickableElement));

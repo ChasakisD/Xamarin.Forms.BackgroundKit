@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace XamarinBackgroundKit.Abstractions
@@ -12,10 +13,10 @@ namespace XamarinBackgroundKit.Abstractions
 
 		bool IsFocusable { get; }
 
-		Command PressedCommand { get; }
-		Command ReleasedCommand { get; }
-		Command CancelledCommand { get; }
-		Command ReleasedOrCancelledCommand { get; }
+		ICommand PressedCommand { get; }
+		ICommand ReleasedCommand { get; }
+		ICommand CancelledCommand { get; }
+		ICommand ReleasedOrCancelledCommand { get; }
 
 		object PressedCommandParameter { get; }
 		object ReleasedCommandParameter { get; }
