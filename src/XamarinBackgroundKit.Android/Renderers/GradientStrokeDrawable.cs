@@ -142,7 +142,7 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _strokePaint.StrokeWidth = _strokeWidth;
                 _strokePaint.SetPathEffect(_strokePathEffect);
 
-                _strokeGradientProvider?.DrawOrClearGradient(Paint, _width, _height);
+                _strokeGradientProvider?.DrawOrClearGradient(_strokePaint, _width, _height);
             }
         }
 
