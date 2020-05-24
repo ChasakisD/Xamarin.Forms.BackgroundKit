@@ -141,6 +141,10 @@ namespace XamarinBackgroundKit.Android.Renderers
 
             if (oldElement.CornerRadius != newElement.CornerRadius)
                 UpdateCornerRadius();
+
+            if (oldElement.RippleColor != newElement.RippleColor
+                || oldElement.IsRippleEnabled != newElement.IsRippleEnabled)
+                UpdateRipple();
         }
 
         #endregion
