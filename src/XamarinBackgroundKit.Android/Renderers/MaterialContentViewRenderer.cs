@@ -50,6 +50,8 @@ namespace XamarinBackgroundKit.Android.Renderers
 
         protected override void DispatchDraw(Canvas canvas)
         {
+            BackgroundManager?.UpdateElevation();
+
             BackgroundManager?.Draw(this, canvas, () => base.DispatchDraw(canvas));
         }
 

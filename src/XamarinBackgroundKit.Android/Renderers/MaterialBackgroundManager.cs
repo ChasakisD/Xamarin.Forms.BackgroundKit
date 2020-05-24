@@ -349,7 +349,7 @@ namespace XamarinBackgroundKit.Android.Renderers
             _nativeView?.SetTranslationZ(_context, _backgroundElement);
         }
 
-        private void UpdateElevation()
+        public void UpdateElevation()
         {
             if (_nativeView == null) return;
 
