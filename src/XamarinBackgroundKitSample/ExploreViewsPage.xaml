@@ -20,6 +20,7 @@
                         <background:Background
                             CornerRadius="10"
                             Elevation="4"
+                            ShadowColor="Red"
                             RippleColor="#80FF0000"
                             IsRippleEnabled="True"
                             Color="#F5F5F5" />

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using Android.Content;
+﻿using Android.Content;
+using System.ComponentModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;

@@ -1,8 +1,8 @@
-﻿using System;
-using Android.Graphics;
+﻿using Android.Graphics;
 using Android.Graphics.Drawables.Shapes;
 using Android.OS;
-using Android.Support.V4.View;
+using AndroidX.Core.View;
+using System;
 using XamarinBackgroundKit.Android.Extensions;
 using XamarinBackgroundKit.Android.OutlineProviders;
 using XamarinBackgroundKit.Android.PathProviders;
@@ -51,7 +51,7 @@ namespace XamarinBackgroundKit.Android.Renderers
                 _shape = newShape;
 
                 PathProvider?.Dispose();
-                PathProvider = PathProvidersContainer.Resolve(_shape.GetType());
+                PathProvider = PathProvidersContainer.Resolve(_shape?.GetType());
 
                 if (PathProvider != null)
                 {
@@ -125,8 +125,8 @@ namespace XamarinBackgroundKit.Android.Renderers
             _clipPath.Set(clipPath);
 
             _maskPath.Reset();
-            _maskPath.AddRect(canvasBounds, Path.Direction.Cw);
-            _maskPath.InvokeOp(_clipPath, Path.Op.Difference);
+            _maskPath.AddRect(canvasBounds, Path.Direction.Cw!);
+            _maskPath.InvokeOp(_clipPath, Path.Op.Difference!);
         }
 
         public void Dispose()

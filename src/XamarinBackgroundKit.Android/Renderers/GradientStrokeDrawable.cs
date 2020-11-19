@@ -6,8 +6,8 @@ using XamarinBackgroundKit.Abstractions;
 using XamarinBackgroundKit.Android.GradientProviders;
 using XamarinBackgroundKit.Android.PathProviders;
 using XamarinBackgroundKit.Controls;
-using Color = Xamarin.Forms.Color;
 using AColor = Android.Graphics.Color;
+using Color = Xamarin.Forms.Color;
 
 namespace XamarinBackgroundKit.Android.Renderers
 {

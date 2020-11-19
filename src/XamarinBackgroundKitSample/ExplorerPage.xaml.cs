@@ -5,6 +5,8 @@ using System.Linq;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Controls;
 using XamarinBackgroundKit.Effects;
+using GradientBrush = XamarinBackgroundKit.Controls.GradientBrush;
+using GradientStop = XamarinBackgroundKit.Controls.GradientStop;
 
 namespace XamarinBackgroundKitSample
 {
