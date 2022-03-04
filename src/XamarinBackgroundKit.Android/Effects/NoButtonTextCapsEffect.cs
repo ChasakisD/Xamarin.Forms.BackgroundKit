@@ -1,4 +1,4 @@
-﻿using Android.Support.V7.Widget;
+﻿using AndroidX.AppCompat.Widget;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Android.Effects;
 using XamarinBackgroundKit.Effects;

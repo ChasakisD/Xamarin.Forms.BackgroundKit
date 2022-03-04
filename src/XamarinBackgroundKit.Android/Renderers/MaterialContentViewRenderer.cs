@@ -1,7 +1,8 @@
-﻿using System.ComponentModel;
-using Android.Content;
+﻿using Android.Content;
 using Android.Graphics;
 using Android.Views;
+using System.ComponentModel;
+using Android.Content.Res;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using XamarinBackgroundKit.Android.Renderers;
@@ -28,6 +29,9 @@ namespace XamarinBackgroundKit.Android.Renderers
             base.OnElementChanged(e);
 
             if (e.NewElement == null) return;
+
+            this.EnsureId();
+
             if (BackgroundManager == null)
             {
                 BackgroundManager = new MaterialBackgroundManager(this);

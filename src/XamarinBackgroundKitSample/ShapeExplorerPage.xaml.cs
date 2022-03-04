@@ -1,6 +1,7 @@
 ﻿using System;
 using Xamarin.Forms;
 using XamarinBackgroundKit.Shapes;
+using Rect = XamarinBackgroundKit.Shapes.Rect;
 
 namespace XamarinBackgroundKitSample
 {
