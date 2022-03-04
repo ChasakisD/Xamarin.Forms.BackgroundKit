@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    x:Class="XamarinBackgroundKitSample.IssuesGalleryViews.Issue90Page"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:background="http://xamarin.com/schemas/2014/forms/background"
+    xmlns:issue90="clr-namespace:XamarinBackgroundKitSample.Models.Issue90;assembly=XamarinBackgroundKitSample">
+
+    <CollectionView IsGrouped="True" ItemsSource="{Binding GroupItemList}">
+
+        <CollectionView.GroupHeaderTemplate>
+            <DataTemplate x:DataType="issue90:Issue90GroupModel">
+                <Label
+                    Padding="20"
+                    BackgroundColor="LightGoldenrodYellow"
+                    Text="{Binding Key}" />
+            </DataTemplate>
+        </CollectionView.GroupHeaderTemplate>
+
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="issue90:Issue90ItemModel">
+                <ContentView>
+                    <background:MaterialContentView
+                        Margin="10,0,10,0"
+                        Padding="20,30,20,30"
+                        Background="{background:BgProvider Color=White,
+                                                           BorderColor=Red,
+                                                           BorderWidth=5,
+                                                           CornerRadius={Binding CornerRadius}}"
+                        BackgroundColor="White">
+                        <Label Text="{Binding Data}" />
+                    </background:MaterialContentView>
+                </ContentView>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+
+    </CollectionView>
+
+</ContentPage>
