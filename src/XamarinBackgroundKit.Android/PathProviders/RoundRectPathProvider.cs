@@ -13,7 +13,7 @@ namespace XamarinBackgroundKit.Android.PathProviders
         public override bool IsBorderSupported => true;
 
         public override bool CanHandledByOutline =>
-            Math.Abs(CornerRadii.Sum() / CornerRadii.Length - CornerRadii[0]) < 0.0001;
+            !IsPathDirty && Math.Abs(CornerRadii.Sum() / CornerRadii.Length - CornerRadii[0]) < 0.0001;
 
         public override void CreatePath(Path path, RoundRect shape, int width, int height)
         {

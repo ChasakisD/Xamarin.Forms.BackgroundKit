@@ -15,7 +15,8 @@ namespace XamarinBackgroundKitSample
 
             var issuesViews = new ObservableCollection<string>
             {
-                "Issue41"
+                "Issue41",
+                "Issue90"
             };
 
             var customViews = new ObservableCollection<string>
@@ -99,6 +100,12 @@ namespace XamarinBackgroundKitSample
             if (labelText.Equals("Issue41"))
             {
                 await Navigation.PushAsync(new Issue41Page());
+                return;
+            }
+
+            if (labelText.Equals("Issue90"))
+            {
+                await Navigation.PushAsync(new Issue90Page());
                 return;
             }
 
