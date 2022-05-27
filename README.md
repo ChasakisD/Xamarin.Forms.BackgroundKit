@@ -38,7 +38,7 @@ XamarinBackgroundKit.Android.BackgroundKit.Init();
 #### Xamarin.iOS
 Initialize the renderer below the Xamarin.Forms.Init
 ```cs
-XamarinBackgroundKit.Android.BackgroundKit.Init();
+XamarinBackgroundKit.iOS.BackgroundKit.Init();
 ```
 
 ### Actual Usage
